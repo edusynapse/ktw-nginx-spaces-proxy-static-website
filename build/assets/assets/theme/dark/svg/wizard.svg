@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100" height="100"
+     preserveAspectRatio="none" viewBox="0 0 100 100">
+    <defs>
+        <!-- Transformed Gradient for T-Shirt -->
+        <linearGradient id="shirtGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:rgba(142,145,146,1);stop-opacity:1"/>
+            <stop offset="100%" style="stop-color:rgba(130,134,135,1);stop-opacity:1"/>
+        </linearGradient>
+        <!-- Transformed Gradient for Hair -->
+        <linearGradient id="hairGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:rgba(20,18,18,1);stop-opacity:1"/>
+            <stop offset="100%" style="stop-color:rgba(35,32,31,1);stop-opacity:1"/>
+        </linearGradient>
+        <!-- Clip path for the T-Shirt shape -->
+        <clipPath id="shirtClip">
+            <path d="M20 85 Q50 65, 80 85 L100 100 L0 100 Z"/>
+        </clipPath>
+    </defs>
+    <g fill="none">
+        <!-- Transparent Background -->
+        <rect width="100" height="100" fill="none"/>
+
+        <!-- T-Shirt Top with transformed pastel blue gradient -->
+        <path d="M20 85 Q50 65, 80 85 L100 100 L0 100 Z" fill="url(#shirtGradient)"/>
+
+        <!-- Polka dots over the T-Shirt fill (grey → rgba(90,90,90,1)) -->
+        <g clip-path="url(#shirtClip)">
+            <circle cx="25" cy="90" r="0.8" fill="rgba(90,90,90,1)"/>
+            <circle cx="35" cy="92" r="0.8" fill="rgba(90,90,90,1)"/>
+            <circle cx="45" cy="89" r="0.8" fill="rgba(90,90,90,1)"/>
+            <circle cx="55" cy="93" r="0.8" fill="rgba(90,90,90,1)"/>
+            <circle cx="65" cy="90" r="0.8" fill="rgba(90,90,90,1)"/>
+            <circle cx="30" cy="96" r="0.8" fill="rgba(90,90,90,1)"/>
+            <circle cx="40" cy="98" r="0.8" fill="rgba(90,90,90,1)"/>
+            <circle cx="50" cy="97" r="0.8" fill="rgba(90,90,90,1)"/>
+            <circle cx="60" cy="99" r="0.8" fill="rgba(90,90,90,1)"/>
+            <circle cx="70" cy="96" r="0.8" fill="rgba(90,90,90,1)"/>
+            <circle cx="25" cy="100" r="0.8" fill="rgba(90,90,90,1)"/>
+            <circle cx="75" cy="100" r="0.8" fill="rgba(90,90,90,1)"/>
+        </g>
+
+        <!-- Grey borders on the T-Shirt top and vertical edges (grey → rgba(90,90,90,1)) -->
+        <path d="M20 85 Q50 65, 80 85" stroke="rgba(90,90,90,1)" stroke-width="1" fill="none"/>
+        <path d="M20 85 L0 100" stroke="rgba(90,90,90,1)" stroke-width="1" fill="none"/>
+        <path d="M80 85 L100 100" stroke="rgba(90,90,90,1)" stroke-width="1" fill="none"/>
+
+        <!-- Thicker Collar (from rgba(70,190,170,1) → rgba(95,104,102,1)) -->
+        <path d="M20 75 Q50 60, 80 75 L80 90 Q50 80, 20 90 Z"
+              fill="rgba(95,104,102,1)" stroke="rgba(90,90,90,1)" stroke-width="1"/>
+
+        <!-- V-Shape between the collar and face (from rgba(210,180,150,1) → rgba(128,126,124,1)) -->
+        <polygon points="40,76 60,76 50,100"
+                 fill="rgba(128,126,124,1)"
+                 stroke="rgba(46,49,49,1)" stroke-width="1"/>
+
+        <!-- Ears -->
+        <!-- Ears fill: from rgba(230,190,150,1) → rgba(136,133,130,1) -->
+        <ellipse cx="20" cy="47" rx="7" ry="12"
+                 fill="rgba(136,133,130,1)" stroke="rgba(122,119,116,1)" stroke-width="1"/>
+        <ellipse cx="80" cy="47" rx="7" ry="12"
+                 fill="rgba(136,133,130,1)" stroke="rgba(122,119,116,1)" stroke-width="1"/>
+        <!-- Extra thin outer borders on ears: from rgba(160,130,100,1) → rgba(93,91,89,1) -->
+        <ellipse cx="20" cy="47" rx="8" ry="13" fill="none"
+                 stroke="rgba(93,91,89,1)" stroke-width="0.8"/>
+        <ellipse cx="80" cy="47" rx="8" ry="13" fill="none"
+                 stroke="rgba(93,91,89,1)" stroke-width="0.8"/>
+
+        <!-- Face -->
+        <!-- Face fill: from rgba(255,220,180,1) → rgba(155,153,150,1) -->
+        <ellipse cx="50" cy="50" rx="30" ry="35"
+                 fill="rgba(155,153,150,1)" stroke="rgba(136,133,130,1)" stroke-width="2"/>
+        <!-- Face outer border: from rgba(160,130,100,1) → rgba(93,91,89,1) -->
+        <ellipse cx="50" cy="50" rx="31" ry="36" fill="none"
+                 stroke="rgba(93,91,89,1)" stroke-width="0.8"/>
+        <!-- Spaced-out freckles: from rgba(210,150,120,0.7) → rgba(116,111,109,0.7) -->
+        <circle cx="38" cy="55" r="0.8" fill="rgba(116,111,109,0.7)"/>
+        <circle cx="46" cy="57" r="0.8" fill="rgba(116,111,109,0.7)"/>
+        <circle cx="54" cy="57" r="0.8" fill="rgba(116,111,109,0.7)"/>
+        <circle cx="62" cy="55" r="0.8" fill="rgba(116,111,109,0.7)"/>
+
+        <!-- Eyes (black remains unchanged) -->
+        <ellipse cx="40" cy="49" rx="4" ry="2.5" fill="rgba(0,0,0,1)"/>
+        <!-- Eye highlights: white → rgba(179,179,179,1) -->
+        <circle cx="39" cy="48" r="0.8" fill="rgba(179,179,179,1)"/>
+        <ellipse cx="60" cy="49" rx="4" ry="2.5" fill="rgba(0,0,0,1)"/>
+        <circle cx="59" cy="48" r="0.8" fill="rgba(179,179,179,1)"/>
+
+        <!-- Eyebrows: stroke "#333333" → rgba(36,36,36,1) -->
+        <path d="M34 46 Q40 40, 46 46" stroke="rgba(36,36,36,1)" stroke-width="2" fill="none"/>
+        <path d="M54 46 Q60 40, 66 46" stroke="rgba(36,36,36,1)" stroke-width="2" fill="none"/>
+
+        <!-- Slimmer, nose-shaped Nose -->
+        <!-- Nose fill: from rgba(255,190,160,1) → rgba(145,140,138,1) -->
+        <path d="M50 45 C45 54, 45 60, 50 65 C55 60, 55 54, 50 45 Z"
+              fill="rgba(145,140,138,1)" stroke="rgba(0,0,0,0.2)" stroke-width="0.5"/>
+
+        <!-- Thick Mouth -->
+        <!-- Mouth fill: from rgba(200,50,50,1) → rgba(77,67,67,1) -->
+        <path d="M40 64 Q50 72, 60 64 Q50 80, 40 64 Z"
+              fill="rgba(77,67,67,1)" stroke="rgba(0,0,0,0.5)" stroke-width="1.5"/>
+
+        <!-- Hair with cloud-like lower edge -->
+        <path d="
+      M28,30
+      Q40,32 48,30
+      T56,30
+      Q64,32 72,30
+      Q50,10, 28,30 Z"
+              transform="translate(0,2)"
+              stroke="url(#hairGradient)" stroke-width="16" fill="none"/>
+
+        <!-- Cap with dark blue-greyish border -->
+        <!-- Cap fill: from rgba(150,50,50,1) → rgba(63,56,56,1) -->
+        <path d="M20 28 L80 28 L75 8 Q50 -2, 25 8 Z"
+              fill="rgba(63,56,56,1)" stroke="rgba(46,49,49,1)" stroke-width="1"/>
+        <path d="M15 28 L85 28" stroke="rgba(46,49,49,1)" stroke-width="5" fill="none"/>
+        <path d="M15 28 L85 28" stroke="rgba(46,49,49,1)" stroke-width="1" fill="none"/>
+        <path d="M15 28 Q50 32, 85 28" stroke="rgba(46,49,49,1)" stroke-width="2" fill="none"/>
+    </g>
+</svg>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <base href="/"><!-- ✅ required for Flutter web (incl. WASM) -->
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Game and Learn">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="know_to_win">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <meta name="flutter-web-use-single-entry-history" content="false">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>know_to_win</title>
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* Center the loading indicator */
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ffffff;
+      z-index: 9999;
+      flex-direction: column;
+    }
+
+    body {
+      background-image: url(/assets/assets/theme/default/svg/pageBackgroundTile.webp);
+      background-repeat: repeat;
+    }
+
+    #loading-text {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #333333;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    const serviceWorkerVersion = "1869388282";
+  </script>
+
+  <!-- InAppWebView web glue (fine to keep here) -->
+  <script type="application/javascript"
+          src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
+          defer></script>
+
+
+  <script>
+    // Register the router SW at root so it controls "/"
+    if ('serviceWorker' in navigator) {
+      (async () => {
+        try {
+          const reg = await navigator.serviceWorker.register('/sw-assets.js', { scope: '/' });
+          console.log('[assets-sw] registered:', reg.scope);
+
+          // Ensure it takes control now
+          await navigator.serviceWorker.ready;
+          if (!navigator.serviceWorker.controller) location.reload();
+        } catch (e) {
+          console.warn('[assets-sw] registration failed:', e);
+        }
+      })();
+    }
+  </script>
+
+
+
+  <!-- Your helper SW in its own scope; OK with WASM -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          // Use a dedicated scope so it doesn't conflict with Flutter's SW
+          const reg = await navigator.serviceWorker.register('/sw-offline.js', { scope: '/sw-offline/' });
+          console.log('[offline-sw] registered:', reg.scope);
+        } catch (e) {
+          console.warn('[offline-sw] registration failed:', e);
+        }
+      });
+    }
+  </script>
+
+  <script>
+    // Seed history.state so Flutter's single-entry code never sees null.
+    try {
+      if (history.state == null) {
+        history.replaceState({ seed: Date.now() }, '', location.href);
+      }
+    } catch (e) {
+      console.warn('history seed failed', e);
+    }
+  </script>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+<!-- Loading Indicator -->
+<div id="loading">
+  <img src="icons/loader.gif" alt="Loading..." width="200" />
+  <div id="loading-text">Loading...</div>
+</div>
+
+<!-- Load the Flutter bootstrap LAST (match Flutter’s template for WASM) -->
+<script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

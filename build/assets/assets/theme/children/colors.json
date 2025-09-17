@@ -1,0 +1,77 @@
+{
+  "scaffoldBackgroundColor": "#FFFFFF",
+  "backGroundImage" : "background.webp",
+
+  "appBarBackgroundColor": "#fce3df",
+  "appBarForegroundColor": "#552929",
+  "appBarBackgroundImage": "appbarBackground.png",
+
+  "popupBackgroundColor": "#e7fbff",
+  "popupBackgroundAccentColor" : "#fffdf5",
+  "popupBackgroundImage": "popupBackgroundImageTile.webp",
+  "popupTitleBackgroundColor": "#a2370b",
+
+  "popupTitleBackgroundAccentColor": "#3d5e3e",
+  "popupTitleBorderColor": "#d09898",
+  "popupBorderEndColor" : "#d09898",
+  "popupBorderStartColor" : "#ca98d0",
+
+
+  "popupTitleTextColor": "#594727",
+  "popupTextColor": "#654343",
+  "popupButtonBackgroundColor": "#e7bba8",
+  "popupButtonTextColor": "#594727",
+
+  "cardTextColor": "#482b2b",
+  "cardTitleForegroundColor": "#453427",
+  "cardTitleBackgroundColor": "#b3f2d7",
+  "cardTitleBackgroundAccentColor" : "#ffa2af",
+
+  "cardTitleBorderColor" : "#d09898",
+
+  "cartTextForegroundColor": "#542323",
+  "cardBackgroundImage": "cardBackgroundTile.webp",
+  "cardBackgroundAccentColor": "#fbe7f7",
+  "cardBackgroundColor":"#ddffe8",
+  "cardButtonTextColor": "#270c27",
+  "cardButtonBackgroundColor": "#ead6c6",
+
+  "filterSectionBackgroundColor": "#ffe8e3",
+  "filterSectionBackgroundAccentColor" : "#ddfcff",
+  "filterSectionTextColor": "#270c27",
+  "filterSectionDropdownTextColor": "#270c27",
+  "filterSectionDropdownBackgroundColor": "#ead6c6",
+  "filterSectionButtonTextColor": "#270c27",
+  "filterSectionButtonBackgroundColor": "#ead6c6",
+  "filterSectionRangeSelectorColor": "#ead6c6",
+  "filterSectionBackgroundImage": "filterSectionBackgroundTile.webp",
+  "filterSectionDropdownHighlightColor" : "#285223",
+
+  "menuBackgroundColor": "#BBDEFB",
+  "menuTextColor": "#270c27",
+
+  "bottomNavigationBarBackgroundColor": "#FFF3E0",
+  "bottomNavigationBarSelectedItemColor": "#632710",
+  "bottomNavigationBarUnselectedItemColor": "#552929",
+
+  "pageBackgroundGradientStartColor": "#e4fad0",
+  "pageBackgroundGradientEndColor": "#e7afc0",
+  "pageBackgroundTile": "pageBackgroundTile.webp",
+  "pageSectionButtonTextColor": "#270c27",
+  "pageSectionButtonBackgroundColor": "#ead6c6",
+
+  "shadowColor" : "#ca806d",
+
+
+  "focusColor" : "#e7fbff",
+
+  "globalTapThrottleEnabled": true,
+  "globalTapThrottleIntervalMs": 800,
+  "globalTapThrottleMode": "throttle",
+
+
+  "forgotFunnyImage": "forgot.webp",
+  "sessionSafeImage" : "session_safe.webp",
+  "sessionPersonalImage" : "session_personal.webp",
+  "sessionSharedImage" : "session_shared.webp"
+}
