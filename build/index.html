@@ -5,13 +5,28 @@
   <base href="/"><!-- ✅ required for Flutter web (incl. WASM) -->
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Game and Learn">
-
+  <meta name="google-signin-client_id" content="64979320907-f64nkkq2hvdmpoj9ccdgodt2p2388s7e.apps.googleusercontent.com">
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="know_to_win">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-  <meta name="flutter-web-use-single-entry-history" content="false">
+  <meta name="flutter-web-use-single-entry-history" content="true">
+  <script>
+    // Belt & suspenders: seed a NON-NULL state with a serialCount so teardown can't assert.
+    (function () {
+      try {
+        var s = history.state;
+        if (!s || typeof s.serialCount !== 'number') {
+          history.replaceState({ serialCount: 1, _seed: true }, document.title, location.href);
+        }
+      } catch (_) {}
+    })();
+
+    // Also tell the loader explicitly (supported by recent Flutter).
+    window.flutterConfiguration = { useSingleEntryHistory: true };
+  </script>
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
@@ -50,7 +65,7 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "1160753477";
+    const serviceWorkerVersion = "2776083628";
   </script>
 
   <!-- InAppWebView web glue (fine to keep here) -->
