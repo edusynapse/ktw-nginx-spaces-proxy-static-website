@@ -64,13 +64,29 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "3513238710";
+    const serviceWorkerVersion = "3580499586";
   </script>
 
   <!-- InAppWebView web glue (fine to keep here) -->
   <script type="application/javascript"
           src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
           defer></script>
+
+  <!-- Your helper SW in its own scope; OK with WASM -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          // Use a dedicated scope so it doesn't conflict with Flutter's SW
+          const reg = await navigator.serviceWorker.register('/sw-offline.js', { scope: '/sw-offline/' });
+          console.log('[offline-sw] registered:', reg.scope);
+        } catch (e) {
+          console.warn('[offline-sw] registration failed:', e);
+        }
+      });
+    }
+  </script>
+
 
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
