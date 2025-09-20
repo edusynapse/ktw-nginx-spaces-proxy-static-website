@@ -11,27 +11,19 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="know_to_win">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-  <meta name="flutter-web-use-single-entry-history" content="true">
-  <script>
-    // Belt & suspenders: seed a NON-NULL state with a serialCount so teardown can't assert.
-    (function () {
-      try {
-        var s = history.state;
-        if (!s || typeof s.serialCount !== 'number') {
-          history.replaceState({ serialCount: 1, _seed: true }, document.title, location.href);
-        }
-      } catch (_) {}
-    })();
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin" />
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp" />
 
-    // Also tell the loader explicitly (supported by recent Flutter).
-    window.flutterConfiguration = { useSingleEntryHistory: true };
-  </script>
-  <meta http-equiv="Cross-Origin-Opener-Policy" content="unsafe-none">
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
   <title>know_to_win</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="preload" href="workers/cache_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
+  <link rel="preload" href="workers/decompress_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
+  <link rel="preload" href="workers/language_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
+  <link rel="preload" href="workers/session_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
+  <link rel="preload" href="workers/timeduri_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
 
   <style>
     /* Center the loading indicator */
@@ -64,7 +56,7 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "3683644205";
+    const serviceWorkerVersion = "898098791";
   </script>
 
   <!-- InAppWebView web glue (fine to keep here) -->
