@@ -1129,7 +1129,6 @@ class CompiledApp {
       _4483: x0 => x0.hostname,
       _4487: x0 => x0.pathname,
       _4491: x0 => x0.hash,
-      _4500: x0 => x0.state,
       _4523: (x0,x1) => { x0.returnValue = x1 },
       _4525: x0 => x0.message,
       _4526: x0 => x0.filename,
