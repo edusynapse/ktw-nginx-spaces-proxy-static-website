@@ -23,7 +23,7 @@
   <title>know_to_win</title>
   <link rel="manifest" href="manifest.json">
 
-<!--  &lt;!&ndash; Preload your WASM worker artifacts &ndash;&gt;
+  <!-- Preload your WASM worker artifacts -->
   <link rel="preload" href="workers/cache_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/decompress_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/language_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
@@ -31,50 +31,14 @@
   <link rel="preload" href="workers/timeduri_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/usb_auth_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
 
-  &lt;!&ndash; Preload your JS worker artifacts &ndash;&gt;
+  <!-- Preload your JS worker artifacts -->
   <link rel="preload" href="workers/cache_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/decompress_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/language_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/session_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/timeduri_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  <link rel="preload" href="workers/usb_auth_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>-->
+  <link rel="preload" href="workers/usb_auth_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
 
-  <script>
-    (function () {
-      const ua = navigator.userAgent.toLowerCase();
-      const preferJs = ua.includes('firefox'); // your policy: JS on Firefox
-      const list = [
-        'cache_service',
-        'decompress_service',
-        'language_service',
-        'session_service',
-        'timeduri_service',
-        'usb_auth_service',
-      ];
-
-      function addPreload(href, as, type) {
-        const l = document.createElement('link');
-        l.rel = 'preload';
-        l.as = as;               // 'script' for JS, 'fetch' for WASM
-        if (type) l.type = type; // only for WASM
-        l.href = href;
-        l.crossOrigin = 'anonymous';
-        document.head.appendChild(l);
-      }
-
-      if (preferJs) {
-        // JS worker stubs
-        for (const n of list) {
-          addPreload(`workers/${n}.web.g.dart.js`, 'script');
-        }
-      } else {
-        // WASM worker modules
-        for (const n of list) {
-          addPreload(`workers/${n}.web.g.dart.wasm`, 'fetch', 'application/wasm');
-        }
-      }
-    })();
-  </script>
 
   <!-- Optional: shave a little handshake time -->
   <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
@@ -126,7 +90,7 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "2048335379";
+    const serviceWorkerVersion = "4151360624";
   </script>
 
   <!-- InAppWebView web glue (fine to keep here) -->
