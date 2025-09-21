@@ -11,12 +11,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="know_to_win">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin" />
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
   <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-
   <title>know_to_win</title>
   <link rel="manifest" href="manifest.json">
   <link rel="preload" href="workers/cache_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
@@ -24,6 +23,7 @@
   <link rel="preload" href="workers/language_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/session_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/timeduri_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
+  <link rel="preload" href="workers/usb_auth_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
 
   <style>
     /* Center the loading indicator */
@@ -40,12 +40,10 @@
       z-index: 9999;
       flex-direction: column;
     }
-
     body {
       background-image: url(/assets/assets/theme/default/svg/pageBackgroundTile.webp);
       background-repeat: repeat;
     }
-
     #loading-text {
       margin-top: 20px;
       font-size: 1.2em;
@@ -53,17 +51,14 @@
       font-family: Arial, sans-serif;
     }
   </style>
-
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "48287181";
+    const serviceWorkerVersion = "224101922";
   </script>
-
   <!-- InAppWebView web glue (fine to keep here) -->
   <script type="application/javascript"
           src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
           defer></script>
-
   <!-- Your helper SW in its own scope; OK with WASM -->
   <script>
     if ('serviceWorker' in navigator) {
@@ -78,8 +73,6 @@
       });
     }
   </script>
-
-
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
@@ -88,7 +81,6 @@
   <img src="icons/loader.gif" alt="Loading..." width="200" />
   <div id="loading-text">Loading...</div>
 </div>
-
 <!-- Load the Flutter bootstrap LAST (match Flutter’s template for WASM) -->
 <script src="flutter_bootstrap.js" async></script>
 </body>
