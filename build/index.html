@@ -6,18 +6,24 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Game and Learn">
   <meta name="google-signin-client_id" content="64979320907-f64nkkq2hvdmpoj9ccdgodt2p2388s7e.apps.googleusercontent.com">
+
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="know_to_win">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Cross-origin isolation (align with server/Nginx) -->
   <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
-  <meta http-equiv="Cross-Origin-Embedder-Policy" content="credentialless" /> <!-- Changed: Align with Nginx -->
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="credentialless" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
+
   <title>know_to_win</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Preload your WASM worker artifacts -->
   <link rel="preload" href="workers/cache_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/decompress_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/language_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
@@ -25,40 +31,64 @@
   <link rel="preload" href="workers/timeduri_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/usb_auth_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
 
+  <!-- Optional: shave a little handshake time -->
+  <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
+  <link rel="dns-prefetch" href="//checkout.razorpay.com">
+  <link rel="preconnect" href="https://dapi.knowtowin.com" crossorigin>
+  <link rel="dns-prefetch" href="//dapi.knowtowin.com">
+
   <style>
     /* Center the loading indicator */
     #loading {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       background-color: #ffffff;
       z-index: 9999;
       flex-direction: column;
+      padding: 16px;
+      gap: 12px;
     }
     body {
       background-image: url(/assets/assets/theme/default/svg/pageBackgroundTile.webp);
       background-repeat: repeat;
     }
     #loading-text {
-      margin-top: 20px;
-      font-size: 1.2em;
+      margin-top: 8px;
+      font-size: 1.1em;
       color: #333333;
       font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    /* Progress bar */
+    #progress {
+      width: 260px;
+      height: 6px;
+      background: #e9ecef;
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,.05);
+    }
+    #progress .bar {
+      width: 0%;
+      height: 100%;
+      background: #3b82f6; /* matches Tailwind's blue-500 */
+      transition: width .2s ease;
     }
   </style>
+
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "3750493712";
+    const serviceWorkerVersion = "2052116066";
   </script>
+
   <!-- InAppWebView web glue (fine to keep here) -->
   <script type="application/javascript"
           src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
           defer></script>
+
   <!-- Your helper SW in its own scope; OK with WASM -->
   <script>
     if ('serviceWorker' in navigator) {
@@ -73,14 +103,20 @@
       });
     }
   </script>
+
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 <!-- Loading Indicator -->
-<div id="loading">
+<div id="loading" role="status" aria-live="polite" aria-label="Loading application">
   <img src="icons/loader.gif" alt="Loading..." width="200" />
-  <div id="loading-text">Loading...</div>
+  <div id="loading-text">Warming up…</div>
+  <div id="progress" aria-label="Loading progress" role="progressbar"
+       aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="bar" id="progress-bar"></div>
+  </div>
 </div>
+
 <!-- Load the Flutter bootstrap LAST (match Flutter’s template for WASM) -->
 <script src="flutter_bootstrap.js" async></script>
 </body>
