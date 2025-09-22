@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.edusynapse.knowtowin.know_to_win.general",
+      "sha256_cert_fingerprints": [
+        "C1:45:5F:51:57:B2:85:E4:CE:CE:C1:B6:8A:AC:78:C4:28:CC:EC:87:57:CB:22:EC:CB:3C:C9:21:5C:58:E4:CF"
+      ]
+    }
+  }
+]
