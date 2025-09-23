@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Game and Learn">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="know_to_win">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <meta name="flutter-web-use-single-entry-history" content="false">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>know_to_win</title>
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* Center the loading indicator */
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center; /* Horizontal centering */
+      align-items: center;     /* Vertical centering */
+      background-color: #ffffff; /* Optional: Background color */
+      z-index: 9999; /* Ensure it's on top */
+      flex-direction: column; /* Stack elements vertically */
+    }
+
+    body {
+      background-image: url(/assets/assets/theme/default/svg/pageBackgroundTile.webp);
+      background-repeat: repeat;
+    }
+
+    /* Style the loading text */
+    #loading-text {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #333333;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    const serviceWorkerVersion = {{flutter_service_worker_version}};
+  </script>
+  <script type="application/javascript"
+          src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
+          defer></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          // Use a dedicated scope so it doesn't conflict with Flutter's SW
+          const reg = await navigator.serviceWorker.register('/sw-offline.js', { scope: '/sw-offline/' });
+          console.log('[offline-sw] registered:', reg.scope);
+        } catch (e) {
+          console.warn('[offline-sw] registration failed:', e);
+        }
+      });
+    }
+  </script>
+  <script>
+    // Seed history.state so Flutter's single-entry code never sees null.
+    try {
+      if (history.state == null) {
+        history.replaceState({ seed: Date.now() }, '', location.href);
+      }
+    } catch (e) {
+      console.warn('history seed failed', e);
+    }
+  </script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <!-- Instead of flutter.js, use flutter_bootstrap.js -->
+  <script src="flutter_bootstrap.js" async></script>
+</head>
+<body>
+<!-- Loading Indicator -->
+<div id="loading">
+  <img src="icons/loader.gif" alt="Loading..." width="200" />
+  <div id="loading-text">Loading...</div>
+</div>
+</body>
+</html>
