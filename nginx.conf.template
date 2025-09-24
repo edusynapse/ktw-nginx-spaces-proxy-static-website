@@ -1,0 +1,141 @@
+events { worker_connections 1024; }
+
+http {
+  include /etc/nginx/mime.types;
+
+  # Flutter ES modules
+  types { application/javascript mjs; }
+
+  default_type  application/octet-stream;
+  sendfile      on;
+  keepalive_timeout 65;
+
+  gzip on;
+  gzip_types text/plain text/css application/json application/javascript application/wasm text/xml application/xml application/xml+rss text/javascript;
+
+  # Debug-friendly logs (visible in DO runtime logs)
+  error_log  /var/log/nginx/error.log debug;
+  access_log /var/log/nginx/access.log;
+
+  # Helper map: 1 iff there is no ?version= in the URL
+  map $arg_version $needs_version {
+    "" 1;
+    default 0;
+  }
+
+  # Common: static files rule (add in both servers)
+  # Redirect to a versioned URL if missing, then cache forever.
+  # NOTE: do NOT apply to service workers.
+  # We wrap this in a snippet to reuse.
+  #-----------------------------------
+  # usage: include /etc/nginx/snippets/static-with-version.conf;
+  #-----------------------------------
+
+  server {
+    listen 8080;
+    server_name knowtowin.com;
+
+    root  /usr/share/nginx/html;
+    index index.html;
+
+    # ========= Static assets → force ?version=... =========
+    location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|wasm|otf|woff2?|ttf|json)$ {
+      if ($needs_version) {
+        return 302 $scheme://$host$uri?version=$APP_VERSION;
+      }
+      add_header Cache-Control "public, max-age=31536000, immutable" always;
+      expires 1y;
+      try_files $uri =404;
+    }
+
+    # Service workers: NEVER cached
+    location = /flutter_service_worker.js {
+      add_header Cache-Control "no-store, must-revalidate" always;
+      expires -1;
+    }
+    location = /sw-offline.js {
+      add_header Cache-Control "no-store, must-revalidate" always;
+      expires -1;
+    }
+
+    # Font Awesome double-encoded paths → serve canonical file, preserve version if provided.
+    location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Brands-Regular-400.otf" {
+      if ($needs_version) { return 302 $scheme://$host$uri?version=$APP_VERSION; }
+      rewrite ^ /Font%20Awesome%207%20Brands-Regular-400.otf?version=$arg_version break;
+    }
+    location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Free-Regular-400.otf" {
+      if ($needs_version) { return 302 $scheme://$host$uri?version=$APP_VERSION; }
+      rewrite ^ /Font%20Awesome%207%20Free-Regular-400.otf?version=$arg_version break;
+    }
+    location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Free-Solid-900.otf" {
+      if ($needs_version) { return 302 $scheme://$host$uri?version=$APP_VERSION; }
+      rewrite ^ /Font%20Awesome%207%20Free-Solid-900.otf?version=$arg_version break;
+    }
+
+    # SPA fallback
+    location / {
+      try_files $uri $uri/ /index.html;
+      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+      add_header Cross-Origin-Embedder-Policy credentialless always;
+    }
+  }
+
+  # ---------- DEV ----------
+  server {
+    listen 8080;
+    server_name devapp.knowtowin.com;
+
+    root  /usr/share/nginx/devhtml;
+    index index.html;
+
+    location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|wasm|otf|woff2?|ttf|json)$ {
+      if ($needs_version) {
+        return 302 $scheme://$host$uri?version=$APP_VERSION;
+      }
+      add_header Cache-Control "public, max-age=31536000, immutable" always;
+      expires 1y;
+      try_files $uri =404;
+    }
+
+    location = /flutter_service_worker.js {
+      add_header Cache-Control "no-store, must-revalidate" always;
+      expires -1;
+    }
+    location = /sw-offline.js {
+      add_header Cache-Control "no-store, must-revalidate" always;
+      expires -1;
+    }
+
+    location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Brands-Regular-400.otf" {
+      if ($needs_version) { return 302 $scheme://$host$uri?version=$APP_VERSION; }
+      rewrite ^ /Font%20Awesome%207%20Brands-Regular-400.otf?version=$arg_version break;
+    }
+    location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Free-Regular-400.otf" {
+      if ($needs_version) { return 302 $scheme://$host$uri?version=$APP_VERSION; }
+      rewrite ^ /Font%20Awesome%207%20Free-Regular-400.otf?version=$arg_version break;
+    }
+    location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Free-Solid-900.otf" {
+      if ($needs_version) { return 302 $scheme://$host$uri?version=$APP_VERSION; }
+      rewrite ^ /Font%20Awesome%207%20Free-Solid-900.otf?version=$arg_version break;
+    }
+
+    location / {
+      try_files $uri $uri/ /index.html;
+      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+      add_header Cross-Origin-Embedder-Policy credentialless always;
+    }
+  }
+
+  # Local debug convenience
+  server {
+    listen 8080;
+    server_name localhost 127.0.0.1;
+    root /usr/share/nginx/html;
+    index index.html;
+    location / {
+      try_files $uri $uri/ /index.html;
+      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+      add_header Cross-Origin-Embedder-Policy credentialless always;
+    }
+  }
+}
