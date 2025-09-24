@@ -4,8 +4,8 @@ const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
 const RESOURCES = {"version.json": "ae95d02578cdb7f75a61c3c8f6fd9021",
-"index.html": "12c5063022217e3277a9411d18ba9bc9",
-"/": "12c5063022217e3277a9411d18ba9bc9",
+"index.html": "938e21577d853394e9559710271d3075",
+"/": "938e21577d853394e9559710271d3075",
 "main.dart.wasm": "b0fcd61e103f0eacb038dbfbbf87f065",
 "icons/Icon-maskable-512.png": "b20c965748ea3c72311c33a56548d204",
 "icons/Icon-maskable-192.png": "71963dd5c02648065a0fa2d4f40bc186",
@@ -270,6 +270,7 @@ const RESOURCES = {"version.json": "ae95d02578cdb7f75a61c3c8f6fd9021",
 "workers/cache_service_worker.wasm.map": "9fa3ce045f089a798e28c1ff2bf210dd",
 "index_Non_WASM.html": "f58aa103694319ccfd0971c60e4e088a",
 "firebase-messaging-sw.js": "f534489e125b753c097a473b012efd7a",
+"sw-kill.js": "e0d25956bcf615ef35814a69335041f4",
 "flutter_bootstrap.js": "c77fb1167b90defbeb37642721d266dc"};
 // The application shell files that are downloaded before a service worker can
 // start.
