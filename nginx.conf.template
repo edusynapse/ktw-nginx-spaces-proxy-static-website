@@ -3,7 +3,7 @@ events { worker_connections 1024; }
 http {
   include /etc/nginx/mime.types;
 
-  # Flutter ES modules
+  # Add ES module mapping for .mjs on top of mime.types
   types { application/javascript mjs; }
 
   default_type  application/octet-stream;
@@ -17,31 +17,40 @@ http {
   error_log  /var/log/nginx/error.log debug;
   access_log /var/log/nginx/access.log;
 
-  # Helper map: 1 iff there is no ?version= in the URL
+  # ──────────────────────────────────────────────────────────
+  # Versioning helpers
+  #  - $needs_version == 1 when the request lacks ?version=
+  #  - $versioned_qs preserves existing args and appends version
+  # ──────────────────────────────────────────────────────────
   map $arg_version $needs_version {
-    "" 1;
+    ""      1;
     default 0;
   }
+  map $args $versioned_qs {
+    ""      "version=$APP_VERSION";
+    default "$args&version=$APP_VERSION";
+  }
 
-  # Common: static files rule (add in both servers)
-  # Redirect to a versioned URL if missing, then cache forever.
-  # NOTE: do NOT apply to service workers.
-  # We wrap this in a snippet to reuse.
-  #-----------------------------------
-  # usage: include /etc/nginx/snippets/static-with-version.conf;
-  #-----------------------------------
-
+  ########################################################################
+  # PROD: knowtowin.com  -> /usr/share/nginx/html
+  ########################################################################
   server {
     listen 8080;
     server_name knowtowin.com;
 
+    # Ensure redirects remain relative (no scheme/host injection)
+    absolute_redirect off;
+
+    # Security: upgrade future accidental http hits
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
     root  /usr/share/nginx/html;
     index index.html;
 
-    # ========= Static assets → force ?version=... =========
+    # ========= Static assets → force ?version=... (relative 302) =========
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|wasm|otf|woff2?|ttf|json)$ {
       if ($needs_version) {
-        return 302 $scheme://$host$uri?version=$APP_VERSION;
+        return 302 $uri?$versioned_qs;   # ← relative Location keeps HTTPS
       }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
@@ -58,17 +67,17 @@ http {
       expires -1;
     }
 
-    # Font Awesome double-encoded paths → serve canonical file, preserve version if provided.
+    # Font Awesome double-encoded paths → canonical file, keep version
     location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Brands-Regular-400.otf" {
-      if ($needs_version) { return 302 $scheme://$host$uri?version=$APP_VERSION; }
+      if ($needs_version) { return 302 $uri?$versioned_qs; }
       rewrite ^ /Font%20Awesome%207%20Brands-Regular-400.otf?version=$arg_version break;
     }
     location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Free-Regular-400.otf" {
-      if ($needs_version) { return 302 $scheme://$host$uri?version=$APP_VERSION; }
+      if ($needs_version) { return 302 $uri?$versioned_qs; }
       rewrite ^ /Font%20Awesome%207%20Free-Regular-400.otf?version=$arg_version break;
     }
     location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Free-Solid-900.otf" {
-      if ($needs_version) { return 302 $scheme://$host$uri?version=$APP_VERSION; }
+      if ($needs_version) { return 302 $uri?$versioned_qs; }
       rewrite ^ /Font%20Awesome%207%20Free-Solid-900.otf?version=$arg_version break;
     }
 
@@ -80,17 +89,22 @@ http {
     }
   }
 
-  # ---------- DEV ----------
+  ########################################################################
+  # DEV: devapp.knowtowin.com  -> /usr/share/nginx/devhtml
+  ########################################################################
   server {
     listen 8080;
     server_name devapp.knowtowin.com;
+
+    absolute_redirect off;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
 
     root  /usr/share/nginx/devhtml;
     index index.html;
 
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|wasm|otf|woff2?|ttf|json)$ {
       if ($needs_version) {
-        return 302 $scheme://$host$uri?version=$APP_VERSION;
+        return 302 $uri?$versioned_qs;
       }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
@@ -107,15 +121,15 @@ http {
     }
 
     location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Brands-Regular-400.otf" {
-      if ($needs_version) { return 302 $scheme://$host$uri?version=$APP_VERSION; }
+      if ($needs_version) { return 302 $uri?$versioned_qs; }
       rewrite ^ /Font%20Awesome%207%20Brands-Regular-400.otf?version=$arg_version break;
     }
     location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Free-Regular-400.otf" {
-      if ($needs_version) { return 302 $scheme://$host$uri?version=$APP_VERSION; }
+      if ($needs_version) { return 302 $uri?$versioned_qs; }
       rewrite ^ /Font%20Awesome%207%20Free-Regular-400.otf?version=$arg_version break;
     }
     location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Free-Solid-900.otf" {
-      if ($needs_version) { return 302 $scheme://$host$uri?version=$APP_VERSION; }
+      if ($needs_version) { return 302 $uri?$versioned_qs; }
       rewrite ^ /Font%20Awesome%207%20Free-Solid-900.otf?version=$arg_version break;
     }
 
@@ -126,12 +140,36 @@ http {
     }
   }
 
-  # Local debug convenience
+  ########################################################################
+  # Optional: localhost fallback inside container
+  ########################################################################
   server {
     listen 8080;
     server_name localhost 127.0.0.1;
+
+    absolute_redirect off;
+
     root /usr/share/nginx/html;
     index index.html;
+
+    location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|wasm|otf|woff2?|ttf|json)$ {
+      if ($needs_version) {
+        return 302 $uri?$versioned_qs;
+      }
+      add_header Cache-Control "public, max-age=31536000, immutable" always;
+      expires 1y;
+      try_files $uri =404;
+    }
+
+    location = /flutter_service_worker.js {
+      add_header Cache-Control "no-store, must-revalidate" always;
+      expires -1;
+    }
+    location = /sw-offline.js {
+      add_header Cache-Control "no-store, must-revalidate" always;
+      expires -1;
+    }
+
     location / {
       try_files $uri $uri/ /index.html;
       add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
