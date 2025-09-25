@@ -128,7 +128,7 @@
           src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
           defer></script>
   <!-- Your helper SW in its own scope; OK with WASM -->
-  <script>
+<!--  <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', async () => {
         try {
@@ -140,7 +140,7 @@
         }
       });
     }
-  </script>
+  </script>-->
 <!--
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 -->
@@ -158,6 +158,55 @@
 <!-- Load the Flutter bootstrap LAST (match Flutter’s template for WASM) -->
 <script src="flutter_bootstrap.js" async></script>
 <!-- Add this near the end of <body> (before </body>) -->
+<script>
+  (function () {
+    if (!('serviceWorker' in navigator)) return;
+
+    async function isOfflineSWAlreadyActive() {
+      try {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        return regs.some(r => r.scope.endsWith('/sw-offline/'));
+      } catch { return false; }
+    }
+
+    async function registerOfflineSW() {
+      if (registerOfflineSW._did) return;
+      if (await isOfflineSWAlreadyActive()) {  // avoid extra network if already present
+        registerOfflineSW._did = true;
+        console.log('[offline-sw] already active; skipping late register');
+        return;
+      }
+      registerOfflineSW._did = true;
+
+      navigator.serviceWorker
+        .register('/sw-offline.js', { scope: '/sw-offline/' })
+        .then(reg => console.log('[offline-sw] registered late:', reg.scope))
+        .catch(err => console.warn('[offline-sw] registration failed:', err));
+    }
+
+    // PRIMARY trigger: your bootstrap wraps fetch() for main.dart.wasm and emits
+    //   window.dispatchEvent(new CustomEvent('ktw-wasm-progress', { detail: { loaded, total, done } }))
+    // We wait specifically for done=true to ensure the WASM bytes are finished.
+    window.addEventListener('ktw-wasm-progress', (e) => {
+      if (e && e.detail && e.detail.done) {
+        // tiny delay to yield back to the main thread
+        setTimeout(registerOfflineSW, 0);
+      }
+    });
+
+    // FALLBACK: if the progress hook changes in the future, still load after first paint
+    window.addEventListener('flutter-first-frame', () => {
+      // don’t double-register if wasm handler already ran
+      if (!registerOfflineSW._did) setTimeout(registerOfflineSW, 0);
+    }, { once: true });
+
+    // SAFETY NET: if neither event fires (unexpected), try much later
+    window.addEventListener('load', () => {
+      setTimeout(() => { if (!registerOfflineSW._did) registerOfflineSW(); }, 8000);
+    }, { once: true });
+  })();
+</script>
+
 <script>
   (function () {
     function addRazorpay() {
