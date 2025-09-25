@@ -78,6 +78,46 @@ _flutter.buildConfig = {"engineRevision":"c29809135135e262a912cf583b2c90deb9ded6
 
   window.addEventListener('flutter-first-frame', removeLoader, { once: true });
 
+  // --- ADDED: Progress aggregator (main wasm + worker wasm) -------------------
+  const __ktwAgg = {
+    items: new Map(),   // id -> { loaded, total, done }
+    update(id, loaded, total, done) {
+      const prev = this.items.get(id) || { loaded: 0, total: 0, done: false };
+      const cur = {
+        loaded: Math.max(loaded || 0, prev.loaded || 0),
+        total: total || prev.total || 0,
+        done: !!done || prev.done
+      };
+      this.items.set(id, cur);
+
+      // Sum bytes; if any total unknown (0), show "unknown-total" style
+      let sumLoaded = 0, sumTotal = 0, allTotalsKnown = true, allDone = true;
+      for (const v of this.items.values()) {
+        sumLoaded += v.loaded || 0;
+        if (v.total && v.total > 0) sumTotal += v.total;
+        else allTotalsKnown = false;
+        if (!v.done) allDone = false;
+      }
+
+      let pct, label;
+      if (allTotalsKnown && sumTotal > 0) {
+        pct = Math.min(62, Math.floor((sumLoaded / sumTotal) * 62));
+        label = `Downloading engine… ${(sumLoaded/1048576).toFixed(1)} / ${(sumTotal/1048576).toFixed(1)} MB`;
+      } else {
+        pct = Math.min(62, 10 + Math.floor(Math.log2(sumLoaded + 1)));
+        label = `Downloading engine… ${(sumLoaded/1048576).toFixed(1)} MB`;
+      }
+
+      if (typeof setProgress === 'function') setProgress(pct, label);
+      else if (typeof setText === 'function') setText(label);
+
+      if (allDone && typeof setProgress === 'function') {
+        setProgress(62, 'Download complete');
+      }
+    }
+  };
+  // ---------------------------------------------------------------------------
+
   // --- WASM progress tap: wrap fetch ONLY for main.dart.wasm ---
   (function installWasmProgressTracker() {
     if (!('fetch' in window) || !('ReadableStream' in window)) return;
@@ -108,9 +148,9 @@ _flutter.buildConfig = {"engineRevision":"c29809135135e262a912cf583b2c90deb9ded6
         async pull(controller) {
           const { done, value } = await reader.read();
           if (done) {
-            window.dispatchEvent(new CustomEvent('ktw-wasm-progress', {
-              detail: { loaded, total, done: true }
-            }));
+            // ADDED: include id so aggregator can distinguish files
+            const detail = { id: 'main.dart.wasm', loaded, total, done: true };
+            window.dispatchEvent(new CustomEvent('ktw-wasm-progress', { detail }));
             controller.close();
             return;
           }
@@ -120,9 +160,9 @@ _flutter.buildConfig = {"engineRevision":"c29809135135e262a912cf583b2c90deb9ded6
           const now = performance.now();
           if (now - lastEmit > 80) {
             lastEmit = now;
-            window.dispatchEvent(new CustomEvent('ktw-wasm-progress', {
-              detail: { loaded, total }
-            }));
+            // ADDED: include id for aggregator
+            const detail = { id: 'main.dart.wasm', loaded, total };
+            window.dispatchEvent(new CustomEvent('ktw-wasm-progress', { detail }));
           }
 
           controller.enqueue(value);
@@ -137,39 +177,121 @@ _flutter.buildConfig = {"engineRevision":"c29809135135e262a912cf583b2c90deb9ded6
         headers: res.headers
       });
     };
+  })();
 
-    // Hook progress into your loader UI.
-    window.addEventListener('ktw-wasm-progress', (e) => {
-      const { loaded, total, done } = e.detail;
-      // Reserve 0–62% for the wasm download; rest is init/run.
-      let pct;
-      let label;
+  // --- ADDED: Worker wrapper to capture workers' .wasm progress ---------------
+  (function installWorkerWasmProgressBridge() {
+    if (!('Worker' in window)) return;
+    const NativeWorker = window.Worker;
 
-      if (total > 0) {
-        pct = Math.min(62, Math.floor( (loaded / total) * 62 ));
-        label = `Downloading engine… ${(loaded/1048576).toFixed(1)} / ${(total/1048576).toFixed(1)} MB`;
-      } else {
-        // No Content-Length (e.g., gzip) → show bytes only, cap at 62%.
-        pct = Math.min(62, 10 + Math.floor(Math.log2(loaded + 1)));
-        label = `Downloading engine… ${(loaded/1048576).toFixed(1)} MB`;
+    window.Worker = function(url, options) {
+      const abs = (typeof url === 'string')
+        ? new URL(url, document.baseURI).toString()
+        : url;
+
+      // Match your generated worker entry scripts
+      if (typeof abs === 'string' && /\/workers\/.*\.web\.g\.dart\.js$/.test(abs)) {
+        // Inject a tiny bootstrap inside the worker that wraps self.fetch for *.wasm
+        const bootstrap = `
+          (function(){
+            try {
+              if ('fetch' in self && 'ReadableStream' in self) {
+                const origFetch = fetch.bind(self);
+                const isWasm = (input) => {
+                  try {
+                    const u = typeof input === 'string'
+                      ? new URL(input, location.href)
+                      : new URL(input.url, location.href);
+                    // Keep narrow to workers' wasm files
+                    return /\\/workers\\/.*\\.wasm(?:$|\\?)/.test(u.pathname + u.search);
+                  } catch { return false; }
+                };
+                const idName = (input) => {
+                  try {
+                    const u = typeof input === 'string'
+                      ? new URL(input, location.href)
+                      : new URL(input.url, location.href);
+                    const p = u.pathname.split('/');
+                    return p[p.length - 1] || 'worker.wasm';
+                  } catch { return 'worker.wasm'; }
+                };
+                self.fetch = async function(input, init) {
+                  if (!isWasm(input)) return origFetch(input, init);
+                  const res = await origFetch(input, init);
+                  if (!res.ok || !res.body) return res;
+
+                  const total = Number(res.headers.get('content-length')) || 0;
+                  const id = idName(input);
+                  let last = 0;
+
+                  const reader = res.body.getReader();
+                  const stream = new ReadableStream({
+                    async pull(controller) {
+                      const { done, value } = await reader.read();
+                      if (done) {
+                        try { self.postMessage({ __ktwWasmProgress: { id, done: true, total: total || last } }); } catch {}
+                        controller.close();
+                        return;
+                      }
+                      last += value.byteLength;
+                      try { self.postMessage({ __ktwWasmProgress: { id, loaded: last, total } }); } catch {}
+                      controller.enqueue(value);
+                    },
+                    cancel() { reader.cancel(); }
+                  });
+                  return new Response(stream, {
+                    status: res.status,
+                    statusText: res.statusText,
+                    headers: res.headers
+                  });
+                };
+              }
+            } catch (_e) {}
+            importScripts(${JSON.stringify(abs)});
+          })();
+        `;
+        const blobURL = URL.createObjectURL(new Blob([bootstrap], { type: 'text/javascript' }));
+        const w = new NativeWorker(blobURL, options);
+
+        // Forward worker progress to the same page-level event your loader uses.
+        w.addEventListener('message', (ev) => {
+          const m = ev.data && ev.data.__ktwWasmProgress;
+          if (!m) return;
+          try {
+            window.dispatchEvent(new CustomEvent('ktw-wasm-progress', {
+              detail: { id: m.id, loaded: m.loaded, total: m.total, done: m.done, worker: true }
+            }));
+          } catch {}
+        });
+
+        return w;
       }
 
-      if (typeof setProgress === 'function') setProgress(pct, label);
-      else if (typeof setText === 'function') setText(label);
-
-      if (done && typeof setProgress === 'function') setProgress(62, 'Download complete');
-    });
+      // Non-matching workers unchanged
+      return new NativeWorker(url, options);
+    };
   })();
+  // ---------------------------------------------------------------------------
+
+  // Hook progress into your loader UI (now aggregates multiple ids).
+  window.addEventListener('ktw-wasm-progress', (e) => {
+    const d = (e && e.detail) || {};
+    const id = d.id || 'main.dart.wasm';
+    const loaded = Number(d.loaded) || 0;
+    const total = Number(d.total) || 0;
+    const done = !!d.done;
+    __ktwAgg.update(id, loaded, total, done);
+  });
 
   _flutter.loader.load({
     onEntrypointLoaded: async function (engineInitializer) {
       clearInterval(tick);
-        if (typeof setProgress === 'function') setProgress(70, 'Initializing engine…');
+      if (typeof setProgress === 'function') setProgress(70, 'Initializing engine…');
 
-        const appRunner = await engineInitializer.initializeEngine();
+      const appRunner = await engineInitializer.initializeEngine();
 
-        if (typeof setProgress === 'function') setProgress(85, 'Starting app…');
-        await appRunner.runApp();
+      if (typeof setProgress === 'function') setProgress(85, 'Starting app…');
+      await appRunner.runApp();
 
       // In case the first-frame event was missed for any reason, fall back.
       setTimeout(() => {
