@@ -4,7 +4,8 @@ events { worker_connections 1024; }
 
 http {
   include /etc/nginx/mime.types;
-  # Map .mjs to JS (in addition to mime.types)
+
+  # Ensure .mjs is served as JS (in addition to mime.types)
   types { application/javascript mjs; }
 
   default_type  application/octet-stream;
@@ -17,12 +18,25 @@ http {
   error_log  /var/log/nginx/error.log debug;
   access_log /var/log/nginx/access.log;
 
-  # ── Strip any existing `version=` while preserving other query params ──
-  # Produces the args without 'version', so we can append the canonical one once.
+  # ─────────────────────────────────────────────────────────────────────────
+  # Version handling helpers (safe, no loops)
+  # ─ strip any existing `version=` while preserving other params
   map $args $args_wo_version {
     "~^(?<pre>.*?)(^|&)version=[^&]*(?<post>&.*)?$" "$pre$post";
     default "$args";
   }
+  # ─ canonical querystring: other params (if any) + version=$APP_VERSION
+  map $args_wo_version $canon_qs {
+    ""      "version=$APP_VERSION";
+    default "$args_wo_version&version=$APP_VERSION";
+  }
+  # ─ whether we must redirect (missing or mismatched version)
+  map $arg_version $need_vredir {
+    "~^$APP_VERSION$" 0;
+    default           1;
+  }
+  # ─ build final redirect URL for generic assets
+  map "$uri?$canon_qs" $redir_url { default $uri?$canon_qs; }
 
   ########################################################################
   # PROD
@@ -54,40 +68,19 @@ http {
 
     # Static assets → enforce one canonical ?version, then cache forever
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($arg_version != $APP_VERSION) {
-        set $qs $args_wo_version;
-        if ($qs = "") { return 302 $uri?version=$APP_VERSION; }
-        return 302 $uri?$qs&version=$APP_VERSION;
-      }
+      if ($need_vredir) { return 302 $redir_url; }
+
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
       try_files $uri =404;
     }
 
-    # Font Awesome double-encoded paths → canonical file path, preserve args
-    location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Brands-Regular-400.otf" {
-      if ($arg_version != $APP_VERSION) {
-        set $qs $args_wo_version;
-        if ($qs = "") { return 302 $uri?version=$APP_VERSION; }
-        return 302 $uri?$qs&version=$APP_VERSION;
-      }
-      rewrite ^ /Font%20Awesome%207%20Brands-Regular-400.otf$is_args$args break;
-    }
-    location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Free-Regular-400.otf" {
-      if ($arg_version != $APP_VERSION) {
-        set $qs $args_wo_version;
-        if ($qs = "") { return 302 $uri?version=$APP_VERSION; }
-        return 302 $uri?$qs&version=$APP_VERSION;
-      }
-      rewrite ^ /Font%20Awesome%207%20Free-Regular-400.otf$is_args$args break;
-    }
-    location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Free-Solid-900.otf" {
-      if ($arg_version != $APP_VERSION) {
-        set $qs $args_wo_version;
-        if ($qs = "") { return 302 $uri?version=$APP_VERSION; }
-        return 302 $uri?$qs&version=$APP_VERSION;
-      }
-      rewrite ^ /Font%20Awesome%207%20Free-Solid-900.otf$is_args$args break;
+    # Font Awesome (double-encoded or normal) → rewrite to canonical root file + canonical version
+    # Matches:
+    #   /assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20X.otf
+    #   /assets/packages/font_awesome_flutter/lib/fonts/Font%2520Awesome%25207%2520X.otf
+    location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
+      return 302 /Font%20Awesome%207%20$1.otf?$canon_qs;
     }
 
     # One-tap hard refresh
@@ -132,39 +125,15 @@ http {
     location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION"; }
 
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($arg_version != $APP_VERSION) {
-        set $qs $args_wo_version;
-        if ($qs = "") { return 302 $uri?version=$APP_VERSION; }
-        return 302 $uri?$qs&version=$APP_VERSION;
-      }
+      if ($need_vredir) { return 302 $redir_url; }
+
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
       try_files $uri =404;
     }
 
-    location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Brands-Regular-400.otf" {
-      if ($arg_version != $APP_VERSION) {
-        set $qs $args_wo_version;
-        if ($qs = "") { return 302 $uri?version=$APP_VERSION; }
-        return 302 $uri?$qs&version=$APP_VERSION;
-      }
-      rewrite ^ /Font%20Awesome%207%20Brands-Regular-400.otf$is_args$args break;
-    }
-    location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Free-Regular-400.otf" {
-      if ($arg_version != $APP_VERSION) {
-        set $qs $args_wo_version;
-        if ($qs = "") { return 302 $uri?version=$APP_VERSION; }
-        return 302 $uri?$qs&version=$APP_VERSION;
-      }
-      rewrite ^ /Font%20Awesome%207%20Free-Regular-400.otf$is_args$args break;
-    }
-    location = "/assets/packages/font_awesome_flutter/lib/fonts/Font%20Awesome%207%20Free-Solid-900.otf" {
-      if ($arg_version != $APP_VERSION) {
-        set $qs $args_wo_version;
-        if ($qs = "") { return 302 $uri?version=$APP_VERSION; }
-        return 302 $uri?$qs&version=$APP_VERSION;
-      }
-      rewrite ^ /Font%20Awesome%207%20Free-Solid-900.otf$is_args$args break;
+    location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
+      return 302 /Font%20Awesome%207%20$1.otf?$canon_qs;
     }
 
     location = /__force_update__ { default_type text/plain; add_header Clear-Site-Data "\"cache\", \"storage\"" always; return 200 "ok\n"; }
@@ -202,14 +171,15 @@ http {
     location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION"; }
 
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($arg_version != $APP_VERSION) {
-        set $qs $args_wo_version;
-        if ($qs = "") { return 302 $uri?version=$APP_VERSION; }
-        return 302 $uri?$qs&version=$APP_VERSION;
-      }
+      if ($need_vredir) { return 302 $redir_url; }
+
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
       try_files $uri =404;
+    }
+
+    location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
+      return 302 /Font%20Awesome%207%20$1.otf?$canon_qs;
     }
 
     location = /__force_update__ { default_type text/plain; add_header Clear-Site-Data "\"cache\", \"storage\"" always; return 200 "ok\n"; }
