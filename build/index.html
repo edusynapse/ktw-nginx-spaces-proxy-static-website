@@ -39,6 +39,8 @@
   <link rel="preload" href="workers/timeduri_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/usb_auth_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
 
+  <link rel="preload" href="/assets/assets/theme/default/svg/background.webp" as="image">
+
   <!-- Optional: shave a little handshake time -->
   <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
   <link rel="dns-prefetch" href="//checkout.razorpay.com">
@@ -53,15 +55,24 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #ffffff;
+      background-color: transparent;
       z-index: 9999;
       flex-direction: column;
       padding: 16px;
       gap: 12px;
     }
+    html {
+      height: 100%;
+    }
+
     body {
-      background-image: url(/assets/assets/theme/default/svg/pageBackgroundTile.webp);
-      background-repeat: repeat;
+      min-height: 100vh; /* Fallback to viewport height for better compatibility */
+      height: 100%; /* Ensures it inherits from html */
+      margin: 0; /* Removes any default margins that could cause gaps */
+      background-image: url(/assets/assets/theme/default/svg/background.webp);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
     }
     #loading-text {
       margin-top: 8px;
@@ -89,7 +100,7 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "2280366490";
+    const serviceWorkerVersion = "3159036696";
   </script>
 
   <!-- InAppWebView web glue (fine to keep here) -->
