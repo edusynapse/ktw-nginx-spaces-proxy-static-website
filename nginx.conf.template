@@ -1,12 +1,13 @@
-# nginx.conf.template  (uses $APP_VERSION via envsubst)
+# nginx.conf.template (uses $APP_VERSION via envsubst)
 
 events { worker_connections 1024; }
 
 http {
-  include /etc/nginx/mime.types;
-
-  # Add ES module mapping for .mjs on top of mime.types
-  types { application/javascript mjs; }
+  # Merge base MIME table and add ES module mapping for .mjs
+  types {
+    include /etc/nginx/mime.types;
+    application/javascript mjs;
+  }
 
   default_type  application/octet-stream;
   sendfile      on;
@@ -28,6 +29,11 @@ http {
     ""      "version=$APP_VERSION";
     default "$args&version=$APP_VERSION";
   }
+  # Detect Flutter’s ?v= param so we don't redirect those
+  map $args $has_v {
+    "~(^|&)v=" 1;
+    default    0;
+  }
   # ────────────────────────────────────────────────────────────────────────────
 
   ########################################################################
@@ -39,9 +45,33 @@ http {
 
     absolute_redirect off;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    add_header X-App-Version $APP_VERSION always;
 
     root  /usr/share/nginx/html;
     index index.html;
+
+    # App shell must NEVER be cached
+    location = /index.html {
+      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+      add_header Cross-Origin-Embedder-Policy credentialless always;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      add_header Pragma "no-cache" always;
+      add_header Expires "0" always;
+      try_files $uri =404;
+    }
+
+    location = /flutter_bootstrap.js {
+      add_header Cache-Control "no-store, must-revalidate" always;
+      expires -1;
+      try_files $uri =404;
+    }
+
+    # Single SPA fallback / root handler
+    location / {
+      try_files $uri $uri/ /index.html;
+      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+      add_header Cross-Origin-Embedder-Policy credentialless always;
+    }
 
     # Service workers: NEVER cached, NEVER redirected (no 3xx allowed)
     location = /flutter_service_worker.js {
@@ -56,8 +86,8 @@ http {
     }
     location = /firebase-messaging-sw.js {
       add_header Cache-Control "no-store, must-revalidate" always;
-      expires -1;
       add_header Service-Worker-Allowed "/" always;
+      expires -1;
       try_files $uri =404;
     }
     location = /sw-kill.js {
@@ -66,10 +96,17 @@ http {
       try_files $uri =404;
     }
 
+    # Tiny version probe used by the page to decide if it must nuke old SW/caches
+    location = /__app_version {
+      default_type text/plain;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      return 200 "$APP_VERSION";
+    }
+
     # Static assets → force ?version=... (relative 302), then cache forever
-    location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|wasm|otf|woff2?|ttf|json)$ {
+    location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
       if ($needs_version) {
-        return 302 $uri?$versioned_qs;   # relative Location keeps HTTPS
+        if ($has_v = 0) { return 302 $uri?$versioned_qs; }
       }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
@@ -90,11 +127,10 @@ http {
       rewrite ^ /Font%20Awesome%207%20Free-Solid-900.otf?version=$arg_version break;
     }
 
-    # SPA fallback
-    location / {
-      try_files $uri $uri/ /index.html;
-      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
-      add_header Cross-Origin-Embedder-Policy credentialless always;
+    # Optional: One-tap hard refresh endpoint
+    location = /__force_update__ {
+      add_header Clear-Site-Data "\"cache\", \"storage\"" always;
+      return 200 "ok\n";
     }
   }
 
@@ -107,9 +143,33 @@ http {
 
     absolute_redirect off;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    add_header X-App-Version $APP_VERSION always;
 
     root  /usr/share/nginx/devhtml;
     index index.html;
+
+    # App shell must NEVER be cached
+    location = /index.html {
+      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+      add_header Cross-Origin-Embedder-Policy credentialless always;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      add_header Pragma "no-cache" always;
+      add_header Expires "0" always;
+      try_files $uri =404;
+    }
+
+    location = /flutter_bootstrap.js {
+      add_header Cache-Control "no-store, must-revalidate" always;
+      expires -1;
+      try_files $uri =404;
+    }
+
+    # Single SPA fallback / root handler
+    location / {
+      try_files $uri $uri/ /index.html;
+      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+      add_header Cross-Origin-Embedder-Policy credentialless always;
+    }
 
     # Service workers (dev): no-store, no-redirect
     location = /flutter_service_worker.js {
@@ -124,8 +184,8 @@ http {
     }
     location = /firebase-messaging-sw.js {
       add_header Cache-Control "no-store, must-revalidate" always;
-      expires -1;
       add_header Service-Worker-Allowed "/" always;
+      expires -1;
       try_files $uri =404;
     }
     location = /sw-kill.js {
@@ -134,10 +194,17 @@ http {
       try_files $uri =404;
     }
 
+    # Tiny version probe used by the page to decide if it must nuke old SW/caches
+    location = /__app_version {
+      default_type text/plain;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      return 200 "$APP_VERSION";
+    }
+
     # Static assets → force ?version=... (relative 302), then cache forever
-    location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|wasm|otf|woff2?|ttf|json)$ {
+    location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
       if ($needs_version) {
-        return 302 $uri?$versioned_qs;
+        if ($has_v = 0) { return 302 $uri?$versioned_qs; }
       }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
@@ -158,11 +225,10 @@ http {
       rewrite ^ /Font%20Awesome%207%20Free-Solid-900.otf?version=$arg_version break;
     }
 
-    # SPA fallback
-    location / {
-      try_files $uri $uri/ /index.html;
-      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
-      add_header Cross-Origin-Embedder-Policy credentialless always;
+    # Optional: One-tap hard refresh endpoint
+    location = /__force_update__ {
+      add_header Clear-Site-Data "\"cache\", \"storage\"" always;
+      return 200 "ok\n";
     }
   }
 
@@ -174,9 +240,33 @@ http {
     server_name localhost 127.0.0.1;
 
     absolute_redirect off;
+    add_header X-App-Version $APP_VERSION always;
 
     root /usr/share/nginx/html;
     index index.html;
+
+    # App shell must NEVER be cached
+    location = /index.html {
+      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+      add_header Cross-Origin-Embedder-Policy credentialless always;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      add_header Pragma "no-cache" always;
+      add_header Expires "0" always;
+      try_files $uri =404;
+    }
+
+    location = /flutter_bootstrap.js {
+      add_header Cache-Control "no-store, must-revalidate" always;
+      expires -1;
+      try_files $uri =404;
+    }
+
+    # Single SPA fallback / root handler
+    location / {
+      try_files $uri $uri/ /index.html;
+      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+      add_header Cross-Origin-Embedder-Policy credentialless always;
+    }
 
     # Service workers (local): no-store, no-redirect
     location = /flutter_service_worker.js {
@@ -191,8 +281,8 @@ http {
     }
     location = /firebase-messaging-sw.js {
       add_header Cache-Control "no-store, must-revalidate" always;
-      expires -1;
       add_header Service-Worker-Allowed "/" always;
+      expires -1;
       try_files $uri =404;
     }
     location = /sw-kill.js {
@@ -201,20 +291,27 @@ http {
       try_files $uri =404;
     }
 
+    # Tiny version probe used by the page to decide if it must nuke old SW/caches
+    location = /__app_version {
+      default_type text/plain;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      return 200 "$APP_VERSION";
+    }
+
     # Static assets
-    location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|wasm|otf|woff2?|ttf|json)$ {
+    location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
       if ($needs_version) {
-        return 302 $uri?$versioned_qs;
+        if ($has_v = 0) { return 302 $uri?$versioned_qs; }
       }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
       try_files $uri =404;
     }
 
-    location / {
-      try_files $uri $uri/ /index.html;
-      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
-      add_header Cross-Origin-Embedder-Policy credentialless always;
+    # Optional: One-tap hard refresh endpoint
+    location = /__force_update__ {
+      add_header Clear-Site-Data "\"cache\", \"storage\"" always;
+      return 200 "ok\n";
     }
   }
 }

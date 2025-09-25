@@ -6,23 +6,21 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Game and Learn">
   <meta name="google-signin-client_id" content="64979320907-f64nkkq2hvdmpoj9ccdgodt2p2388s7e.apps.googleusercontent.com">
-
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="know_to_win">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
   <!-- Cross-origin isolation (align with server/Nginx) -->
   <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
   <meta http-equiv="Cross-Origin-Embedder-Policy" content="credentialless" />
-
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-
   <title>know_to_win</title>
   <link rel="manifest" href="manifest.json">
-
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <!-- Preload your WASM worker artifacts -->
   <link rel="preload" href="workers/cache_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/decompress_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
@@ -30,7 +28,6 @@
   <link rel="preload" href="workers/session_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/timeduri_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/usb_auth_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
-
   <!-- Preload your JS worker artifacts -->
   <link rel="preload" href="workers/cache_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/decompress_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
@@ -38,15 +35,12 @@
   <link rel="preload" href="workers/session_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/timeduri_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/usb_auth_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-
   <link rel="preload" href="/assets/assets/theme/default/svg/background.webp" as="image">
-
   <!-- Optional: shave a little handshake time -->
   <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
   <link rel="dns-prefetch" href="//checkout.razorpay.com">
   <link rel="preconnect" href="https://dapi.knowtowin.com" crossorigin>
   <link rel="dns-prefetch" href="//dapi.knowtowin.com">
-
   <style>
     /* Center the loading indicator */
     #loading {
@@ -64,7 +58,6 @@
     html {
       height: 100%;
     }
-
     body {
       min-height: 100vh; /* Fallback to viewport height for better compatibility */
       height: 100%; /* Ensures it inherits from html */
@@ -97,17 +90,43 @@
       transition: width .2s ease;
     }
   </style>
-
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "3159036696";
+    const serviceWorkerVersion = "1543269458";
   </script>
+  <script>
+    (async () => {
+      try {
+        const res = await fetch('/__app_version', { cache: 'no-store' });
+        const serverVer = (await res.text()).trim();
+        const storedVer = localStorage.getItem('app_version');
 
+        if (storedVer && storedVer !== serverVer) {
+          if ('serviceWorker' in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.allSettled(regs.map(r => r.unregister()));
+          }
+          if (window.caches) {
+            const keys = await caches.keys();
+            await Promise.allSettled(keys.map(k => caches.delete(k)));
+          }
+          localStorage.setItem('app_version', serverVer);
+          const url = new URL(window.location.href);
+          url.searchParams.set('v', serverVer);
+          window.location.replace(url.toString());
+          return;
+        }
+
+        localStorage.setItem('app_version', serverVer);
+      } catch (e) {
+        console.warn('Version check failed; proceeding without SW reset', e);
+      }
+    })();
+  </script>
   <!-- InAppWebView web glue (fine to keep here) -->
   <script type="application/javascript"
           src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
           defer></script>
-
   <!-- Your helper SW in its own scope; OK with WASM -->
   <script>
     if ('serviceWorker' in navigator) {
@@ -122,7 +141,6 @@
       });
     }
   </script>
-
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
@@ -135,7 +153,6 @@
     <div class="bar" id="progress-bar"></div>
   </div>
 </div>
-
 <!-- Load the Flutter bootstrap LAST (match Flutter’s template for WASM) -->
 <script src="flutter_bootstrap.js" async></script>
 </body>
