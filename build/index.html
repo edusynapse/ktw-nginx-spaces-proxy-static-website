@@ -141,7 +141,9 @@
       });
     }
   </script>
+<!--
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+-->
 </head>
 <body>
 <!-- Loading Indicator -->
@@ -155,5 +157,28 @@
 </div>
 <!-- Load the Flutter bootstrap LAST (match Flutter’s template for WASM) -->
 <script src="flutter_bootstrap.js" async></script>
+<!-- Add this near the end of <body> (before </body>) -->
+<script>
+  (function () {
+    function addRazorpay() {
+      if (window.Razorpay) return;                 // already loaded
+      var s = document.createElement('script');
+      s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      s.async = true;                              // downloads without blocking
+      s.defer = true;                              // executes after parse (for good measure)
+      s.crossOrigin = 'anonymous';
+      document.head.appendChild(s);
+    }
+
+    // After Flutter paints its first frame, load Razorpay.
+    window.addEventListener('flutter-first-frame', function () {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(addRazorpay, { timeout: 2000 });
+      } else {
+        setTimeout(addRazorpay, 0);
+      }
+    }, { once: true });
+  })();
+</script>
 </body>
 </html>
