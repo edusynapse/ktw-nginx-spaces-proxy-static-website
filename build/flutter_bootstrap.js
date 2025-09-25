@@ -78,15 +78,98 @@ _flutter.buildConfig = {"engineRevision":"c29809135135e262a912cf583b2c90deb9ded6
 
   window.addEventListener('flutter-first-frame', removeLoader, { once: true });
 
+  // --- WASM progress tap: wrap fetch ONLY for main.dart.wasm ---
+  (function installWasmProgressTracker() {
+    if (!('fetch' in window) || !('ReadableStream' in window)) return;
+
+    const origFetch = window.fetch.bind(window);
+    const matchWasm = (u) => {
+      try {
+        const url = typeof u === 'string' ? new URL(u, location.href)
+                                          : new URL(u.url, location.href);
+        return /\/main\.dart\.wasm(?:$|\?)/.test(url.pathname + url.search);
+      } catch (_) { return false; }
+    };
+
+    let lastEmit = 0;
+
+    window.fetch = async function(input, init) {
+      if (!matchWasm(input)) return origFetch(input, init);
+
+      const res = await origFetch(input, init);
+      // If we can't stream, just pass it through.
+      if (!res.ok || !res.body) return res;
+
+      const total = Number(res.headers.get('content-length')) || 0;
+      let loaded = 0;
+
+      const reader = res.body.getReader();
+      const stream = new ReadableStream({
+        async pull(controller) {
+          const { done, value } = await reader.read();
+          if (done) {
+            window.dispatchEvent(new CustomEvent('ktw-wasm-progress', {
+              detail: { loaded, total, done: true }
+            }));
+            controller.close();
+            return;
+          }
+          loaded += value.byteLength;
+
+          // throttle UI events ~12/s
+          const now = performance.now();
+          if (now - lastEmit > 80) {
+            lastEmit = now;
+            window.dispatchEvent(new CustomEvent('ktw-wasm-progress', {
+              detail: { loaded, total }
+            }));
+          }
+
+          controller.enqueue(value);
+        },
+        cancel() { reader.cancel(); }
+      });
+
+      // Re-wrap the response with our streaming body so Flutter still streams.
+      return new Response(stream, {
+        status: res.status,
+        statusText: res.statusText,
+        headers: res.headers
+      });
+    };
+
+    // Hook progress into your loader UI.
+    window.addEventListener('ktw-wasm-progress', (e) => {
+      const { loaded, total, done } = e.detail;
+      // Reserve 0–62% for the wasm download; rest is init/run.
+      let pct;
+      let label;
+
+      if (total > 0) {
+        pct = Math.min(62, Math.floor( (loaded / total) * 62 ));
+        label = `Downloading engine… ${(loaded/1048576).toFixed(1)} / ${(total/1048576).toFixed(1)} MB`;
+      } else {
+        // No Content-Length (e.g., gzip) → show bytes only, cap at 62%.
+        pct = Math.min(62, 10 + Math.floor(Math.log2(loaded + 1)));
+        label = `Downloading engine… ${(loaded/1048576).toFixed(1)} MB`;
+      }
+
+      if (typeof setProgress === 'function') setProgress(pct, label);
+      else if (typeof setText === 'function') setText(label);
+
+      if (done && typeof setProgress === 'function') setProgress(62, 'Download complete');
+    });
+  })();
+
   _flutter.loader.load({
     onEntrypointLoaded: async function (engineInitializer) {
       clearInterval(tick);
-      setProgress(65, 'Initializing engine…');
+        if (typeof setProgress === 'function') setProgress(70, 'Initializing engine…');
 
-      const appRunner = await engineInitializer.initializeEngine();
+        const appRunner = await engineInitializer.initializeEngine();
 
-      setProgress(85, 'Starting app…');
-      await appRunner.runApp();
+        if (typeof setProgress === 'function') setProgress(85, 'Starting app…');
+        await appRunner.runApp();
 
       // In case the first-frame event was missed for any reason, fall back.
       setTimeout(() => {
