@@ -3,11 +3,9 @@
 events { worker_connections 1024; }
 
 http {
-  # Merge base MIME table and add ES module mapping for .mjs
-  types {
-    include /etc/nginx/mime.types;
-    application/javascript mjs;
-  }
+  # Load the standard MIME table, then add .mjs explicitly
+  include /etc/nginx/mime.types;
+  types { application/javascript mjs; }
 
   default_type  application/octet-stream;
   sendfile      on;
