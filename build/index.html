@@ -94,18 +94,19 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "991037379";
+    const serviceWorkerVersion = "4001250916";
   </script>
 
   <!-- Strip version-y query params immediately to keep deep links clean -->
   <script>
-    (function stripVersionParams() { // NEW
+    (function stripVersionParams() {
       try {
         const u = new URL(window.location.href);
         const before = u.toString();
         let changed = false;
-        if (u.searchParams.has('v'))        { u.searchParams.delete('v');        changed = true; }
-        if (u.searchParams.has('version'))  { u.searchParams.delete('version');  changed = true; }
+        for (const key of ['v','version','__h']) {  // ← also strip one-time cache buster
+          if (u.searchParams.has(key)) { u.searchParams.delete(key); changed = true; }
+        }
         if (changed) {
           const qs = u.searchParams.toString();
           const clean = u.origin + u.pathname + (qs ? '?' + qs : '') + u.hash;
@@ -118,17 +119,22 @@
     })();
   </script>
 
-  <!-- Version check against server; clean-reload without adding ?v=... -->
+  <!-- Version check against server; bust HTML cache once with ?__h=<serverVer> if mismatch -->
   <script>
     (async () => {
       try {
         const res = await fetch('/__app_version', { cache: 'no-store' });
         const serverVer = (await res.text()).trim();
         const storedVer = localStorage.getItem('app_version');
-        console.log('[ver-check] server=', serverVer, 'stored=', storedVer);
+        const swv = (typeof serviceWorkerVersion !== 'undefined' && serviceWorkerVersion != null)
+          ? String(serviceWorkerVersion)
+          : null;
+        console.log('[ver-check] server=', serverVer, 'stored=', storedVer, 'htmlSWV=', swv);
 
-        if (storedVer && storedVer !== serverVer) {
-          console.log('[ver-refresh] New version detected. Clearing SW + caches, reloading clean URL…');
+        const mismatch = (storedVer && storedVer !== serverVer) || (swv && swv !== serverVer);
+
+        if (mismatch) {
+          console.log('[ver-refresh] New version detected. Clearing SW + caches, reloading with cache-buster…');
 
           if ('serviceWorker' in navigator) {
             try {
@@ -149,24 +155,21 @@
 
           localStorage.setItem('app_version', serverVer);
 
-          // Build a clean URL (no v/version); preserve other params and the hash
+          // Reload ONCE with a cache-busting param for HTML; preserve other params and the hash.
           try {
             const u = new URL(window.location.href);
-            u.searchParams.delete('v');
-            u.searchParams.delete('version');
-            const qs = u.searchParams.toString();
-            const clean = u.origin + u.pathname + (qs ? '?' + qs : '') + u.hash;
-            console.log('[ver-refresh] redirect →', clean);
-            window.location.replace(clean);
+            u.searchParams.set('__h', serverVer);
+            const bust = u.origin + u.pathname + '?' + u.searchParams.toString() + u.hash;
+            console.log('[ver-refresh] redirect →', bust);
+            window.location.replace(bust);
             return;
           } catch {
-            // Fallback: hard reload without change
             window.location.reload();
             return;
           }
         }
 
-        // First run or same version → store for next compare.
+        // First run or already on latest → store for next compare.
         localStorage.setItem('app_version', serverVer);
       } catch (e) {
         console.warn('[ver-check] Version check failed; proceeding without SW reset', e);
