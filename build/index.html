@@ -43,6 +43,7 @@
   <link rel="dns-prefetch" href="//checkout.razorpay.com">
   <link rel="preconnect" href="https://dapi.knowtowin.com" crossorigin>
   <link rel="dns-prefetch" href="//dapi.knowtowin.com">
+
   <style>
     /* Center the loading indicator */
     #loading {
@@ -90,36 +91,85 @@
       transition: width .2s ease;
     }
   </style>
+
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "4210157041";
+    const serviceWorkerVersion = "991037379";
   </script>
+
+  <!-- Strip version-y query params immediately to keep deep links clean -->
+  <script>
+    (function stripVersionParams() { // NEW
+      try {
+        const u = new URL(window.location.href);
+        const before = u.toString();
+        let changed = false;
+        if (u.searchParams.has('v'))        { u.searchParams.delete('v');        changed = true; }
+        if (u.searchParams.has('version'))  { u.searchParams.delete('version');  changed = true; }
+        if (changed) {
+          const qs = u.searchParams.toString();
+          const clean = u.origin + u.pathname + (qs ? '?' + qs : '') + u.hash;
+          window.history.replaceState(null, '', clean);
+          console.log('[ver-clean] stripped query param(s):', before, '→', clean);
+        }
+      } catch (e) {
+        console.warn('[ver-clean] failed:', e);
+      }
+    })();
+  </script>
+
+  <!-- Version check against server; clean-reload without adding ?v=... -->
   <script>
     (async () => {
       try {
         const res = await fetch('/__app_version', { cache: 'no-store' });
         const serverVer = (await res.text()).trim();
         const storedVer = localStorage.getItem('app_version');
+        console.log('[ver-check] server=', serverVer, 'stored=', storedVer);
 
         if (storedVer && storedVer !== serverVer) {
+          console.log('[ver-refresh] New version detected. Clearing SW + caches, reloading clean URL…');
+
           if ('serviceWorker' in navigator) {
-            const regs = await navigator.serviceWorker.getRegistrations();
-            await Promise.allSettled(regs.map(r => r.unregister()));
+            try {
+              const regs = await navigator.serviceWorker.getRegistrations();
+              await Promise.allSettled(regs.map(r => r.unregister()));
+            } catch (e) {
+              console.warn('[ver-refresh] SW unregister failed:', e);
+            }
           }
           if (window.caches) {
-            const keys = await caches.keys();
-            await Promise.allSettled(keys.map(k => caches.delete(k)));
+            try {
+              const keys = await caches.keys();
+              await Promise.allSettled(keys.map(k => caches.delete(k)));
+            } catch (e) {
+              console.warn('[ver-refresh] cache clear failed:', e);
+            }
           }
+
           localStorage.setItem('app_version', serverVer);
-          const url = new URL(window.location.href);
-          url.searchParams.set('v', serverVer);
-          window.location.replace(url.toString());
-          return;
+
+          // Build a clean URL (no v/version); preserve other params and the hash
+          try {
+            const u = new URL(window.location.href);
+            u.searchParams.delete('v');
+            u.searchParams.delete('version');
+            const qs = u.searchParams.toString();
+            const clean = u.origin + u.pathname + (qs ? '?' + qs : '') + u.hash;
+            console.log('[ver-refresh] redirect →', clean);
+            window.location.replace(clean);
+            return;
+          } catch {
+            // Fallback: hard reload without change
+            window.location.reload();
+            return;
+          }
         }
 
+        // First run or same version → store for next compare.
         localStorage.setItem('app_version', serverVer);
       } catch (e) {
-        console.warn('Version check failed; proceeding without SW reset', e);
+        console.warn('[ver-check] Version check failed; proceeding without SW reset', e);
       }
     })();
   </script>
