@@ -196,7 +196,7 @@ http {
     }
 
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($need_vredir_prod) { return 302 $redir_url_prod; }
+      if ($need_vredir_dev) { return 302 $uri?$canon_qs_dev; }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
       try_files $uri =404;
