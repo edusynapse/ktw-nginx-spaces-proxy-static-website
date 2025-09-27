@@ -1,4 +1,4 @@
-# nginx.conf.template  (uses $APP_VERSION via envsubst)
+# nginx.conf.template  (versions come from index.html via entrypoint; APP_VERSION is fallback)
 
 events { worker_connections 1024; }
 
@@ -18,24 +18,22 @@ http {
   error_log  /var/log/nginx/error.log debug;
   access_log /var/log/nginx/access.log;
 
-  # ───────── Canonical version handling (no loops) ─────────
-  # Strip any existing version= while preserving other params
-  map $args $args_wo_version {
-    "~^(?<pre>.*?)(^|&)version=[^&]*(?<post>&.*)?$" "$pre$post";
-    default "$args";
-  }
-  # Canonical querystring: other params (if any) + version=$APP_VERSION
-  map $args_wo_version $canon_qs {
-    ""      "version=$APP_VERSION";
-    default "$args_wo_version&version=$APP_VERSION";
-  }
+  # ───────── Canonical version handling (separate for PROD/DEV) ─────────
+  # Strip existing version= while preserving other params
+  map $args $args_wo_version_prod { "~^(?<pre>.*?)(^|&)version=[^&]*(?<post>&.*)?$" "$pre$post"; default "$args"; }
+  map $args $args_wo_version_dev  { "~^(?<pre>.*?)(^|&)version=[^&]*(?<post>&.*)?$" "$pre$post"; default "$args"; }
+
+  # Canonical querystring: other params (if any) + version=<from index.html / fallback>
+  map $args_wo_version_prod $canon_qs_prod { "" "version=$APP_VERSION_PROD"; default "$args_wo_version_prod&version=$APP_VERSION_PROD"; }
+  map $args_wo_version_dev  $canon_qs_dev  { "" "version=$APP_VERSION_DEV";  default "$args_wo_version_dev&version=$APP_VERSION_DEV"; }
+
   # Need redirect if version missing/mismatched
-  map $arg_version $need_vredir {
-    "~^$APP_VERSION$" 0;
-    default           1;
-  }
-  # Build final redirect URL for generic assets
-  map "$uri?$canon_qs" $redir_url { default $uri?$canon_qs; }
+  map $arg_version $need_vredir_prod { "~^$APP_VERSION_PROD$" 0; default 1; }
+  map $arg_version $need_vredir_dev  { "~^$APP_VERSION_DEV$"  0; default 1; }
+
+  # Build final redirect URLs
+  map "$uri?$canon_qs_prod" $redir_url_prod { default $uri?$canon_qs_prod; }
+  map "$uri?$canon_qs_dev"  $redir_url_dev  { default $uri?$canon_qs_dev; }
 
   ########################################################################
   # PROD
@@ -46,7 +44,7 @@ http {
 
     absolute_redirect off;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
-    add_header X-App-Version $APP_VERSION always;
+    add_header X-App-Version $APP_VERSION_PROD always;
 
     root  /usr/share/nginx/html;
     index index.html;
@@ -62,18 +60,19 @@ http {
     location = /firebase-messaging-sw.js{ add_header Cache-Control "no-store, must-revalidate" always; add_header Service-Worker-Allowed "/" always; expires -1; try_files $uri =404; }
     location = /sw-kill.js              { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
 
-    # Version probe
-    location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION"; }
+    # /__app_version – returned from env (or swap to file alias if preferred)
+    location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION_PROD"; }
+    # file-based alternative:
+    # location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; alias /usr/share/nginx/html/__app_version; }
 
-    # ── Font Awesome overrides FIRST (match %20 and %2520) ──
+    # Font Awesome name-encoded redirects FIRST
     location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
-      return 302 /Font%20Awesome%207%20$1.otf?$canon_qs;
+      return 302 /Font%20Awesome%207%20$1.otf?$canon_qs_prod;
     }
 
-    # Static assets → enforce one canonical ?version, then cache forever
+    # Static assets → enforce canonical ?version then cache forever
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($need_vredir) { return 302 $redir_url; }
-
+      if ($need_vredir_prod) { return 302 $redir_url_prod; }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
       try_files $uri =404;
@@ -81,12 +80,12 @@ http {
 
     # One-tap hard refresh
     location = /__force_update__ {
-      default_type text/plain;                      # avoids download
+      default_type text/plain;
       add_header Clear-Site-Data "\"cache\", \"storage\"" always;
       return 200 "ok\n";
     }
 
-    # SPA fallback (ALL app routes) → also no-store
+    # SPA fallback (ALL app routes) → no-store
     location / {
       try_files $uri $uri/ /index.html;
       add_header Cache-Control "no-store, must-revalidate" always;
@@ -104,7 +103,7 @@ http {
 
     absolute_redirect off;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
-    add_header X-App-Version $APP_VERSION always;
+    add_header X-App-Version $APP_VERSION_DEV always;
 
     root  /usr/share/nginx/devhtml;
     index index.html;
@@ -118,16 +117,16 @@ http {
     location = /firebase-messaging-sw.js{ add_header Cache-Control "no-store, must-revalidate" always; add_header Service-Worker-Allowed "/" always; expires -1; try_files $uri =404; }
     location = /sw-kill.js              { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
 
-    location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION"; }
+    location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION_DEV"; }
+    # file-based alternative:
+    # location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; alias /usr/share/nginx/devhtml/__app_version; }
 
-    # Font Awesome overrides FIRST
     location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
-      return 302 /Font%20Awesome%207%20$1.otf?$canon_qs;
+      return 302 /Font%20Awesome%207%20$1.otf?$canon_qs_dev;
     }
 
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($need_vredir) { return 302 $redir_url; }
-
+      if ($need_vredir_dev) { return 302 $redir_url_dev; }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
       try_files $uri =404;
@@ -144,14 +143,14 @@ http {
   }
 
   ########################################################################
-  # Localhost fallback
+  # Localhost fallback (uses PROD version)
   ########################################################################
   server {
     listen 8080;
     server_name localhost 127.0.0.1;
 
     absolute_redirect off;
-    add_header X-App-Version $APP_VERSION always;
+    add_header X-App-Version $APP_VERSION_PROD always;
 
     root /usr/share/nginx/html;
     index index.html;
@@ -165,16 +164,14 @@ http {
     location = /firebase-messaging-sw.js{ add_header Cache-Control "no-store, must-revalidate" always; add_header Service-Worker-Allowed "/" always; expires -1; try_files $uri =404; }
     location = /sw-kill.js              { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
 
-    location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION"; }
+    location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION_PROD"; }
 
-    # Font Awesome overrides FIRST
     location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
-      return 302 /Font%20Awesome%207%20$1.otf?$canon_qs;
+      return 302 /Font%20Awesome%207%20$1.otf?$canon_qs_prod;
     }
 
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($need_vredir) { return 302 $redir_url; }
-
+      if ($need_vredir_prod) { return 302 $redir_url_prod; }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
       try_files $uri =404;

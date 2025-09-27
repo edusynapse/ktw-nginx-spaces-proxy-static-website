@@ -1,6 +1,6 @@
 FROM nginx:alpine-slim
 
-# Build arg + env for version (App Platform -> Build args; or set as env)
+# Build arg + env for version (used only as fallback if index.html lacks it)
 ARG APP_VERSION=dev
 ENV APP_VERSION=${APP_VERSION}
 
