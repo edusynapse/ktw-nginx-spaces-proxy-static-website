@@ -49,6 +49,19 @@ http {
     root  /usr/share/nginx/html;
     index index.html;
 
+    # Force fresh + canonical version for the entrypoint bundle
+    location = /main.dart.mjs {
+      # If version is missing or mismatched, redirect to canonical ?version=<server>
+      if ($need_vredir_prod) { return 302 $uri?$canon_qs_prod; }   # use _dev in DEV block
+
+      # Never cache the “entrypoint” so clients/CDNs re-fetch and follow the redirect
+      add_header Cache-Control "no-store, must-revalidate" always;
+      expires -1;
+
+      try_files $uri =404;
+    }
+
+
     # App shell must not be cached
     location = /index.html { add_header Cache-Control "no-store, must-revalidate" always; add_header Pragma "no-cache" always; add_header Expires "0" always; try_files $uri =404; }
     location = /flutter_bootstrap.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
@@ -107,6 +120,18 @@ http {
 
     root  /usr/share/nginx/devhtml;
     index index.html;
+
+    # Force fresh + canonical version for the entrypoint bundle
+    location = /main.dart.mjs {
+      # If version is missing or mismatched, redirect to canonical ?version=<server>
+      if ($need_vredir_prod) { return 302 $uri?$canon_qs_prod; }   # use _dev in DEV block
+
+      # Never cache the “entrypoint” so clients/CDNs re-fetch and follow the redirect
+      add_header Cache-Control "no-store, must-revalidate" always;
+      expires -1;
+
+      try_files $uri =404;
+    }
 
     location = /index.html { add_header Cache-Control "no-store, must-revalidate" always; add_header Pragma "no-cache" always; add_header Expires "0" always; try_files $uri =404; }
     location = /flutter_bootstrap.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
