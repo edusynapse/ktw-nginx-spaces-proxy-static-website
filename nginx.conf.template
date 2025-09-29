@@ -45,6 +45,8 @@ http {
     absolute_redirect off;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
     add_header X-App-Version $APP_VERSION_PROD always;
+    add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+    add_header Cross-Origin-Embedder-Policy credentialless always;
 
     root  /usr/share/nginx/html;
     index index.html;
@@ -63,7 +65,7 @@ http {
 
 
     # App shell must not be cached
-    location = /index.html { add_header Cache-Control "no-store, must-revalidate" always; add_header Pragma "no-cache" always; add_header Expires "0" always; try_files $uri =404; }
+    location = /index.html { add_header Cross-Origin-Opener-Policy same-origin-allow-popups always; add_header Cross-Origin-Embedder-Policy credentialless always; add_header Cache-Control "no-store, must-revalidate" always; add_header Pragma "no-cache" always; add_header Expires "0" always; try_files $uri =404; }
     location = /flutter_bootstrap.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
     location = /manifest.json { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
 
@@ -118,6 +120,9 @@ http {
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
     add_header X-App-Version $APP_VERSION_DEV always;
 
+    add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+    add_header Cross-Origin-Embedder-Policy credentialless always;
+
     root  /usr/share/nginx/devhtml;
     index index.html;
 
@@ -133,7 +138,7 @@ http {
       try_files $uri =404;
     }
 
-    location = /index.html { add_header Cache-Control "no-store, must-revalidate" always; add_header Pragma "no-cache" always; add_header Expires "0" always; try_files $uri =404; }
+    location = /index.html { add_header Cross-Origin-Opener-Policy same-origin-allow-popups always; add_header Cross-Origin-Embedder-Policy credentialless always; add_header Cache-Control "no-store, must-revalidate" always; add_header Pragma "no-cache" always; add_header Expires "0" always; try_files $uri =404; }
     location = /flutter_bootstrap.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
     location = /manifest.json { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
 
@@ -176,6 +181,9 @@ http {
 
     absolute_redirect off;
     add_header X-App-Version $APP_VERSION_PROD always;
+
+    add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+    add_header Cross-Origin-Embedder-Policy credentialless always;
 
     root /usr/share/nginx/html;
     index index.html;
