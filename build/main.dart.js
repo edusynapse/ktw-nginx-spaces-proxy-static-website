@@ -55224,9 +55224,10 @@ _.k1=$
 _.k3=_.k2=null
 _.k4=!1
 _.ok=null
-_.p1=m
-_.p2=n
-_.c=_.a=_.p3=null},
+_.p2=_.p1=!1
+_.p3=m
+_.p4=n
+_.c=_.a=_.R8=null},
 czp:function czp(){},
 czm:function czm(){},
 czn:function czn(){},
@@ -240188,7 +240189,7 @@ A.KU.prototype={
 a0(){var s=null,r=t.am,q=$.aN()
 return new A.acu(new A.c0(s,r),new A.c0(s,r),new A.be(B.V,q),new A.be(B.V,q),new A.be(B.V,q),new A.be(B.V,q),new A.be(B.V,q),A.fK(!0,s,!0,!0,s,s,!1),A.fK(!0,s,!0,!0,s,s,!1),A.fK(!0,s,!0,!0,s,s,!1),A.fK(!0,s,!0,!0,s,s,!1),A.fK(!0,s,!0,!0,s,s,!1),A.J([B.mD,new A.Jy("signup_email"),B.mE,new A.Jy("submit_otp"),B.kM,new A.Jy("auto_login"),B.mF,new A.Jy("social_login")],t.C5,t.Cv),new A.eb(s,q,t.XR))}}
 A.acu.prototype={
-rt(){var s=this.p2
+rt(){var s=this.p4
 if(s.a!=null)A.G("[Busy] -> null")
 s.sp(0,null)},
 Nv(a){var s=a.length
@@ -240224,7 +240225,7 @@ w7(a,b){return this.buF(a,b)},
 buF(a,b){var s=0,r=A.m(t.H),q=this,p
 var $async$w7=A.i(function(c,d){if(c===1)return A.j(d,r)
 while(true)switch(s){case 0:A.G("[TS] _prepareTS("+a.j(0)+") start reason="+b)
-p=q.p1
+p=q.p3
 s=2
 return A.e(p.h(0,a).IK(),$async$w7)
 case 2:s=q.c!=null?3:4
@@ -240248,7 +240249,7 @@ s=3
 return A.e(n.w7(a,b),$async$oc)
 case 3:p=5
 s=8
-return A.e(n.p1.h(0,a).aiy(),$async$oc)
+return A.e(n.p3.h(0,a).aiy(),$async$oc)
 case 8:l=a0
 A.G("[TS] issueToken["+a.j(0)+'] ok (step="'+b+'", ms='+m.gou()+") token="+n.Nv(l))
 q=l
@@ -240266,7 +240267,7 @@ break
 case 4:s=2
 break
 case 7:p=10
-g=n.p1
+g=n.p3
 s=13
 return A.e(g.h(0,a).Sl("r1"),$async$oc)
 case 13:if(n.c!=null)n.k(new A.czm())
@@ -240290,7 +240291,7 @@ s=12
 break
 case 9:s=2
 break
-case 12:j=n.p1
+case 12:j=n.p3
 s=16
 return A.e(j.h(0,a).Sl("r2"),$async$oc)
 case 16:if(n.c!=null)n.k(new A.czn())
@@ -240315,14 +240316,14 @@ p.bAu()
 p.ay.ef()
 $.aJ.ap$.push(new A.czZ(p))
 $.cYl().jw(0).bl(new A.cA_(),t.a).hf(new A.cA0())
-try{p.p3=t.Pu.a($.ag1()).aPe(new A.alt(B.wx,B.wv,B.ww,B.wu,B.wt,240))}catch(r){s=A.I(r)
+try{p.R8=t.Pu.a($.ag1()).aPe(new A.alt(B.wx,B.wv,B.ww,B.wu,B.wt,240))}catch(r){s=A.I(r)
 A.as("[GSI] renderButton cache failed: "+A.h(s))}q=$.cYl().a
 p.ok=new A.e1(q,A.D(q).i("e1<1>")).a42(new A.cA1(p),new A.cA2())},
 l(){var s,r,q=this
 A.G("[SignUp] dispose")
 s=q.ax
 if(s!=null)s.U(0)
-s=q.p2
+s=q.p4
 r=s.P$=$.aN()
 s.T$=0
 s=q.f
@@ -240446,7 +240447,7 @@ else{c=J.a(c,"signupPage")
 c=c==null?null:J.a(c,"offlineMessage")}m.lT(c==null?u.j:c,!0)
 s=1
 break}A.G("[Busy] -> sendOtp")
-m.p2.sp(0,"sendOtp")
+m.p4.sp(0,"sendOtp")
 p=4
 s=7
 return A.e(m.oc(B.mD,"send"),$async$z1)
@@ -240455,7 +240456,7 @@ s=8
 return A.e(A.xo(),$async$z1)
 case 8:j=a5
 c=m.f
-A.G("[Flow] SEND_OTP -> posting /signupotp email="+c.a.a+" clientId="+A.h(j)+" action="+m.p1.h(0,B.mD).b)
+A.G("[Flow] SEND_OTP -> posting /signupotp email="+c.a.a+" clientId="+A.h(j)+" action="+m.p3.h(0,B.mD).b)
 b=new A.pr()
 $.pV()
 b.fc(0)
@@ -240528,7 +240529,7 @@ else{a0=J.a(a0,"signupPage")
 a0=a0==null?null:J.a(a0,"offlineMessage")}m.lT(a0==null?u.j:a0,!0)
 s=1
 break}A.G("[Busy] -> submitOtp")
-m.p2.sp(0,"submitOtp")
+m.p4.sp(0,"submitOtp")
 p=4
 s=7
 return A.e(m.oc(B.mE,"otp"),$async$uq)
@@ -240541,7 +240542,7 @@ return A.e(A.iZ(),$async$uq)
 case 9:i=a9
 h=new A.a8(Date.now(),0,!1).dG()
 a0=m.f
-A.G("[Flow] SUBMIT_OTP -> posting /signup email="+a0.a.a+" tz="+A.h(i)+" action="+m.p1.h(0,B.mE).b)
+A.G("[Flow] SUBMIT_OTP -> posting /signup email="+a0.a.a+" tz="+A.h(i)+" action="+m.p3.h(0,B.mE).b)
 a1=new A.pr()
 $.pV()
 a1.fc(0)
@@ -240619,7 +240620,7 @@ else{a0=J.a(e,"signupPage")
 a0=a0==null?null:J.a(a0,"offlineMessage")}m.lT(a0==null?u.j:a0,!0)
 s=1
 break}A.G("[Busy] -> autoLogin")
-m.p2.sp(0,"autoLogin")
+m.p4.sp(0,"autoLogin")
 p=4
 s=7
 return A.e(m.w7(B.kM,"before_login"),$async$rK)
@@ -240634,7 +240635,7 @@ return A.e(A.iZ(),$async$rK)
 case 10:j=b1
 i=new A.a8(Date.now(),0,!1).dG()
 a0=m.f
-A.G("[Flow] AUTO_LOGIN -> posting /login email="+a0.a.a+" tz="+A.h(j)+" action="+m.p1.h(0,B.kM).b)
+A.G("[Flow] AUTO_LOGIN -> posting /login email="+a0.a.a+" tz="+A.h(j)+" action="+m.p3.h(0,B.kM).b)
 a1=new A.pr()
 $.pV()
 a1.fc(0)
@@ -240711,31 +240712,35 @@ return A.l($async$rK,r)},
 ny(a){return this.bic(a)},
 bic(a6){var s=0,r=A.m(t.H),q,p=2,o=[],n=[],m=this,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1,a2,a3,a4,a5
 var $async$ny=A.i(function(a7,a8){if(a7===1){o.push(a8)
-s=p}while(true)switch(s){case 0:A.G("[GSI] _handleGoogleSuccessSignUp() start")
+s=p}while(true)switch(s){case 0:if(m.p2){A.G("[GSI] handler reentry ignored")
+s=1
+break}m.p2=!0
+p=3
+A.G("[GSI] _handleGoogleSuccessSignUp() start")
 a0=m.c
 a0.toString
 A.P(a0,!1,t.Z)
 l=$.M
 A.G("[Busy] -> gsi")
-m.p2.sp(0,"gsi")
-p=4
-s=7
+m.p4.sp(0,"gsi")
+p=7
+s=10
 return A.e(m.w7(B.mF,"gsi"),$async$ny)
-case 7:a0=a6.e.a
+case 10:a0=a6.e.a
 a1=t.x2
 a2=A.dy(new A.PC(a0),a1)
-s=8
-return A.e(a2,$async$ny)
-case 8:k=a8
-s=k.a==null?9:10
-break
-case 9:A.G("[GSI] idToken missing -> refresh authentication")
-a0=A.dy(new A.PC(a0),a1)
 s=11
+return A.e(a2,$async$ny)
+case 11:k=a8
+s=k.a==null?12:13
+break
+case 12:A.G("[GSI] idToken missing -> refresh authentication")
+a0=A.dy(new A.PC(a0),a1)
+s=14
 return A.e(a0,$async$ny)
-case 11:case 10:s=12
+case 14:case 13:s=15
 return A.e(A.d9E(a6).a1T(A.b(["email","profile"],t.s)),$async$ny)
-case 12:j=a8
+case 15:j=a8
 a0=j
 i=a0==null?null:a0.a
 a0=k.a
@@ -240746,61 +240751,61 @@ h=A.d9D(i,k.a)
 a0=$.kD
 a3=(a0==null?$.kD=$.vJ():a0).rX("[DEFAULT]")
 A.h1(a3,$.vI(),!0)
-s=13
+s=16
 return A.e(A.d9i(new A.n8(a3)).mh(h),$async$ny)
-case 13:g=a8
+case 16:g=a8
 f=g.galN()
 if(f==null){A.G("[GSI] Firebase user=null -> abort")
 m.rt()
-n=[1]
-s=5
-break}s=14
+n=[1,4]
+s=8
+break}s=17
 return A.e(f.a.rd(!1),$async$ny)
-case 14:e=a8
+case 17:e=a8
 a0=e
 a0=a0==null?null:J.aK(a0)
 A.G("[GSI] Firebase user OK -> idToken(len="+(a0==null?0:a0)+")")
 a0=e
 a0.toString
-s=15
+s=18
 return A.e(m.Cq(a0,$.a2s),$async$ny)
-case 15:d=a8
+case 18:d=a8
 if(m.c==null){m.rt()
-n=[1]
-s=5
+n=[1,4]
+s=8
 break}A.G("[GSI] LoginHelper.handleSuccessfulAuthResponse")
 a0=m.c
 a0.toString
 a1=J.a(d,"email")
 a1=a1==null?null:J.W(a1)
-s=16
+s=19
 return A.e(A.nj(a0,d,"google",a1),$async$ny)
-case 16:a1=$.vH()
-s=17
+case 19:a1=$.vH()
+s=20
 return A.e(a1.Ju("google"),$async$ny)
-case 17:c=J.a(d,"userId")
-s=c!=null?18:19
+case 20:c=J.a(d,"userId")
+s=c!=null?21:22
 break
-case 18:s=20
+case 21:s=23
 return A.e(a1.ro(c),$async$ny)
-case 20:case 19:A.wW(!1)
+case 23:case 22:A.wW(!1)
 A.Ru(!1)
 if(J.a(d,"generatedPassword")!=null){A.G("[GSI] server returned generatedPassword -> show inline UI")
 m.rt()
 m.k(new A.czl(m,d,e))
-n=[1]
-s=5
+n=[1,4]
+s=8
 break}A.G("[GSI] existing user -> proceed to countdown + next steps")
 m.rt()
-s=21
+s=24
 return A.e(m.z_(),$async$ny)
-case 21:a0=J.a(d,"email")
-s=22
+case 24:a0=J.a(d,"email")
+s=25
 return A.e(m.yJ(a0==null?null:J.W(a0)),$async$ny)
-case 22:n.push(6)
-s=5
+case 25:n.push(9)
+s=8
 break
-case 4:p=3
+case 7:p=6
 a5=o.pop()
 b=A.I(a5)
 a=A.ae(a5)
@@ -240809,15 +240814,23 @@ a0=l
 if(a0==null)a0=null
 else{a0=J.a(a0,"signupPage")
 a0=a0==null?null:J.a(a0,"googleSignInFailed")}m.lT(a0==null?"Google Sign-In failed.":a0,!0)
-n.push(6)
-s=5
+n.push(9)
+s=8
 break
-case 3:n=[2]
-case 5:p=2
+case 6:n=[3]
+case 8:p=3
 m.rt()
 s=n.pop()
 break
-case 6:case 1:return A.k(q,r)
+case 9:n.push(5)
+s=4
+break
+case 3:n=[2]
+case 4:p=2
+m.p2=!1
+s=n.pop()
+break
+case 5:case 1:return A.k(q,r)
 case 2:return A.j(o.at(-1),r)}})
 return A.l($async$ny,r)},
 Cq(a,b){return this.byA(a,b)},
@@ -240840,7 +240853,7 @@ c=t.N
 b=t.z
 i=A.J(["idToken",a2,"lang",d,"userTimeZone",k,"timeWithTimeZone",j,"turnstileToken",m,"clientId",l],c,b)
 if(a3!=null&&a3.length!==0)J.af(i,"referral_code",a3)
-A.G("[GSI] POST /social-login action="+n.p1.h(0,B.mF).b)
+A.G("[GSI] POST /social-login action="+n.p3.h(0,B.mF).b)
 a=new A.pr()
 $.pV()
 a.fc(0)
@@ -241024,7 +241037,7 @@ if(q)q=e
 else{q=J.a(r,d)
 q=q==null?e:J.a(q,"passwordsMatch")}if(q==null)q="passwords match"
 p=p.a.a
-B.c.E(m,A.b([A.kG(e,A.B(A.b([k,B.a_,i,B.a_,A.cB(B.M,A.b([n,j,h,f.V3(p===o.a.a&&p.length!==0,q)],l),B.e,B.a9,e,B.M,4,8)],l),B.j,B.h,B.f,0,e,B.k),f.e),B.ba,new A.hq(f.p2,new A.czd(f,r),e,e,t.Sj)],l))}else{if(q)q=e
+B.c.E(m,A.b([A.kG(e,A.B(A.b([k,B.a_,i,B.a_,A.cB(B.M,A.b([n,j,h,f.V3(p===o.a.a&&p.length!==0,q)],l),B.e,B.a9,e,B.M,4,8)],l),B.j,B.h,B.f,0,e,B.k),f.e),B.ba,new A.hq(f.p4,new A.czd(f,r),e,e,t.Sj)],l))}else{if(q)q=e
 else{q=J.a(r,"common")
 q=q==null?e:J.a(q,"ok")}B.c.E(m,A.b([B.ba,A.aM(A.d(q==null?"OK":q,e,e,e,e,e,e,e,e,e,e,e),e,new A.cze(f),e,B.C)],l))}return A.x(e,A.aS(A.B(m,B.j,B.h,B.f,0,e,B.k),B.l,e,B.p,B.v,e,e,e,e,e,!1,B.x),B.e,e,e,s,e,400,e,e,B.w,e,e,400)},
 V3(a,b){var s=null,r=a?B.n7:B.la,q=A.aj(12)
@@ -241046,7 +241059,7 @@ var $async$$0=A.i(function(a,b){if(a===1)return A.j(b,r)
 while(true)switch(s){case 0:A.G("[SignUp] pre-render Turnstile for signupEmail")
 p=q.a
 s=2
-return A.e(p.p1.h(0,B.mD).IK(),$async$$0)
+return A.e(p.p3.h(0,B.mD).IK(),$async$$0)
 case 2:if(p.c!=null)p.k(new A.czV())
 return A.k(null,r)}})
 return A.l($async$$0,r)},
@@ -241077,27 +241090,34 @@ $1(a){A.as("[GSI] initialize() failed: "+A.h(a))},
 $S:36}
 A.cA1.prototype={
 $1(a){return this.aSi(a)},
-aSi(a){var s=0,r=A.m(t.H),q,p=2,o=[],n=this,m,l,k,j,i
+aSi(a){var s=0,r=A.m(t.H),q,p=2,o=[],n=[],m=this,l,k,j,i,h
 var $async$$1=A.i(function(b,c){if(b===1){o.push(c)
 s=p}while(true)switch(s){case 0:A.G("[GSI] auth event: "+a.j(0))
-k=n.a
-if(k.c==null){s=1
+j=m.a
+if(j.c==null){s=1
 break}s=a instanceof A.PD?3:4
 break
-case 3:p=6
+case 3:if(j.p1){A.G("[GSI] auth event skipped: already handling")
+s=1
+break}j.p1=!0
+p=6
 s=9
-return A.e(k.ny(a.a),$async$$1)
-case 9:p=2
-s=8
+return A.e(j.ny(a.a),$async$$1)
+case 9:n.push(8)
+s=7
 break
 case 6:p=5
-i=o.pop()
-m=A.I(i)
-l=A.ae(i)
-A.aX(m,l)
-s=8
+h=o.pop()
+l=A.I(h)
+k=A.ae(h)
+A.aX(l,k)
+n.push(8)
+s=7
 break
-case 5:s=2
+case 5:n=[2]
+case 7:p=2
+j.p1=!1
+s=n.pop()
 break
 case 8:case 4:case 1:return A.k(q,r)
 case 2:return A.j(o.at(-1),r)}})
@@ -241299,7 +241319,7 @@ s=q}while(true)switch(s){case 0:g=n.a
 s=g.e.gam().hz()?2:3
 break
 case 2:A.G("[Busy] -> gsiPwd")
-g.p2.sp(0,"gsiPwd")
+g.p4.sp(0,"gsiPwd")
 q=5
 A.G("[GSI] POST /social-login/password start")
 j=t.N
@@ -241418,7 +241438,7 @@ e=r.Q
 d=q.h(a1,a0)
 d=d==null?a:J.a(d,"confirmPasswordLabel")
 if(d==null)d="Confirm Password"
-c=r.p2
+c=r.p4
 b=t.Sj
 h=A.b([n,B.q,j,B.q,A.x(a,A.kG(a,A.B(A.b([g,B.q,f,B.q,A.eW(r.w,a,a,r.CW,a,a,a,a,d,a,1,e,a,new A.czP(r),a,!1,A.fM(a,!1,a,a,a,a,a,a,a,a,A.bK(r.Q?B.k3:B.k2,a,a,a),a,a,a,a,new A.czQ(r),a,a,a,a,a,a,a),new A.czR(r,a1),B.aJ),B.aL,A.ax(new A.hq(c,new A.czS(r,a1),a,a,b),a,a)],i),B.S,B.h,B.f,0,a,B.k),r.d),B.e,a,a,h,a,a,a,a,B.Es,a,a,a)],i)
 if(r.as){n=k.t3(A.d2(l,1),m)
@@ -241448,7 +241468,7 @@ q===$&&A.c()
 n=t.p
 q=A.B(A.b([s,A.x(a,new A.eG(q,new A.czL(a1),a,t.jz),B.e,a,a,a,a,a,a,a,B.w,a,a,a)],n),B.j,B.h,B.f,0,a,B.k)
 s=A.b([],n)
-r=r.p1
+r=r.p3
 m=r.h(0,B.mD).c
 if((m==null?a:m.a)!=null)s.push(r.h(0,B.mD).c.a)
 m=r.h(0,B.mE).c
@@ -241539,7 +241559,7 @@ A.czH.prototype={
 $3(a,b,c){return b==="autoLogin"?new A.K(B.El,A.S(B.auD,B.j,B.as,B.f,0,null,null),null):B.ai},
 $S:1236}
 A.czI.prototype={
-$3(a,b,c){var s,r=null,q=this.a.p3
+$3(a,b,c){var s,r=null,q=this.a.R8
 if(q==null)q=B.ai
 s=t.p
 q=A.b([A.Nh(b!=null,new A.K(B.bz,q,r))],s)
