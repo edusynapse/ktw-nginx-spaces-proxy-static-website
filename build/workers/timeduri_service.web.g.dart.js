@@ -5615,8 +5615,6 @@
         list = A._setArrayType([], $E._eval$1("JSArray<0>"));
       for (t1 = J.get$iterator$ax(elements); t1.moveNext$0();)
         B.JSArray_methods.add$1(list, $E._as(t1.get$current()));
-      if (growable)
-        return list;
       list.$flags = 1;
       return list;
     },
@@ -7246,39 +7244,7 @@
     NullRejectionException: function NullRejectionException(t0) {
       this.isUndefined = t0;
     },
-    ArchiveException$(message) {
-      return new A.ArchiveException(message, null, null);
-    },
-    ArchiveException: function ArchiveException(t0, t1, t2) {
-      this.message = t0;
-      this.source = t1;
-      this.offset = t2;
-    },
-    InputStream$(data, byteOrder, $length, start) {
-      var t1, t2;
-      if (type$.TypedData._is(data))
-        t1 = J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(data), data.byteOffset, data.byteLength);
-      else
-        t1 = type$.List_int._is(data) ? data : A.List_List$from(data, true, type$.int);
-      t2 = new A.InputStream(t1, start, start, byteOrder);
-      t2.__InputStream__length_A = $length == null ? t1.length : $length;
-      return t2;
-    },
-    InputStreamBase: function InputStreamBase() {
-    },
-    InputStream: function InputStream(t0, t1, t2, t3) {
-      var _ = this;
-      _.buffer = t0;
-      _.offset = t1;
-      _.start = t2;
-      _.byteOrder = t3;
-      _.__InputStream__length_A = $;
-    },
-    OutputStreamBase: function OutputStreamBase() {
-    },
-    OutputStream: function OutputStream(t0) {
-      this.length = 0;
-      this._output_stream$_buffer = t0;
+    _GZipDecoder: function _GZipDecoder() {
     },
     HuffmanTable$(lengths) {
       var t1 = new A.HuffmanTable();
@@ -7290,14 +7256,66 @@
       this.maxCodeLength = 0;
       this.minCodeLength = 2147483647;
     },
+    ZLibDecoderBase: function ZLibDecoderBase() {
+    },
+    _ZLibDecoder: function _ZLibDecoder() {
+    },
+    Inflate$stream(_input, output) {
+      var t1 = A.HuffmanTable$(B.List_w2t),
+        t2 = A.HuffmanTable$(B.List_AC1);
+      t1 = new A.Inflate(_input, output == null ? A.OutputMemoryStream$(null) : output, t1, t2);
+      t1._inflate$0();
+      return t1;
+    },
     Inflate: function Inflate(t0, t1, t2, t3) {
       var _ = this;
-      _.__Inflate_input_A = t0;
-      _.inputSet = false;
-      _.output = t1;
+      _._inflate$_input = t0;
+      _._nextInput = null;
+      _._inflate$_output = t1;
       _._bitBufferLen = _._bitBuffer = 0;
       _._fixedLiteralLengthTable = t2;
       _._fixedDistanceTable = t3;
+    },
+    ByteOrder: function ByteOrder(t0) {
+      this._core$_name = t0;
+    },
+    InputMemoryStream$(bytes, byteOrder, $length, offset) {
+      var t2, data,
+        t1 = new A.InputMemoryStream(byteOrder);
+      if (offset == null)
+        offset = 0;
+      if ($length == null)
+        $length = bytes.length - offset;
+      t2 = bytes.length;
+      if (offset + $length > t2)
+        $length = t2 - offset;
+      data = type$.Uint8List._is(bytes) ? bytes : new Uint8Array(A._ensureNativeList(bytes));
+      t2 = J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(data), data.byteOffset + offset, $length);
+      t1.buffer = t2;
+      t1.__InputMemoryStream__length_A = t2.length;
+      return t1;
+    },
+    InputMemoryStream: function InputMemoryStream(t0) {
+      var _ = this;
+      _.buffer = null;
+      _._input_memory_stream$_position = 0;
+      _.__InputMemoryStream__length_A = $;
+      _.byteOrder = t0;
+    },
+    InputStream: function InputStream() {
+    },
+    InputStream_readString_codesToString: function InputStream_readString_codesToString(t0) {
+      this.utf8 = t0;
+    },
+    OutputMemoryStream$(size) {
+      var t1 = size == null ? 32768 : size;
+      return new A.OutputMemoryStream(new Uint8Array(t1));
+    },
+    OutputMemoryStream: function OutputMemoryStream(t0) {
+      this.length = 0;
+      this._output_memory_stream$_buffer = t0;
+    },
+    OutputStream: function OutputStream() {
     },
     CancelationToken: function CancelationToken() {
     },
@@ -9446,6 +9464,15 @@
         return 0 - Math.round(0 - receiver);
       throw A.wrapException(A.UnsupportedError$("" + receiver + ".round()"));
     },
+    clamp$2(receiver, lowerLimit, upperLimit) {
+      if (B.JSInt_methods.compareTo$1(lowerLimit, upperLimit) > 0)
+        throw A.wrapException(A.argumentErrorValue(lowerLimit));
+      if (this.compareTo$1(receiver, lowerLimit) < 0)
+        return lowerLimit;
+      if (this.compareTo$1(receiver, upperLimit) > 0)
+        return upperLimit;
+      return receiver;
+    },
     toString$0(receiver) {
       if (receiver === 0 && 1 / receiver < 0)
         return "-0.0";
@@ -9890,7 +9917,7 @@
       t1._asyncComplete$1(null);
       return t1;
     },
-    $signature: 26
+    $signature: 20
   };
   A.SentinelValue.prototype = {};
   A.EfficientLengthIterable.prototype = {};
@@ -10994,19 +11021,19 @@
     call$1(o) {
       return this.getTag(o);
     },
-    $signature: 17
+    $signature: 14
   };
   A.initHooks_closure0.prototype = {
     call$2(o, tag) {
       return this.getUnknownTag(o, tag);
     },
-    $signature: 70
+    $signature: 45
   };
   A.initHooks_closure1.prototype = {
     call$1(tag) {
       return this.prototypeForTag(A._asString(tag));
     },
-    $signature: 69
+    $signature: 41
   };
   A.JSSyntaxRegExp.prototype = {
     toString$0(_) {
@@ -11461,7 +11488,7 @@
       t1.storedCallback = null;
       f.call$0();
     },
-    $signature: 6
+    $signature: 5
   };
   A._AsyncRun__initializeScheduleImmediate_closure.prototype = {
     call$1(callback) {
@@ -11471,7 +11498,7 @@
       t2 = this.span;
       t1.firstChild ? t1.removeChild(t2) : t1.appendChild(t2);
     },
-    $signature: 40
+    $signature: 54
   };
   A._AsyncRun__scheduleImmediateJsOverride_internalCallback.prototype = {
     call$0() {
@@ -11546,13 +11573,13 @@
     call$2(error, stackTrace) {
       this.bodyFunction.call$2(1, new A.ExceptionAndStackTrace(error, type$.StackTrace._as(stackTrace)));
     },
-    $signature: 68
+    $signature: 62
   };
   A._wrapJsFunctionForAsync_closure.prototype = {
     call$2(errorCode, result) {
       this.$protected(A._asInt(errorCode), result);
     },
-    $signature: 67
+    $signature: 70
   };
   A._asyncStarHelper_closure.prototype = {
     call$0() {
@@ -11575,7 +11602,7 @@
       var errorCode = this.controller.cancelationFuture != null ? 2 : 0;
       this.bodyFunction.call$2(errorCode, null);
     },
-    $signature: 6
+    $signature: 5
   };
   A._AsyncStarStreamController.prototype = {
     _AsyncStarStreamController$1(body, $T) {
@@ -11626,7 +11653,7 @@
         return t1.cancelationFuture;
       }
     },
-    $signature: 66
+    $signature: 39
   };
   A._AsyncStarStreamController__closure.prototype = {
     call$0() {
@@ -11768,7 +11795,7 @@
         _this._future._completeErrorObject$1(new A.AsyncError(t2, t1));
       }
     },
-    $signature: 5
+    $signature: 6
   };
   A.Future_wait_closure.prototype = {
     call$1(value) {
@@ -12141,7 +12168,7 @@
     call$1(__wc0_formal) {
       this.joinedResult._completeWithResultOf$1(this.originalSource);
     },
-    $signature: 6
+    $signature: 5
   };
   A._Future__propagateToListeners_handleWhenCompleteCallback_closure0.prototype = {
     call$2(e, s) {
@@ -12149,7 +12176,7 @@
       type$.StackTrace._as(s);
       this.joinedResult._completeErrorObject$1(new A.AsyncError(e, s));
     },
-    $signature: 8
+    $signature: 7
   };
   A._Future__propagateToListeners_handleValueCallback.prototype = {
     call$0() {
@@ -12239,7 +12266,7 @@
         this._future._completeErrorObject$1(new A.AsyncError(e, s));
       }
     },
-    $signature: 8
+    $signature: 7
   };
   A._AsyncCallbackEntry.prototype = {};
   A.Stream.prototype = {
@@ -12522,7 +12549,7 @@
       t1._addError$2(A._asObject(e), type$.StackTrace._as(s));
       t1._close$0();
     },
-    $signature: 8
+    $signature: 7
   };
   A._AddStreamState_cancel_closure.prototype = {
     call$0() {
@@ -13305,7 +13332,7 @@
     call$1(v) {
       return this.K._is(v);
     },
-    $signature: 20
+    $signature: 16
   };
   A._HashMapKeyIterable.prototype = {
     get$length(_) {
@@ -13386,7 +13413,7 @@
     call$1(v) {
       return this.K._is(v);
     },
-    $signature: 20
+    $signature: 16
   };
   A._LinkedHashSet.prototype = {
     get$iterator(_) {
@@ -13549,7 +13576,7 @@
     call$2(k, v) {
       this.result.$indexSet(0, this.K._as(k), this.V._as(v));
     },
-    $signature: 56
+    $signature: 37
   };
   A.ListBase.prototype = {
     get$iterator(receiver) {
@@ -13738,7 +13765,7 @@
       t2 = A.S(v);
       t1._contents += t2;
     },
-    $signature: 11
+    $signature: 9
   };
   A._UnmodifiableMapMixin.prototype = {
     $indexSet(_, key, value) {
@@ -13974,7 +14001,7 @@
       }
       return null;
     },
-    $signature: 21
+    $signature: 17
   };
   A._Utf8Decoder__decoderNonfatal_closure.prototype = {
     call$0() {
@@ -13986,7 +14013,7 @@
       }
       return null;
     },
-    $signature: 21
+    $signature: 17
   };
   A.AsciiCodec.prototype = {
     get$name() {
@@ -14476,7 +14503,7 @@
       B.JSArray_methods.$indexSet(t1, t2.i++, key);
       B.JSArray_methods.$indexSet(t1, t2.i++, value);
     },
-    $signature: 11
+    $signature: 9
   };
   A._JsonPrettyPrintMixin.prototype = {
     writeList$1(list) {
@@ -14544,7 +14571,7 @@
       B.JSArray_methods.$indexSet(t1, t2.i++, key);
       B.JSArray_methods.$indexSet(t1, t2.i++, value);
     },
-    $signature: 11
+    $signature: 9
   };
   A._JsonStringStringifier.prototype = {
     get$_partialResult() {
@@ -15227,7 +15254,7 @@
       hash = hash + ((hash & 524287) << 10) & 536870911;
       return hash ^ hash >>> 6;
     },
-    $signature: 22
+    $signature: 18
   };
   A._BigIntImpl_hashCode_finish.prototype = {
     call$1(hash) {
@@ -15235,7 +15262,7 @@
       hash ^= hash >>> 11;
       return hash + ((hash & 16383) << 15) & 536870911;
     },
-    $signature: 53
+    $signature: 50
   };
   A._Uri__makeQueryFromParameters_closure.prototype = {
     call$2(key, value) {
@@ -15256,7 +15283,7 @@
             A._asStringQ(value);
         }
     },
-    $signature: 24
+    $signature: 19
   };
   A.DateTime.prototype = {
     difference$1(other) {
@@ -15671,13 +15698,13 @@
     call$2(msg, position) {
       throw A.wrapException(A.FormatException$("Illegal IPv4 address, " + msg, this.host, position));
     },
-    $signature: 49
+    $signature: 57
   };
   A.Uri_parseIPv6Address_error.prototype = {
     call$2(msg, position) {
       throw A.wrapException(A.FormatException$("Illegal IPv6 address, " + msg, this.host, position));
     },
-    $signature: 44
+    $signature: 30
   };
   A.Uri_parseIPv6Address_parseHex.prototype = {
     call$2(start, end) {
@@ -15689,7 +15716,7 @@
         this.error.call$2("each part must be in the range of `0x0..0xFFFF`", start);
       return value;
     },
-    $signature: 22
+    $signature: 18
   };
   A._Uri.prototype = {
     get$_text() {
@@ -15998,7 +16025,7 @@
         t1._contents += t2;
       }
     },
-    $signature: 38
+    $signature: 67
   };
   A._Uri__makeQueryFromParametersDefault_closure.prototype = {
     call$2(key, value) {
@@ -16010,7 +16037,7 @@
         for (t1 = J.get$iterator$ax(type$.Iterable_dynamic._as(value)), t2 = this.writeParameter; t1.moveNext$0();)
           t2.call$2(key, A._asString(t1.get$current()));
     },
-    $signature: 24
+    $signature: 19
   };
   A.UriData.prototype = {
     get$uri() {
@@ -16420,581 +16447,49 @@
     },
     $isException: 1
   };
-  A.ArchiveException.prototype = {};
-  A.InputStreamBase.prototype = {};
-  A.InputStream.prototype = {
-    get$length(_) {
-      var t1 = this.__InputStream__length_A;
-      t1 === $ && A.throwLateFieldNI("_length");
-      return t1 - (this.offset - this.start);
-    },
-    get$isEOS() {
-      var t1 = this.offset,
-        t2 = this.__InputStream__length_A;
-      t2 === $ && A.throwLateFieldNI("_length");
-      return t1 >= this.start + t2;
-    },
-    $index(_, index) {
+  A._GZipDecoder.prototype = {
+    decodeStream$4$raw$verify(input, output, raw, verify) {
       var t1, t2;
-      A._asInt(index);
-      t1 = this.buffer;
-      t2 = B.JSInt_methods.$add(this.offset, index);
-      if (!(t2 >= 0 && t2 < t1.length))
-        return A.ioore(t1, t2);
-      return t1[t2];
-    },
-    readByte$0() {
-      var t1 = this.buffer,
-        t2 = this.offset++;
-      if (!(t2 >= 0 && t2 < t1.length))
-        return A.ioore(t1, t2);
-      return t1[t2];
-    },
-    readBytes$1(count) {
-      var t2, $length, bytes, _this = this,
-        t1 = _this.start,
-        position = _this.offset - t1 + t1;
-      if (count < 0) {
-        t2 = _this.__InputStream__length_A;
+      while (true) {
+        t1 = input._input_memory_stream$_position;
+        t2 = input.__InputMemoryStream__length_A;
         t2 === $ && A.throwLateFieldNI("_length");
-        $length = t2 - (position - t1);
-      } else
-        $length = count;
-      bytes = A.InputStream$(_this.buffer, _this.byteOrder, $length, position);
-      _this.offset = _this.offset + bytes.get$length(0);
-      return bytes;
-    },
-    readString$0() {
-      var t1, t2, t3, t4, c, _this = this,
-        utf8 = true,
-        codes = A._setArrayType([], type$.JSArray_int);
-      if (_this.get$isEOS())
-        return "";
-      t1 = _this.start;
-      t2 = _this.buffer;
-      while (true) {
-        t3 = _this.offset;
-        t4 = _this.__InputStream__length_A;
-        t4 === $ && A.throwLateFieldNI("_length");
-        if (!(t3 < t1 + t4))
+        if (!(t1 < t2))
           break;
-        _this.offset = t3 + 1;
-        if (!(t3 >= 0 && t3 < t2.length))
-          return A.ioore(t2, t3);
-        c = t2[t3];
-        if (c === 0)
-          break;
-        B.JSArray_methods.add$1(codes, c);
-      }
-      return utf8 ? new A.Utf8Decoder(false).convert$1(codes) : A.String_String$fromCharCodes(codes, 0, null);
-    },
-    readUint16$0() {
-      var b1, b2, _this = this,
-        t1 = _this.buffer,
-        t2 = _this.offset,
-        t3 = _this.offset = t2 + 1,
-        t4 = t1.length;
-      if (!(t2 >= 0 && t2 < t4))
-        return A.ioore(t1, t2);
-      b1 = t1[t2] & 255;
-      _this.offset = t3 + 1;
-      if (!(t3 >= 0 && t3 < t4))
-        return A.ioore(t1, t3);
-      b2 = t1[t3] & 255;
-      if (_this.byteOrder === 1)
-        return b1 << 8 | b2;
-      return b2 << 8 | b1;
-    },
-    readUint32$0() {
-      var b1, b2, b3, b4, _this = this,
-        t1 = _this.buffer,
-        t2 = _this.offset,
-        t3 = _this.offset = t2 + 1,
-        t4 = t1.length;
-      if (!(t2 >= 0 && t2 < t4))
-        return A.ioore(t1, t2);
-      b1 = t1[t2] & 255;
-      t2 = _this.offset = t3 + 1;
-      if (!(t3 >= 0 && t3 < t4))
-        return A.ioore(t1, t3);
-      b2 = t1[t3] & 255;
-      t3 = _this.offset = t2 + 1;
-      if (!(t2 >= 0 && t2 < t4))
-        return A.ioore(t1, t2);
-      b3 = t1[t2] & 255;
-      _this.offset = t3 + 1;
-      if (!(t3 >= 0 && t3 < t4))
-        return A.ioore(t1, t3);
-      b4 = t1[t3] & 255;
-      if (_this.byteOrder === 1)
-        return (b1 << 24 | b2 << 16 | b3 << 8 | b4) >>> 0;
-      return (b4 << 24 | b3 << 16 | b2 << 8 | b1) >>> 0;
-    }
-  };
-  A.OutputStreamBase.prototype = {};
-  A.OutputStream.prototype = {
-    writeBytes$1(bytes) {
-      var len, j, t1, t2, t3, t4, t5, i, _this = this;
-      type$.List_int._as(bytes);
-      len = bytes.length;
-      for (; j = _this.length, t1 = j + len, t2 = _this._output_stream$_buffer, t3 = t2.length, t1 > t3;)
-        _this._expandBuffer$1(t1 - t3);
-      if (len === 1) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-      } else if (len === 2) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-      } else if (len === 3) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-      } else if (len === 4) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-      } else if (len === 5) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 4;
-        if (4 >= len)
-          return A.ioore(bytes, 4);
-        t4 = bytes[4];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-      } else if (len === 6) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 4;
-        if (4 >= len)
-          return A.ioore(bytes, 4);
-        t4 = bytes[4];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 5;
-        if (5 >= len)
-          return A.ioore(bytes, 5);
-        t5 = bytes[5];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-      } else if (len === 7) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 4;
-        if (4 >= len)
-          return A.ioore(bytes, 4);
-        t4 = bytes[4];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 5;
-        if (5 >= len)
-          return A.ioore(bytes, 5);
-        t5 = bytes[5];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 6;
-        if (6 >= len)
-          return A.ioore(bytes, 6);
-        t4 = bytes[6];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-      } else if (len === 8) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 4;
-        if (4 >= len)
-          return A.ioore(bytes, 4);
-        t4 = bytes[4];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 5;
-        if (5 >= len)
-          return A.ioore(bytes, 5);
-        t5 = bytes[5];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 6;
-        if (6 >= len)
-          return A.ioore(bytes, 6);
-        t4 = bytes[6];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 7;
-        if (7 >= len)
-          return A.ioore(bytes, 7);
-        t5 = bytes[7];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-      } else if (len === 9) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 4;
-        if (4 >= len)
-          return A.ioore(bytes, 4);
-        t4 = bytes[4];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 5;
-        if (5 >= len)
-          return A.ioore(bytes, 5);
-        t5 = bytes[5];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 6;
-        if (6 >= len)
-          return A.ioore(bytes, 6);
-        t4 = bytes[6];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 7;
-        if (7 >= len)
-          return A.ioore(bytes, 7);
-        t5 = bytes[7];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 8;
-        if (8 >= len)
-          return A.ioore(bytes, 8);
-        t4 = bytes[8];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-      } else if (len === 10) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 4;
-        if (4 >= len)
-          return A.ioore(bytes, 4);
-        t4 = bytes[4];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 5;
-        if (5 >= len)
-          return A.ioore(bytes, 5);
-        t5 = bytes[5];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 6;
-        if (6 >= len)
-          return A.ioore(bytes, 6);
-        t4 = bytes[6];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 7;
-        if (7 >= len)
-          return A.ioore(bytes, 7);
-        t5 = bytes[7];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 8;
-        if (8 >= len)
-          return A.ioore(bytes, 8);
-        t4 = bytes[8];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 9;
-        if (9 >= len)
-          return A.ioore(bytes, 9);
-        t5 = bytes[9];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-      } else
-        for (t4 = t2.$flags | 0, i = 0; i < len; ++i, ++j) {
-          if (!(i < len))
-            return A.ioore(bytes, i);
-          t5 = bytes[i];
-          t4 & 2 && A.throwUnsupportedOperation(t2);
-          if (!(j >= 0 && j < t3))
-            return A.ioore(t2, j);
-          t2[j] = t5;
+        if (!this._readHeader$1(input)) {
+          input._input_memory_stream$_position = t1;
+          return B.C__ZLibDecoder.decodeStream$4$raw$verify(input, output, false, false);
         }
-      _this.length = t1;
-    },
-    writeInputStream$1(stream) {
-      var t2, t3, t4, t5, t6, _this = this,
-        t1 = stream.start;
-      while (true) {
-        t2 = _this.length;
-        t3 = stream.__InputStream__length_A;
-        t3 === $ && A.throwLateFieldNI("_length");
-        t4 = stream.offset;
-        t3 = t2 + (t3 - (t4 - t1));
-        t5 = _this._output_stream$_buffer;
-        t6 = t5.length;
-        if (!(t3 > t6))
-          break;
-        _this._expandBuffer$1(t3 - t6);
+        A.Inflate$stream(input, output);
+        input.readUint32$0();
+        input.readUint32$0();
       }
-      B.NativeUint8List_methods.setRange$4(t5, t2, t2 + stream.get$length(0), stream.buffer, t4);
-      _this.length = _this.length + stream.get$length(0);
+      return true;
     },
-    subset$2(start, end) {
-      var _this = this;
-      if (start < 0)
-        start = _this.length + start;
-      if (end == null)
-        end = _this.length;
-      else if (end < 0)
-        end = _this.length + end;
-      return J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(_this._output_stream$_buffer), start, end - start);
-    },
-    subset$1(start) {
-      return this.subset$2(start, null);
-    },
-    _expandBuffer$1(required) {
-      var blockSize = required != null ? required > 32768 ? required : 32768 : 32768,
-        t1 = this._output_stream$_buffer,
-        t2 = t1.length,
-        newBuffer = new Uint8Array((t2 + blockSize) * 2);
-      B.NativeUint8List_methods.setRange$3(newBuffer, 0, t2, t1);
-      this._output_stream$_buffer = newBuffer;
-    },
-    _expandBuffer$0() {
-      return this._expandBuffer$1(null);
-    },
-    get$length(receiver) {
-      return this.length;
+    _readHeader$1(input) {
+      var flags;
+      if (input.readUint16$0() !== 35615)
+        return false;
+      if (input.readByte$0() !== 8)
+        return false;
+      flags = input.readByte$0();
+      input.readUint32$0();
+      input.readByte$0();
+      input.readByte$0();
+      if ((flags & 4) !== 0)
+        input.readBytes$1(input.readUint16$0());
+      if ((flags & 8) !== 0)
+        input.readString$0();
+      if ((flags & 16) !== 0)
+        input.readString$0();
+      if ((flags & 2) !== 0)
+        input.readUint16$0();
+      return true;
     }
   };
   A.HuffmanTable.prototype = {
     HuffmanTable$1(lengths) {
-      var i, t1, size, t2, bitLength, code, skip, t3, rtemp, reversed, j, t4, _this = this,
+      var i, t1, size, t2, bitLength, code, skip, t3, rTemp, reversed, j, t4, _this = this,
         listSize = lengths.length;
       for (i = 0; i < listSize; ++i) {
         t1 = lengths[i];
@@ -17009,9 +16504,9 @@
       for (bitLength = 1, code = 0, skip = 2; bitLength <= t1;) {
         for (t3 = bitLength << 16, i = 0; i < listSize; ++i)
           if (lengths[i] === bitLength) {
-            for (rtemp = code, reversed = 0, j = 0; j < bitLength; ++j) {
-              reversed = (reversed << 1 | rtemp & 1) >>> 0;
-              rtemp = rtemp >>> 1;
+            for (rTemp = code, reversed = 0, j = 0; j < bitLength; ++j) {
+              reversed = (reversed << 1 | rTemp & 1) >>> 0;
+              rTemp = rTemp >>> 1;
             }
             for (t4 = (t3 | i) >>> 0, j = reversed; j < size; j += skip) {
               if (!(j >= 0))
@@ -17026,30 +16521,82 @@
       }
     }
   };
-  A.Inflate.prototype = {
-    _inflate$0() {
-      var t1, t2, t3, t4, _this = this;
-      _this._bitBufferLen = _this._bitBuffer = 0;
-      if (!_this.inputSet)
-        return;
-      t1 = _this.__Inflate_input_A;
-      t1 === $ && A.throwLateFieldNI("input");
-      t2 = t1.start;
+  A.ZLibDecoderBase.prototype = {};
+  A._ZLibDecoder.prototype = {
+    decodeStream$4$raw$verify(input, output, raw, verify) {
+      var t1, t2, t3, t4, b, b0, buffer = null;
       while (true) {
-        t3 = t1.offset;
-        t4 = t1.__InputStream__length_A;
-        t4 === $ && A.throwLateFieldNI("_length");
-        if (!(t3 < t2 + t4))
+        t1 = input._input_memory_stream$_position;
+        t2 = input.__InputMemoryStream__length_A;
+        t2 === $ && A.throwLateFieldNI("_length");
+        if (!(t1 < t2))
+          break;
+        t2 = input.buffer;
+        t2.toString;
+        t3 = input._input_memory_stream$_position = t1 + 1;
+        t4 = t2.length;
+        if (!(t1 >= 0 && t1 < t4))
+          return A.ioore(t2, t1);
+        b = t2[t1];
+        input._input_memory_stream$_position = t3 + 1;
+        if (!(t3 >= 0 && t3 < t4))
+          return A.ioore(t2, t3);
+        b0 = t2[t3];
+        if ((b & 8) !== 8)
+          return false;
+        if (B.JSInt_methods.$mod(b * 256 + b0, 31) !== 0)
+          return false;
+        if ((b0 >>> 5 & 1) !== 0) {
+          input.readUint32$0();
+          return false;
+        }
+        if (buffer != null)
+          output.writeBytes$1(buffer);
+        t1 = A.Inflate$stream(input, null)._inflate$_output;
+        buffer = J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(t1._output_memory_stream$_buffer), t1._output_memory_stream$_buffer.byteOffset, t1.length);
+        input.readUint32$0();
+      }
+      if (buffer != null)
+        output.writeBytes$1(buffer);
+      return true;
+    }
+  };
+  A.Inflate.prototype = {
+    get$_inputStream() {
+      var t1 = this._inflate$_input;
+      if (t1 == null)
+        return t1;
+      t1.__InputMemoryStream__length_A === $ && A.throwLateFieldNI("_length");
+      return t1;
+    },
+    _inflate$0() {
+      var t1, t2, _this = this;
+      _this._bitBufferLen = _this._bitBuffer = 0;
+      if (_this.get$_inputStream() == null)
+        return;
+      while (true) {
+        t1 = _this.get$_inputStream();
+        t2 = t1._input_memory_stream$_position;
+        t1 = t1.__InputMemoryStream__length_A;
+        t1 === $ && A.throwLateFieldNI("_length");
+        if (!(t2 < t1))
           break;
         if (!_this._parseBlock$0())
-          break;
+          return;
       }
     },
     _parseBlock$0() {
-      var blockHeader, _this = this,
-        t1 = _this.__Inflate_input_A;
-      t1 === $ && A.throwLateFieldNI("input");
-      if (t1.get$isEOS())
+      var t1, t2, blockHeader, _this = this,
+        input = _this.get$_inputStream();
+      if (input != null) {
+        t1 = input._input_memory_stream$_position;
+        t2 = input.__InputMemoryStream__length_A;
+        t2 === $ && A.throwLateFieldNI("_length");
+        t2 = t1 >= t2;
+        t1 = t2;
+      } else
+        t1 = true;
+      if (t1)
         return false;
       blockHeader = _this._readBits$1(3);
       switch (B.JSInt_methods._shrOtherPositive$1(blockHeader, 1)) {
@@ -17071,58 +16618,66 @@
       return (blockHeader & 1) === 0;
     },
     _readBits$1($length) {
-      var t1, t2, t3, t4, octet, _this = this;
+      var t1, t2, b, t3, _this = this;
       if ($length === 0)
         return 0;
-      for (t1 = _this.__Inflate_input_A; t2 = _this._bitBufferLen, t2 < $length;) {
-        t1 === $ && A.throwLateFieldNI("input");
-        t3 = t1.offset;
-        t4 = t1.__InputStream__length_A;
-        t4 === $ && A.throwLateFieldNI("_length");
-        if (t3 >= t1.start + t4)
+      for (; t1 = _this._bitBufferLen, t1 < $length;) {
+        t1 = _this.get$_inputStream();
+        t2 = t1._input_memory_stream$_position;
+        t1 = t1.__InputMemoryStream__length_A;
+        t1 === $ && A.throwLateFieldNI("_length");
+        if (t2 >= t1)
           return -1;
-        t4 = t1.buffer;
-        t1.offset = t3 + 1;
-        if (!(t3 >= 0 && t3 < t4.length))
-          return A.ioore(t4, t3);
-        octet = t4[t3];
-        _this._bitBuffer = (_this._bitBuffer | B.JSInt_methods.$shl(octet, t2)) >>> 0;
+        t1 = _this.get$_inputStream();
+        t2 = t1.buffer;
+        t2.toString;
+        t1 = t1._input_memory_stream$_position++;
+        if (!(t1 >= 0 && t1 < t2.length))
+          return A.ioore(t2, t1);
+        b = t2[t1];
+        t1 = _this._bitBuffer;
+        t2 = _this._bitBufferLen;
+        _this._bitBuffer = (t1 | B.JSInt_methods.$shl(b, t2)) >>> 0;
         _this._bitBufferLen = t2 + 8;
       }
-      t1 = _this._bitBuffer;
+      t2 = _this._bitBuffer;
       t3 = B.JSInt_methods._shlPositive$1(1, $length);
-      _this._bitBuffer = B.JSInt_methods._shrBothPositive$1(t1, $length);
-      _this._bitBufferLen = t2 - $length;
-      return (t1 & t3 - 1) >>> 0;
+      _this._bitBuffer = B.JSInt_methods._shrBothPositive$1(t2, $length);
+      _this._bitBufferLen = t1 - $length;
+      return (t2 & t3 - 1) >>> 0;
     },
     _readCodeByTable$1(table) {
-      var maxCodeLength, t2, t3, t4, t5, octet, codeWithLength, codeLength, _this = this,
+      var maxCodeLength, t2, t3, b, t4, codeWithLength, codeLength, _this = this,
         t1 = table.__HuffmanTable_table_A;
       t1 === $ && A.throwLateFieldNI("table");
       maxCodeLength = table.maxCodeLength;
-      for (t2 = _this.__Inflate_input_A; t3 = _this._bitBufferLen, t3 < maxCodeLength;) {
-        t2 === $ && A.throwLateFieldNI("input");
-        t4 = t2.offset;
-        t5 = t2.__InputStream__length_A;
-        t5 === $ && A.throwLateFieldNI("_length");
-        if (t4 >= t2.start + t5)
+      for (; t2 = _this._bitBufferLen, t2 < maxCodeLength;) {
+        t2 = _this.get$_inputStream();
+        t3 = t2._input_memory_stream$_position;
+        t2 = t2.__InputMemoryStream__length_A;
+        t2 === $ && A.throwLateFieldNI("_length");
+        if (t3 >= t2)
           return -1;
-        t5 = t2.buffer;
-        t2.offset = t4 + 1;
-        if (!(t4 >= 0 && t4 < t5.length))
-          return A.ioore(t5, t4);
-        octet = t5[t4];
-        _this._bitBuffer = (_this._bitBuffer | B.JSInt_methods.$shl(octet, t3)) >>> 0;
+        t2 = _this.get$_inputStream();
+        t3 = t2.buffer;
+        t3.toString;
+        t2 = t2._input_memory_stream$_position++;
+        if (!(t2 >= 0 && t2 < t3.length))
+          return A.ioore(t3, t2);
+        b = t3[t2];
+        t2 = _this._bitBuffer;
+        t3 = _this._bitBufferLen;
+        _this._bitBuffer = (t2 | B.JSInt_methods.$shl(b, t3)) >>> 0;
         _this._bitBufferLen = t3 + 8;
       }
-      t2 = _this._bitBuffer;
-      t4 = (t2 & B.JSInt_methods.$shl(1, maxCodeLength) - 1) >>> 0;
+      t3 = _this._bitBuffer;
+      t4 = (t3 & B.JSInt_methods.$shl(1, maxCodeLength) - 1) >>> 0;
       if (!(t4 < t1.length))
         return A.ioore(t1, t4);
       codeWithLength = t1[t4];
       codeLength = codeWithLength >>> 16;
-      _this._bitBuffer = B.JSInt_methods._shrBothPositive$1(t2, codeLength);
-      _this._bitBufferLen = t3 - codeLength;
+      _this._bitBuffer = B.JSInt_methods._shrBothPositive$1(t3, codeLength);
+      _this._bitBufferLen = t2 - codeLength;
       return codeWithLength & 65535;
     },
     _parseUncompressedBlock$0() {
@@ -17132,11 +16687,9 @@
       t1 = _this._readBits$1(16);
       if (len !== 0 && len !== (t1 ^ 65535) >>> 0)
         return -1;
-      t1 = _this.__Inflate_input_A;
-      t1 === $ && A.throwLateFieldNI("input");
-      if (len > t1.get$length(0))
+      if (len > _this.get$_inputStream().get$length(0))
         return -1;
-      _this.output.writeInputStream$1(t1.readBytes$1(len));
+      _this._inflate$_output.writeStream$1(_this.get$_inputStream().readBytes$1(len));
       return 0;
     },
     _parseDynamicHuffmanBlock$0() {
@@ -17178,18 +16731,18 @@
         return -1;
       return _this._decodeHuffman$2(A.HuffmanTable$(litlenLengths), A.HuffmanTable$(distLengths));
     },
-    _decodeHuffman$2(litlen, dist) {
+    _decodeHuffman$2(litLen, dist) {
       var t1, code, t2, t3, ti, codeLength, distCode, distance, _this = this;
-      for (t1 = _this.output; true;) {
-        code = _this._readCodeByTable$1(litlen);
+      for (t1 = _this._inflate$_output; true;) {
+        code = _this._readCodeByTable$1(litLen);
         if (code < 0 || code > 285)
           return -1;
         if (code === 256)
           break;
         if (code < 256) {
-          if (t1.length === t1._output_stream$_buffer.length)
+          if (t1.length === t1._output_memory_stream$_buffer.length)
             t1._expandBuffer$0();
-          t2 = t1._output_stream$_buffer;
+          t2 = t1._output_memory_stream$_buffer;
           t3 = t1.length++;
           t2.$flags & 2 && A.throwUnsupportedOperation(t2);
           if (!(t3 >= 0 && t3 < t2.length))
@@ -17216,17 +16769,18 @@
         else
           t1.writeBytes$1(t1.subset$2(t2, codeLength - distance));
       }
-      for (t1 = _this.__Inflate_input_A; t2 = _this._bitBufferLen, t2 >= 8;) {
-        _this._bitBufferLen = t2 - 8;
-        t1 === $ && A.throwLateFieldNI("input");
-        if (--t1.offset < 0)
-          t1.offset = 0;
+      for (; t1 = _this._bitBufferLen, t1 >= 8;) {
+        _this._bitBufferLen = t1 - 8;
+        t1 = _this.get$_inputStream();
+        t2 = --t1._input_memory_stream$_position;
+        t3 = t1.__InputMemoryStream__length_A;
+        t3 === $ && A.throwLateFieldNI("_length");
+        t1._input_memory_stream$_position = B.JSInt_methods.clamp$2(t2, 0, t3);
       }
       return 0;
     },
     _decode$3(num, table, codeLengths) {
       var prev, i, code, prev0, repeat, t1, repeat0, i0, _this = this;
-      type$.List_int._as(codeLengths);
       for (prev = 0, i = 0; i < num;) {
         code = _this._readCodeByTable$1(table);
         if (code === -1)
@@ -17290,6 +16844,163 @@
       return 0;
     }
   };
+  A.ByteOrder.prototype = {
+    _enumToString$0() {
+      return "ByteOrder." + this._core$_name;
+    }
+  };
+  A.InputMemoryStream.prototype = {
+    get$length(_) {
+      var t1 = this.buffer;
+      return t1 == null ? 0 : t1.length - this._input_memory_stream$_position;
+    },
+    $index(_, index) {
+      var t1, t2;
+      A._asInt(index);
+      t1 = this.buffer;
+      t1.toString;
+      t2 = B.JSInt_methods.$add(this._input_memory_stream$_position, index);
+      if (!(t2 >= 0 && t2 < t1.length))
+        return A.ioore(t1, t2);
+      return t1[t2];
+    },
+    subset$2$length$position($length, position) {
+      var t1 = this.buffer;
+      if (t1 == null)
+        return A.InputMemoryStream$(A._setArrayType([], type$.JSArray_int), B.ByteOrder_0, null, null);
+      return A.InputMemoryStream$(t1, this.byteOrder, $length, position);
+    },
+    readByte$0() {
+      var t2,
+        t1 = this.buffer;
+      t1.toString;
+      t2 = this._input_memory_stream$_position++;
+      if (!(t2 >= 0 && t2 < t1.length))
+        return A.ioore(t1, t2);
+      return t1[t2];
+    }
+  };
+  A.InputStream.prototype = {
+    readUint16$0() {
+      var b1 = this.readByte$0(),
+        b2 = this.readByte$0();
+      if (this.byteOrder === B.ByteOrder_1)
+        return (b1 << 8 | b2) >>> 0;
+      return (b2 << 8 | b1) >>> 0;
+    },
+    readUint32$0() {
+      var _this = this,
+        b1 = _this.readByte$0(),
+        b2 = _this.readByte$0(),
+        b3 = _this.readByte$0(),
+        b4 = _this.readByte$0();
+      if (_this.byteOrder === B.ByteOrder_1)
+        return (b1 << 24 | b2 << 16 | b3 << 8 | b4) >>> 0;
+      return (b4 << 24 | b3 << 16 | b2 << 8 | b1) >>> 0;
+    },
+    readBytes$1(count) {
+      var _this = this,
+        bytes = _this.subset$2$length$position(count, _this._input_memory_stream$_position);
+      _this._input_memory_stream$_position = _this._input_memory_stream$_position + bytes.get$length(0);
+      return bytes;
+    },
+    readString$0() {
+      var b, _this = this,
+        codesToString = new A.InputStream_readString_codesToString(true),
+        codes = A._setArrayType([], type$.JSArray_int),
+        t1 = _this._input_memory_stream$_position,
+        t2 = _this.__InputMemoryStream__length_A;
+      t2 === $ && A.throwLateFieldNI("_length");
+      if (t1 >= t2)
+        return "";
+      for (; t1 = _this._input_memory_stream$_position, !(t1 >= _this.__InputMemoryStream__length_A);) {
+        t2 = _this.buffer;
+        t2.toString;
+        _this._input_memory_stream$_position = t1 + 1;
+        if (!(t1 >= 0 && t1 < t2.length))
+          return A.ioore(t2, t1);
+        b = t2[t1];
+        if (b === 0)
+          return codesToString.call$1(codes);
+        B.JSArray_methods.add$1(codes, b);
+      }
+      return codesToString.call$1(codes);
+    }
+  };
+  A.InputStream_readString_codesToString.prototype = {
+    call$1(codes) {
+      var str, str0, exception, t1;
+      type$.List_int._as(codes);
+      try {
+        str0 = B.Utf8Decoder_false.convert$1(codes);
+        str = str0;
+        return str;
+      } catch (exception) {
+        t1 = A.String_String$fromCharCodes(codes, 0, null);
+        return t1;
+      }
+    },
+    $signature: 69
+  };
+  A.OutputMemoryStream.prototype = {
+    getBytes$0() {
+      return J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(this._output_memory_stream$_buffer), this._output_memory_stream$_buffer.byteOffset, this.length);
+    },
+    writeBytes$1(bytes) {
+      var $length, t1, t2, t3, t4, _this = this;
+      type$.List_int._as(bytes);
+      $length = bytes.length;
+      for (; t1 = _this.length, t2 = t1 + $length, t3 = _this._output_memory_stream$_buffer, t4 = t3.length, t2 > t4;)
+        _this._expandBuffer$1(t2 - t4);
+      B.NativeUint8List_methods.setRange$3(t3, t1, t2, bytes);
+      _this.length += $length;
+    },
+    writeStream$1(stream) {
+      var t1, t2, t3, t4, t5, t6, _this = this;
+      while (true) {
+        t1 = _this.length;
+        t2 = stream.buffer;
+        t3 = t2 == null;
+        t4 = t3 ? 0 : t2.length - stream._input_memory_stream$_position;
+        t5 = _this._output_memory_stream$_buffer;
+        t6 = t5.length;
+        if (!(t1 + t4 > t6))
+          break;
+        _this._expandBuffer$1(t1 + (t3 ? 0 : t2.length - stream._input_memory_stream$_position) - t6);
+      }
+      if (!t3)
+        B.NativeUint8List_methods.setRange$4(t5, t1, t1 + stream.get$length(0), t2, stream._input_memory_stream$_position);
+      _this.length = _this.length + stream.get$length(0);
+    },
+    subset$2(start, end) {
+      var _this = this;
+      if (start < 0)
+        start = _this.length + start;
+      if (end == null)
+        end = _this.length;
+      else if (end < 0)
+        end = _this.length + end;
+      return J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(_this._output_memory_stream$_buffer), _this._output_memory_stream$_buffer.byteOffset + start, end - start);
+    },
+    subset$1(start) {
+      return this.subset$2(start, null);
+    },
+    _expandBuffer$1(required) {
+      var blockSize = required != null ? required > 32768 ? required : 32768 : 32768,
+        t1 = this._output_memory_stream$_buffer,
+        t2 = t1.length,
+        newBuffer = new Uint8Array((t2 + blockSize) * 2);
+      B.NativeUint8List_methods.setRange$3(newBuffer, 0, t2, t1);
+      this._output_memory_stream$_buffer = newBuffer;
+    },
+    _expandBuffer$0() {
+      return this._expandBuffer$1(null);
+    },
+    get$length(receiver) {
+      return this.length;
+    }
+  };
+  A.OutputStream.prototype = {};
   A.CancelationToken.prototype = {
     throwIfCanceled$0() {
       var t1 = this.__squadron_cancelation_token$_exception;
@@ -17419,14 +17130,14 @@
     call$1(client) {
       return client._sendUnstreamed$3("GET", this.url, type$.nullable_Map_String_String._as(this.headers));
     },
-    $signature: 28
+    $signature: 21
   };
   A.post_closure.prototype = {
     call$1(client) {
       var _this = this;
       return client._sendUnstreamed$5("POST", _this.url, type$.nullable_Map_String_String._as(_this.headers), _this.body, _this.encoding);
     },
-    $signature: 28
+    $signature: 21
   };
   A.RequestAbortedException.prototype = {};
   A.BaseClient.prototype = {
@@ -17484,13 +17195,13 @@
     call$2(key1, key2) {
       return A._asString(key1).toLowerCase() === A._asString(key2).toLowerCase();
     },
-    $signature: 36
+    $signature: 71
   };
   A.BaseRequest_closure0.prototype = {
     call$1(key) {
       return B.JSString_methods.get$hashCode(A._asString(key).toLowerCase());
     },
-    $signature: 30
+    $signature: 31
   };
   A.BaseResponse.prototype = {
     BaseResponse$7$contentLength$headers$isRedirect$persistentConnection$reasonPhrase$request(statusCode, contentLength, headers, isRedirect, persistentConnection, reasonPhrase, request) {
@@ -17651,20 +17362,20 @@
     call$2(value, header) {
       return this.call$3(value, header, null);
     },
-    $signature: 31
+    $signature: 32
   };
   A._readBody_closure.prototype = {
     call$1(_) {
       return null;
     },
-    $signature: 6
+    $signature: 5
   };
   A._readBody_closure0.prototype = {
     call$1(_) {
       A._asObject(_);
       return this._box_0.isError;
     },
-    $signature: 32
+    $signature: 33
   };
   A.ByteStream.prototype = {
     toBytes$0() {
@@ -17679,7 +17390,7 @@
     call$1(bytes) {
       return this.completer.complete$1(new Uint8Array(A._ensureNativeList(type$.List_int._as(bytes))));
     },
-    $signature: 33
+    $signature: 34
   };
   A.ClientException.prototype = {
     toString$0(_) {
@@ -17813,7 +17524,7 @@
       scanner.expectDone$0();
       return A.MediaType$(t4, t5, parameters);
     },
-    $signature: 34
+    $signature: 35
   };
   A.MediaType_toString_closure.prototype = {
     call$2(attribute, value) {
@@ -17832,13 +17543,13 @@
       } else
         t1._contents = t3 + value;
     },
-    $signature: 35
+    $signature: 36
   };
   A.MediaType_toString__closure.prototype = {
     call$1(match) {
       return "\\" + A.S(match.$index(0, 0));
     },
-    $signature: 29
+    $signature: 22
   };
   A.expectQuotedString_closure.prototype = {
     call$1(match) {
@@ -17846,7 +17557,7 @@
       t1.toString;
       return t1;
     },
-    $signature: 29
+    $signature: 22
   };
   A.TimedUriService.prototype = {
     postRequest$4(url, headers, body, timeoutSeconds) {
@@ -17971,7 +17682,7 @@
     decompressResponse$body$TimedUriService(serialized) {
       var $async$goto = 0,
         $async$completer = A._makeAsyncAwaitCompleter(type$.Map_String_dynamic),
-        $async$returnValue, body, obj, compressed, base64Body, bytes, gunz, t2, t3, headers, flags, t4, t5, t6, buffer, exception, t1, $status;
+        $async$returnValue, body, obj, compressed, base64Body, bytes, gunz, t2, t3, headers, output, exception, t1, $status;
       var $async$decompressResponse$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
         if ($async$errorCode === 1)
           return A._asyncRethrow($async$result, $async$completer);
@@ -17998,32 +17709,10 @@
                   base64Body = J.$index$asx(obj, "body");
                   if (typeof base64Body == "string") {
                     bytes = B.C_Base64Decoder.convert$1(base64Body);
-                    t1 = type$.List_int;
-                    t2 = A.InputStream$(t1._as(bytes), 0, null, 0);
-                    if (t2.readUint16$0() !== 35615)
-                      A.throwExpression(A.ArchiveException$("Invalid GZip Signature"));
-                    if (t2.readByte$0() !== 8)
-                      A.throwExpression(A.ArchiveException$("Invalid GZip Compression Methos"));
-                    flags = t2.readByte$0();
-                    t2.readUint32$0();
-                    t2.readByte$0();
-                    t2.readByte$0();
-                    if ((flags & 4) !== 0)
-                      t2.readBytes$1(t2.readUint16$0());
-                    if ((flags & 8) !== 0)
-                      t2.readString$0();
-                    if ((flags & 16) !== 0)
-                      t2.readString$0();
-                    if ((flags & 2) !== 0)
-                      t2.readUint16$0();
-                    t4 = A.HuffmanTable$(B.List_w2t);
-                    t5 = A.HuffmanTable$(B.List_AC1);
-                    t6 = new A.OutputStream(new Uint8Array(32768));
-                    t5 = new A.Inflate(t2, t6, t4, t5);
-                    t5.inputSet = true;
-                    t5._inflate$0();
-                    buffer = t1._as(J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(t6._output_stream$_buffer), 0, t6.length));
-                    gunz = buffer;
+                    t1 = type$.List_int._as(bytes);
+                    output = A.OutputMemoryStream$(32768);
+                    B.C__GZipDecoder.decodeStream$4$raw$verify(A.InputMemoryStream$(t1, B.ByteOrder_0, null, null), output, false, false);
+                    gunz = output.getBytes$0();
                     body = B.C_Utf8Codec.decode$1(gunz);
                   }
                 }
@@ -18065,7 +17754,7 @@
     call$2(k, v) {
       return new A.MapEntry(A._asString(k), J.toString$0$(v), type$.MapEntry_String_dynamic);
     },
-    $signature: 37
+    $signature: 38
   };
   A._extension_0__$getOperations_closure.prototype = {
     call$1($$req) {
@@ -18301,7 +17990,7 @@
     call$1($$req) {
       return this._this.noop$0();
     },
-    $signature: 39
+    $signature: 40
   };
   A._extension_0__$getOperations_closure4.prototype = {
     call$1($$req) {
@@ -18760,20 +18449,20 @@
     call$1(part) {
       return A._asString(part) !== "";
     },
-    $signature: 27
+    $signature: 23
   };
   A.Context_split_closure.prototype = {
     call$1(part) {
       return A._asString(part).length !== 0;
     },
-    $signature: 27
+    $signature: 23
   };
   A._validateArgList_closure.prototype = {
     call$1(arg) {
       A._asStringQ(arg);
       return arg == null ? "null" : '"' + arg + '"';
     },
-    $signature: 41
+    $signature: 42
   };
   A.InternalStyle.prototype = {
     getRoot$1(path) {
@@ -19533,7 +19222,7 @@
     call$0() {
       return this.color;
     },
-    $signature: 42
+    $signature: 43
   };
   A.Highlighter$__closure.prototype = {
     call$1(line) {
@@ -19541,34 +19230,34 @@
         t2 = A._arrayInstanceType(t1);
       return new A.WhereIterable(t1, t2._eval$1("bool(1)")._as(new A.Highlighter$___closure()), t2._eval$1("WhereIterable<1>")).get$length(0);
     },
-    $signature: 43
+    $signature: 44
   };
   A.Highlighter$___closure.prototype = {
     call$1(highlight) {
       var t1 = type$._Highlight._as(highlight).span;
       return t1.get$start().get$line() !== t1.get$end().get$line();
     },
-    $signature: 12
+    $signature: 10
   };
   A.Highlighter$__closure0.prototype = {
     call$1(line) {
       return type$._Line._as(line).url;
     },
-    $signature: 45
+    $signature: 46
   };
   A.Highlighter__collateLines_closure.prototype = {
     call$1(highlight) {
       var t1 = type$._Highlight._as(highlight).span.get$sourceUrl();
       return t1 == null ? new A.Object() : t1;
     },
-    $signature: 46
+    $signature: 47
   };
   A.Highlighter__collateLines_closure0.prototype = {
     call$2(highlight1, highlight2) {
       var t1 = type$._Highlight;
       return t1._as(highlight1).span.compareTo$1(0, t1._as(highlight2).span);
     },
-    $signature: 47
+    $signature: 48
   };
   A.Highlighter__collateLines_closure1.prototype = {
     call$1(entry) {
@@ -19611,20 +19300,20 @@
       }
       return lines;
     },
-    $signature: 48
+    $signature: 49
   };
   A.Highlighter__collateLines__closure.prototype = {
     call$1(highlight) {
       return type$._Highlight._as(highlight).span.get$end().get$line() < this.line.number;
     },
-    $signature: 12
+    $signature: 10
   };
   A.Highlighter_highlight_closure.prototype = {
     call$1(highlight) {
       type$._Highlight._as(highlight);
       return true;
     },
-    $signature: 12
+    $signature: 10
   };
   A.Highlighter__writeFileStart_closure.prototype = {
     call$0() {
@@ -19722,7 +19411,7 @@
       t2._contents = t4;
       return t4.length - t3.length;
     },
-    $signature: 25
+    $signature: 24
   };
   A.Highlighter__writeIndicator_closure0.prototype = {
     call$0() {
@@ -19742,7 +19431,7 @@
         t1._writeArrow$3$beginning(_this.line, Math.max(_this.highlight.span.get$end().get$column() - 1, 0), false);
       return t2._contents.length - t3.length;
     },
-    $signature: 25
+    $signature: 24
   };
   A.Highlighter__writeSidebar_closure.prototype = {
     call$0() {
@@ -19778,7 +19467,7 @@
       }
       return A._Highlight__normalizeEndOfLine(A._Highlight__normalizeTrailingNewline(A._Highlight__normalizeNewlines(newSpan)));
     },
-    $signature: 76
+    $signature: 77
   };
   A._Line.prototype = {
     toString$0(_) {
@@ -19972,7 +19661,7 @@
       A._asJSObject(t1.port2).close();
       A._asJSObject(init.G.self).close();
     },
-    $signature: 51
+    $signature: 52
   };
   A.bootstrap_closure.prototype = {
     call$1(e) {
@@ -19985,13 +19674,13 @@
       t3.toString;
       t2.connect$3(A.WorkerRequestExt_from(t3), A._asJSObject(t1.port2), this.initializer);
     },
-    $signature: 52
+    $signature: 53
   };
   A.$jsify_closure.prototype = {
     call$1(js) {
       A._asObject(js);
     },
-    $signature: 23
+    $signature: 25
   };
   A.$jsify_closure0.prototype = {
     call$1(js) {
@@ -20012,7 +19701,7 @@
       if (A._isTransferable(js))
         A._asInt(this.transfer.push(js));
     },
-    $signature: 23
+    $signature: 25
   };
   A.$jsify_closure1.prototype = {
     call$1(obj) {
@@ -20223,13 +19912,13 @@
     call$0() {
       return "Failed to post response " + A.S(this.res) + ": " + A.S(this.ex);
     },
-    $signature: 10
+    $signature: 11
   };
   A._WebWorkerChannel__inspectAndPostResponse_closure.prototype = {
     call$0() {
       return "Failed to post response " + A.S(this.res) + ": " + A.S(this.ex);
     },
-    $signature: 10
+    $signature: 11
   };
   A.JsWorkerRunnerExt_get_handle_closure.prototype = {
     call$1($event) {
@@ -20237,7 +19926,7 @@
       t1.toString;
       return this._this.processRequest$1(A.WorkerRequestExt_from(t1));
     },
-    $signature: 57
+    $signature: 58
   };
   A.InternalLogger.prototype = {};
   A._NoLogOutput.prototype = {
@@ -20623,19 +20312,19 @@
     call$1(k) {
       return A._asInt(k) <= 0;
     },
-    $signature: 58
+    $signature: 59
   };
   A.WorkerRunner_connect_closure.prototype = {
     call$1($event) {
       return this.logger.call$1(type$.OutputEvent._as($event).origin);
     },
-    $signature: 59
+    $signature: 60
   };
   A.WorkerRunner_connect_closure0.prototype = {
     call$0() {
       return "Connection failed: " + A.S(this.ex);
     },
-    $signature: 10
+    $signature: 11
   };
   A.WorkerRunner_processRequest_postError.prototype = {
     call$2(exception, stackTrace) {
@@ -20644,7 +20333,7 @@
     call$1(exception) {
       return this.call$2(exception, null);
     },
-    $signature: 18
+    $signature: 15
   };
   A.WorkerRunner_processRequest_post.prototype = {
     call$1(data) {
@@ -20663,7 +20352,7 @@
     call$0() {
       return new A.CancelationTokenReference(this.token.get$id(), new A._AsyncCompleter(new A._Future($.Zone__current, type$._Future_SquadronCanceledException), type$._AsyncCompleter_SquadronCanceledException), true);
     },
-    $signature: 60
+    $signature: 61
   };
   A.WorkerRunner__pipe_onDone.prototype = {
     call$0() {
@@ -20690,13 +20379,13 @@
       });
       return A._asyncStartSync($async$call$0, $async$completer);
     },
-    $signature: 26
+    $signature: 20
   };
   A.WorkerRunner__pipe_closure.prototype = {
     call$0() {
       return true;
     },
-    $signature: 19
+    $signature: 26
   };
   A.WorkerRunner__pipe_closure0.prototype = {
     call$0() {
@@ -20708,7 +20397,7 @@
       }
       return t1;
     },
-    $signature: 19
+    $signature: 26
   };
   A.WorkerRunner__pipe_closure1.prototype = {
     call$1(data) {
@@ -20725,7 +20414,7 @@
         this.postError.call$2(t1, type$.nullable_StackTrace._as(st));
       }
     },
-    $signature: 62
+    $signature: 63
   };
   A.CastConverter.prototype = {
     value$1$0($T) {
@@ -21132,7 +20821,7 @@
       type$.CanceledException._as(e);
       return A.SquadronCanceledException_SquadronCanceledException$from(this.tokenId, e, e.get$stackTrace());
     },
-    $signature: 63
+    $signature: 64
   };
   A.SquadronCanceledExceptions.prototype = {
     get$message() {
@@ -21158,13 +20847,13 @@
     call$1(e) {
       return type$.SquadronCanceledException._as(e).get$message();
     },
-    $signature: 64
+    $signature: 65
   };
   A.SquadronCanceledExceptions_serialize_closure.prototype = {
     call$1(e) {
       return type$.SquadronCanceledException._as(e).serialize$0();
     },
-    $signature: 65
+    $signature: 66
   };
   A.SquadronError.prototype = {
     serialize$0() {
@@ -21343,17 +21032,17 @@
       _instance_0_u = hunkHelpers._instance_0u,
       _instance_1_i = hunkHelpers._instance_1i,
       _static = hunkHelpers.installStaticTearOff;
-    _static_2(J, "_interceptors_JSArray__compareAny$closure", "JSArray__compareAny", 16);
-    _static_1(A, "async__AsyncRun__scheduleImmediateJsOverride$closure", "_AsyncRun__scheduleImmediateJsOverride", 7);
-    _static_1(A, "async__AsyncRun__scheduleImmediateWithSetImmediate$closure", "_AsyncRun__scheduleImmediateWithSetImmediate", 7);
-    _static_1(A, "async__AsyncRun__scheduleImmediateWithTimer$closure", "_AsyncRun__scheduleImmediateWithTimer", 7);
+    _static_2(J, "_interceptors_JSArray__compareAny$closure", "JSArray__compareAny", 27);
+    _static_1(A, "async__AsyncRun__scheduleImmediateJsOverride$closure", "_AsyncRun__scheduleImmediateJsOverride", 12);
+    _static_1(A, "async__AsyncRun__scheduleImmediateWithSetImmediate$closure", "_AsyncRun__scheduleImmediateWithSetImmediate", 12);
+    _static_1(A, "async__AsyncRun__scheduleImmediateWithTimer$closure", "_AsyncRun__scheduleImmediateWithTimer", 12);
     _static_0(A, "async___startMicrotaskLoop$closure", "_startMicrotaskLoop", 0);
-    _static_2(A, "async___nullErrorHandler$closure", "_nullErrorHandler", 5);
-    _instance(A._Completer.prototype, "get$completeError", 0, 1, null, ["call$2", "call$1"], ["completeError$2", "completeError$1"], 18, 0, 0);
-    _instance_2_u(A._Future.prototype, "get$_completeError", "_completeError$2", 5);
+    _static_2(A, "async___nullErrorHandler$closure", "_nullErrorHandler", 6);
+    _instance(A._Completer.prototype, "get$completeError", 0, 1, null, ["call$2", "call$1"], ["completeError$2", "completeError$1"], 15, 0, 0);
+    _instance_2_u(A._Future.prototype, "get$_completeError", "_completeError$2", 6);
     var _;
-    _instance_1_u(_ = A._StreamController.prototype, "get$_add", "_add$1", 9);
-    _instance_2_u(_, "get$_addError", "_addError$2", 5);
+    _instance_1_u(_ = A._StreamController.prototype, "get$_add", "_add$1", 8);
+    _instance_2_u(_, "get$_addError", "_addError$2", 6);
     _instance_0_u(_, "get$_close", "_close$0", 0);
     _instance_0_u(_ = A._ControllerSubscription.prototype, "get$_onPause", "_onPause$0", 0);
     _instance_0_u(_, "get$_onResume", "_onResume$0", 0);
@@ -21362,47 +21051,47 @@
     _instance_0_u(A._DoneStreamSubscription.prototype, "get$_onMicrotask", "_onMicrotask$0", 0);
     _instance_0_u(_ = A._ForwardingStreamSubscription.prototype, "get$_onPause", "_onPause$0", 0);
     _instance_0_u(_, "get$_onResume", "_onResume$0", 0);
-    _instance_1_u(_, "get$_handleData", "_handleData$1", 9);
-    _instance_2_u(_, "get$_handleError", "_handleError$2", 61);
+    _instance_1_u(_, "get$_handleData", "_handleData$1", 8);
+    _instance_2_u(_, "get$_handleError", "_handleError$2", 68);
     _instance_0_u(_, "get$_handleDone", "_handleDone$0", 0);
-    _static_2(A, "collection___defaultEquals$closure", "_defaultEquals", 15);
-    _static_1(A, "collection___defaultHashCode$closure", "_defaultHashCode", 14);
-    _static_2(A, "collection_ListBase__compareAny$closure", "ListBase__compareAny", 16);
-    _static_1(A, "convert___defaultToEncodable$closure", "_defaultToEncodable", 17);
-    _instance_1_i(_ = A._ByteCallbackSink.prototype, "get$add", "add$1", 9);
+    _static_2(A, "collection___defaultEquals$closure", "_defaultEquals", 28);
+    _static_1(A, "collection___defaultHashCode$closure", "_defaultHashCode", 29);
+    _static_2(A, "collection_ListBase__compareAny$closure", "ListBase__compareAny", 27);
+    _static_1(A, "convert___defaultToEncodable$closure", "_defaultToEncodable", 14);
+    _instance_1_i(_ = A._ByteCallbackSink.prototype, "get$add", "add$1", 8);
     _instance_0_u(_, "get$close", "close$0", 0);
-    _static_1(A, "core__identityHashCode$closure", "identityHashCode", 14);
-    _static_2(A, "core__identical$closure", "identical", 15);
+    _static_1(A, "core__identityHashCode$closure", "identityHashCode", 29);
+    _static_2(A, "core__identical$closure", "identical", 28);
     _static_1(A, "core_Uri_decodeComponent$closure", "Uri_decodeComponent", 13);
     _static_1(A, "case_insensitive_map_CaseInsensitiveMap__canonicalizer$closure", "CaseInsensitiveMap__canonicalizer", 13);
-    _static_1(A, "timeduri_service__$TimedUriServiceInitializer$closure", "$TimedUriServiceInitializer", 71);
+    _static_1(A, "timeduri_service__$TimedUriServiceInitializer$closure", "$TimedUriServiceInitializer", 72);
     _static_1(A, "_patch___toJSStr$closure", "_toJSStr", 2);
     _static_1(A, "_patch___toJSBool$closure", "_toJSBool", 2);
     _static_1(A, "_patch___toJSNum$closure", "_toJSNum", 2);
     _static_1(A, "_patch___toJSBigInt$closure", "_toJSBigInt", 2);
     _instance_1_u(_ = A._WebWorkerChannel.prototype, "get$reply", "reply$1", 3);
     _instance_1_u(_, "get$inspectAndReply", "inspectAndReply$1", 3);
-    _instance_1_u(_, "get$log", "log$1", 54);
-    _instance(_, "get$error", 0, 1, null, ["call$3", "call$1", "call$2"], ["error$3", "error$1", "error$2"], 55, 0, 0);
+    _instance_1_u(_, "get$log", "log$1", 55);
+    _instance(_, "get$error", 0, 1, null, ["call$3", "call$1", "call$2"], ["error$3", "error$1", "error$2"], 56, 0, 0);
     _static(A, "converter_Converter_identity$closure", 1, null, ["call$1$1", "call$1"], ["Converter_identity", function(x) {
       return A.Converter_identity(x, type$.dynamic);
-    }], 72, 0);
+    }], 73, 0);
     _static(A, "converter_Converter__castMap$closure", 1, null, ["call$2$1", "call$1"], ["Converter__castMap", function(x) {
       var t1 = type$.dynamic;
       return A.Converter__castMap(x, t1, t1);
-    }], 73, 0);
-    _static_1(A, "squadron_canceled_exception__SquadronCanceledExceptionExt_deserialize$closure", "SquadronCanceledExceptionExt_deserialize", 74);
+    }], 74, 0);
+    _static_1(A, "squadron_canceled_exception__SquadronCanceledExceptionExt_deserialize$closure", "SquadronCanceledExceptionExt_deserialize", 75);
     _static(A, "math__max$closure", 2, null, ["call$1$2", "call$2"], ["max", function(a, b) {
       return A.max(a, b, type$.num);
-    }], 75, 0);
-    _static_2(A, "_platform__isSameInstance$closure", "isSameInstance", 50);
+    }], 76, 0);
+    _static_2(A, "_platform__isSameInstance$closure", "isSameInstance", 51);
   })();
   (function inheritance() {
     var _mixin = hunkHelpers.mixin,
       _inherit = hunkHelpers.inherit,
       _inheritMany = hunkHelpers.inheritMany;
     _inherit(A.Object, null);
-    _inheritMany(A.Object, [A.JS_CONST, J.Interceptor, A.SafeToStringHook, J.ArrayIterator, A.Iterable, A.CastIterator, A.Closure, A.MapBase, A.Error, A.ListBase, A.SentinelValue, A.ListIterator, A.MappedIterator, A.WhereIterator, A.ExpandIterator, A.SkipIterator, A.EmptyIterator, A.WhereTypeIterator, A.FixedLengthListMixin, A.UnmodifiableListMixin, A.ConstantMap, A._KeysOrValuesOrElementsIterator, A.TypeErrorDecoder, A.NullThrownFromJavaScriptException, A.ExceptionAndStackTrace, A._StackTrace, A.LinkedHashMapCell, A.LinkedHashMapKeyIterator, A.LinkedHashMapValueIterator, A.LinkedHashMapEntryIterator, A.JSSyntaxRegExp, A._MatchImplementation, A._AllMatchesIterator, A.StringMatch, A._StringAllMatchesIterator, A._Cell, A._UnmodifiableNativeByteBufferView, A.Rti, A._FunctionParameters, A._Type, A._TimerImpl, A._AsyncAwaitCompleter, A._AsyncStarStreamController, A._IterationMarker, A._SyncStarIterator, A.AsyncError, A.TimeoutException, A._Completer, A._FutureListener, A._Future, A._AsyncCallbackEntry, A.Stream, A._StreamController, A._AsyncStreamControllerDispatch, A._BufferingStreamSubscription, A._AddStreamState, A._DelayedEvent, A._DelayedDone, A._PendingEvents, A._DoneStreamSubscription, A._StreamIterator, A._Zone, A._HashMapKeyIterator, A.SetBase, A._LinkedHashSetCell, A._LinkedHashSetIterator, A._UnmodifiableMapMixin, A.MapView, A.Codec, A.Converter, A._Base64Decoder, A.ByteConversionSink, A._JsonStringifier, A._JsonPrettyPrintMixin, A._Utf8Encoder, A._Utf8Decoder, A._BigIntImpl, A.DateTime, A.Duration, A._Enum, A.OutOfMemoryError, A.StackOverflowError, A._Exception, A.FormatException, A.IntegerDivisionByZeroException, A.MapEntry, A.Null, A._StringStackTrace, A.StringBuffer, A._Uri, A.UriData, A._SimpleUri, A.NullRejectionException, A.InputStreamBase, A.OutputStreamBase, A.HuffmanTable, A.Inflate, A.CancelationToken, A.CanonicalizedMap, A.ClientException, A.BaseClient, A.BaseRequest, A.BaseResponse, A.MediaType, A.TimedUriService, A.MarshalingContext, A.LogEvent, A.LogFilter, A.LogOutput, A.LogPrinter, A.Logger, A.OutputEvent, A.Context, A.Style, A.ParsedPath, A.PathException, A.SourceFile, A.SourceLocationMixin, A.SourceSpanMixin, A.Highlighter, A._Highlight, A._Line, A.SourceLocation, A.SourceSpanException, A._WebWorkerChannel, A.WorkerRunner, A.Converter0, A.LazyInPlaceMap, A.SerializationContext, A.SquadronException, A.CancelationTokenReference, A.StringScanner]);
+    _inheritMany(A.Object, [A.JS_CONST, J.Interceptor, A.SafeToStringHook, J.ArrayIterator, A.Iterable, A.CastIterator, A.Closure, A.MapBase, A.Error, A.ListBase, A.SentinelValue, A.ListIterator, A.MappedIterator, A.WhereIterator, A.ExpandIterator, A.SkipIterator, A.EmptyIterator, A.WhereTypeIterator, A.FixedLengthListMixin, A.UnmodifiableListMixin, A.ConstantMap, A._KeysOrValuesOrElementsIterator, A.TypeErrorDecoder, A.NullThrownFromJavaScriptException, A.ExceptionAndStackTrace, A._StackTrace, A.LinkedHashMapCell, A.LinkedHashMapKeyIterator, A.LinkedHashMapValueIterator, A.LinkedHashMapEntryIterator, A.JSSyntaxRegExp, A._MatchImplementation, A._AllMatchesIterator, A.StringMatch, A._StringAllMatchesIterator, A._Cell, A._UnmodifiableNativeByteBufferView, A.Rti, A._FunctionParameters, A._Type, A._TimerImpl, A._AsyncAwaitCompleter, A._AsyncStarStreamController, A._IterationMarker, A._SyncStarIterator, A.AsyncError, A.TimeoutException, A._Completer, A._FutureListener, A._Future, A._AsyncCallbackEntry, A.Stream, A._StreamController, A._AsyncStreamControllerDispatch, A._BufferingStreamSubscription, A._AddStreamState, A._DelayedEvent, A._DelayedDone, A._PendingEvents, A._DoneStreamSubscription, A._StreamIterator, A._Zone, A._HashMapKeyIterator, A.SetBase, A._LinkedHashSetCell, A._LinkedHashSetIterator, A._UnmodifiableMapMixin, A.MapView, A.Codec, A.Converter, A._Base64Decoder, A.ByteConversionSink, A._JsonStringifier, A._JsonPrettyPrintMixin, A._Utf8Encoder, A._Utf8Decoder, A._BigIntImpl, A.DateTime, A.Duration, A._Enum, A.OutOfMemoryError, A.StackOverflowError, A._Exception, A.FormatException, A.IntegerDivisionByZeroException, A.MapEntry, A.Null, A._StringStackTrace, A.StringBuffer, A._Uri, A.UriData, A._SimpleUri, A.NullRejectionException, A.ZLibDecoderBase, A.HuffmanTable, A.Inflate, A.InputStream, A.OutputStream, A.CancelationToken, A.CanonicalizedMap, A.ClientException, A.BaseClient, A.BaseRequest, A.BaseResponse, A.MediaType, A.TimedUriService, A.MarshalingContext, A.LogEvent, A.LogFilter, A.LogOutput, A.LogPrinter, A.Logger, A.OutputEvent, A.Context, A.Style, A.ParsedPath, A.PathException, A.SourceFile, A.SourceLocationMixin, A.SourceSpanMixin, A.Highlighter, A._Highlight, A._Line, A.SourceLocation, A.SourceSpanException, A._WebWorkerChannel, A.WorkerRunner, A.Converter0, A.LazyInPlaceMap, A.SerializationContext, A.SquadronException, A.CancelationTokenReference, A.StringScanner]);
     _inheritMany(J.Interceptor, [J.JSBool, J.JSNull, J.JavaScriptObject, J.JavaScriptBigInt, J.JavaScriptSymbol, J.JSNumber, J.JSString]);
     _inheritMany(J.JavaScriptObject, [J.LegacyJavaScriptObject, J.JSArray, A.NativeByteBuffer, A.NativeTypedData]);
     _inheritMany(J.LegacyJavaScriptObject, [J.PlainJavaScriptObject, J.UnknownJavaScriptObject, J.JavaScriptFunction]);
@@ -21413,7 +21102,7 @@
     _inheritMany(A._CastIterableBase, [A.CastIterable, A.__CastListBase__CastIterableBase_ListMixin]);
     _inherit(A._EfficientLengthCastIterable, A.CastIterable);
     _inherit(A._CastListBase, A.__CastListBase__CastIterableBase_ListMixin);
-    _inheritMany(A.Closure, [A.Closure2Args, A.CastMap_entries_closure, A.Closure0Args, A.Instantiation, A.TearOffClosure, A.initHooks_closure, A.initHooks_closure1, A._AsyncRun__initializeScheduleImmediate_internalCallback, A._AsyncRun__initializeScheduleImmediate_closure, A._awaitOnObject_closure, A._asyncStarHelper_closure0, A.Future_wait_closure, A._Future__propagateToListeners_handleWhenCompleteCallback_closure, A._Future_timeout_closure0, A.Stream_length_closure, A._CustomHashMap_closure, A._LinkedCustomHashMap_closure, A.MapBase_entries_closure, A._BigIntImpl_hashCode_finish, A.jsify__convert, A.promiseToFuture_closure, A.promiseToFuture_closure0, A.dartify_convert, A.CanonicalizedMap_entries_closure, A.CanonicalizedMap_keys_closure, A.get_closure, A.post_closure, A.BaseRequest_closure0, A.BrowserClient_send_closure, A._readBody_closure, A._readBody_closure0, A.ByteStream_toBytes_closure, A.MediaType_toString__closure, A.expectQuotedString_closure, A._extension_0__$getOperations_closure, A._extension_0__$getOperations_closure0, A._extension_0__$getOperations_closure1, A._extension_0__$getOperations_closure2, A._extension_0__$getOperations_closure3, A._extension_0__$getOperations_closure4, A.Context_joinAll_closure, A.Context_split_closure, A._validateArgList_closure, A.Highlighter$__closure, A.Highlighter$___closure, A.Highlighter$__closure0, A.Highlighter__collateLines_closure, A.Highlighter__collateLines_closure1, A.Highlighter__collateLines__closure, A.Highlighter_highlight_closure, A.bootstrap_closure0, A.bootstrap_closure, A.$jsify_closure, A.$jsify_closure0, A.$jsify_closure1, A.$dartify_closure, A.JsWorkerRunnerExt_get_handle_closure, A.WorkerRunner__checkOperations_closure, A.WorkerRunner_connect_closure, A.WorkerRunner_processRequest_postError, A.WorkerRunner_processRequest_post, A.WorkerRunner__pipe_closure1, A.ContextAwareConverter_value_closure, A.ContextAwareConverter_map_closure, A.ContextAwareConverter_map_closure0, A.ContextAwareConverter_map_closure1, A.ContextAwareConverter_map__closure, A.ContextAwareConverter_nmap_closure, A.ContextAwareConverter_nmap_closure0, A.ContextAwareConverter_nmap_closure1, A.ContextAwareConverter_nmap__closure, A.Converter__mapMap_closure, A.Converter_allowNull_closure, A.LazyInPlaceMap_entries_closure, A.SquadronCanceledException_SquadronCanceledException$from_closure, A.SquadronCanceledExceptions_message_closure, A.SquadronCanceledExceptions_serialize_closure]);
+    _inheritMany(A.Closure, [A.Closure2Args, A.CastMap_entries_closure, A.Closure0Args, A.Instantiation, A.TearOffClosure, A.initHooks_closure, A.initHooks_closure1, A._AsyncRun__initializeScheduleImmediate_internalCallback, A._AsyncRun__initializeScheduleImmediate_closure, A._awaitOnObject_closure, A._asyncStarHelper_closure0, A.Future_wait_closure, A._Future__propagateToListeners_handleWhenCompleteCallback_closure, A._Future_timeout_closure0, A.Stream_length_closure, A._CustomHashMap_closure, A._LinkedCustomHashMap_closure, A.MapBase_entries_closure, A._BigIntImpl_hashCode_finish, A.jsify__convert, A.promiseToFuture_closure, A.promiseToFuture_closure0, A.dartify_convert, A.InputStream_readString_codesToString, A.CanonicalizedMap_entries_closure, A.CanonicalizedMap_keys_closure, A.get_closure, A.post_closure, A.BaseRequest_closure0, A.BrowserClient_send_closure, A._readBody_closure, A._readBody_closure0, A.ByteStream_toBytes_closure, A.MediaType_toString__closure, A.expectQuotedString_closure, A._extension_0__$getOperations_closure, A._extension_0__$getOperations_closure0, A._extension_0__$getOperations_closure1, A._extension_0__$getOperations_closure2, A._extension_0__$getOperations_closure3, A._extension_0__$getOperations_closure4, A.Context_joinAll_closure, A.Context_split_closure, A._validateArgList_closure, A.Highlighter$__closure, A.Highlighter$___closure, A.Highlighter$__closure0, A.Highlighter__collateLines_closure, A.Highlighter__collateLines_closure1, A.Highlighter__collateLines__closure, A.Highlighter_highlight_closure, A.bootstrap_closure0, A.bootstrap_closure, A.$jsify_closure, A.$jsify_closure0, A.$jsify_closure1, A.$dartify_closure, A.JsWorkerRunnerExt_get_handle_closure, A.WorkerRunner__checkOperations_closure, A.WorkerRunner_connect_closure, A.WorkerRunner_processRequest_postError, A.WorkerRunner_processRequest_post, A.WorkerRunner__pipe_closure1, A.ContextAwareConverter_value_closure, A.ContextAwareConverter_map_closure, A.ContextAwareConverter_map_closure0, A.ContextAwareConverter_map_closure1, A.ContextAwareConverter_map__closure, A.ContextAwareConverter_nmap_closure, A.ContextAwareConverter_nmap_closure0, A.ContextAwareConverter_nmap_closure1, A.ContextAwareConverter_nmap__closure, A.Converter__mapMap_closure, A.Converter_allowNull_closure, A.LazyInPlaceMap_entries_closure, A.SquadronCanceledException_SquadronCanceledException$from_closure, A.SquadronCanceledExceptions_message_closure, A.SquadronCanceledExceptions_serialize_closure]);
     _inheritMany(A.Closure2Args, [A._CastListBase_sort_closure, A.CastMap_forEach_closure, A.ConstantMap_map_closure, A.JsLinkedHashMap_addAll_closure, A.initHooks_closure0, A._awaitOnObject_closure0, A._wrapJsFunctionForAsync_closure, A.Future_wait_handleError, A._Future__propagateToListeners_handleWhenCompleteCallback_closure0, A._Future_timeout_closure1, A._AddStreamState_makeErrorHandler_closure, A.LinkedHashMap_LinkedHashMap$from_closure, A.MapBase_mapToString_closure, A._JsonStringifier_writeMap_closure, A._JsonPrettyPrintMixin_writeMap_closure, A._BigIntImpl_hashCode_combine, A._Uri__makeQueryFromParameters_closure, A.Uri__parseIPv4Address_error, A.Uri_parseIPv6Address_error, A.Uri_parseIPv6Address_parseHex, A._Uri__makeQueryFromParametersDefault_writeParameter, A._Uri__makeQueryFromParametersDefault_closure, A.CanonicalizedMap_addAll_closure, A.CanonicalizedMap_forEach_closure, A.CanonicalizedMap_map_closure, A.BaseRequest_closure, A.MediaType_toString_closure, A.TimedUriService_getWithParamsRequest_closure, A.Highlighter__collateLines_closure0, A.WorkerRunner__pipe_closure2, A.Converter__mapMap__closure]);
     _inherit(A.CastList, A._CastListBase);
     _inheritMany(A.MapBase, [A.CastMap, A.JsLinkedHashMap, A._HashMap, A._JsonMap]);
@@ -21465,9 +21154,10 @@
     _inherit(A._JsonStringStringifierPretty, A.__JsonStringStringifierPretty__JsonStringStringifier__JsonPrettyPrintMixin);
     _inheritMany(A.ArgumentError, [A.RangeError, A.IndexError]);
     _inherit(A._DataUri, A._Uri);
-    _inherit(A.ArchiveException, A.FormatException);
-    _inherit(A.InputStream, A.InputStreamBase);
-    _inherit(A.OutputStream, A.OutputStreamBase);
+    _inheritMany(A.ZLibDecoderBase, [A._GZipDecoder, A._ZLibDecoder]);
+    _inheritMany(A._Enum, [A.ByteOrder, A.Level]);
+    _inherit(A.InputMemoryStream, A.InputStream);
+    _inherit(A.OutputMemoryStream, A.OutputStream);
     _inherit(A.RequestAbortedException, A.ClientException);
     _inherit(A.BrowserClient, A.BaseClient);
     _inherit(A.ByteStream, A.StreamView);
@@ -21477,7 +21167,6 @@
     _inherit(A.CaseInsensitiveMap, A.CanonicalizedMap);
     _inherit(A._$TimedUriService$WorkerService, A.TimedUriService);
     _inherit(A._$Deser, A.MarshalingContext);
-    _inherit(A.Level, A._Enum);
     _inherit(A.InternalStyle, A.Style);
     _inheritMany(A.InternalStyle, [A.PosixStyle, A.UrlStyle, A.WindowsStyle]);
     _inherit(A.FileLocation, A.SourceLocationMixin);
@@ -21508,12 +21197,12 @@
     typeUniverse: {eC: new Map(), tR: {}, eT: {}, tPV: {}, sEA: []},
     mangledGlobalNames: {int: "int", double: "double", num: "num", String: "String", bool: "bool", Null: "Null", List: "List", Object: "Object", Map: "Map", JSObject: "JSObject"},
     mangledNames: {},
-    types: ["~()", "Null()", "Object?(Object?)", "~(@)", "Future<Map<String,@>>(List<@>)", "~(Object,StackTrace)", "Null(@)", "~(~())", "Null(Object,StackTrace)", "~(Object?)", "String()", "~(Object?,Object?)", "bool(_Highlight)", "String(String)", "int(Object?)", "bool(Object?,Object?)", "int(@,@)", "@(@)", "~(Object[StackTrace?])", "bool()", "bool(Object?)", "@()", "int(int,int)", "Null(Object)", "~(String,@)", "int()", "Future<~>()", "bool(String)", "Future<Response>(Client)", "String(Match)", "int(String)", "Null(String,String[Object?])", "bool(Object)", "~(List<int>)", "MediaType()", "~(String,String)", "bool(String,String)", "MapEntry<String,@>(String,@)", "~(String,String?)", "Future<~>(List<@>)", "Null(~())", "String(String?)", "String?()", "int(_Line)", "~(String,int?)", "Object(_Line)", "Object(_Highlight)", "int(_Highlight,_Highlight)", "List<_Line>(MapEntry<Object,List<_Highlight>>)", "~(String,int)", "bool(Object,Object)", "~(WorkerRunner)", "Null(JSObject)", "int(int)", "~(LogEvent)", "~(Object[StackTrace?,int?])", "~(@,@)", "~(JSObject)", "bool(int)", "~(OutputEvent)", "CancelationTokenReference()", "~(@,StackTrace)", "Null(@,@)", "SquadronCanceledException(CanceledException)", "String(SquadronCanceledException)", "List<@>(SquadronCanceledException)", "_Future<@>?()", "~(int,@)", "Null(@,StackTrace)", "@(String)", "@(@,String)", "WorkerService(List<@>)", "0^(@)<Object?>", "Map<0^,1^>(@)<Object?,Object?>", "SquadronCanceledException?(List<@>?)", "0^(0^,0^)<num>", "SourceSpanWithContext()"],
+    types: ["~()", "Null()", "Object?(Object?)", "~(@)", "Future<Map<String,@>>(List<@>)", "Null(@)", "~(Object,StackTrace)", "Null(Object,StackTrace)", "~(Object?)", "~(Object?,Object?)", "bool(_Highlight)", "String()", "~(~())", "String(String)", "@(@)", "~(Object[StackTrace?])", "bool(Object?)", "@()", "int(int,int)", "~(String,@)", "Future<~>()", "Future<Response>(Client)", "String(Match)", "bool(String)", "int()", "Null(Object)", "bool()", "int(@,@)", "bool(Object?,Object?)", "int(Object?)", "~(String,int?)", "int(String)", "Null(String,String[Object?])", "bool(Object)", "~(List<int>)", "MediaType()", "~(String,String)", "~(@,@)", "MapEntry<String,@>(String,@)", "_Future<@>?()", "Future<~>(List<@>)", "@(String)", "String(String?)", "String?()", "int(_Line)", "@(@,String)", "Object(_Line)", "Object(_Highlight)", "int(_Highlight,_Highlight)", "List<_Line>(MapEntry<Object,List<_Highlight>>)", "int(int)", "bool(Object,Object)", "~(WorkerRunner)", "Null(JSObject)", "Null(~())", "~(LogEvent)", "~(Object[StackTrace?,int?])", "~(String,int)", "~(JSObject)", "bool(int)", "~(OutputEvent)", "CancelationTokenReference()", "Null(@,StackTrace)", "Null(@,@)", "SquadronCanceledException(CanceledException)", "String(SquadronCanceledException)", "List<@>(SquadronCanceledException)", "~(String,String?)", "~(@,StackTrace)", "String(List<int>)", "~(int,@)", "bool(String,String)", "WorkerService(List<@>)", "0^(@)<Object?>", "Map<0^,1^>(@)<Object?,Object?>", "SquadronCanceledException?(List<@>?)", "0^(0^,0^)<num>", "SourceSpanWithContext()"],
     interceptorsByTag: null,
     leafTags: null,
     arrayRti: Symbol("$ti")
   };
-  A._Universe_addRules(init.typeUniverse, JSON.parse('{"JavaScriptFunction":"LegacyJavaScriptObject","PlainJavaScriptObject":"LegacyJavaScriptObject","UnknownJavaScriptObject":"LegacyJavaScriptObject","NativeArrayBuffer":"NativeByteBuffer","JSArray":{"List":["1"],"EfficientLengthIterable":["1"],"JSObject":[],"Iterable":["1"]},"JSBool":{"bool":[],"TrustedGetRuntimeType":[]},"JSNull":{"Null":[],"TrustedGetRuntimeType":[]},"JavaScriptObject":{"JSObject":[]},"LegacyJavaScriptObject":{"JSObject":[]},"JSArraySafeToStringHook":{"SafeToStringHook":[]},"JSUnmodifiableArray":{"JSArray":["1"],"List":["1"],"EfficientLengthIterable":["1"],"JSObject":[],"Iterable":["1"]},"ArrayIterator":{"Iterator":["1"]},"JSNumber":{"double":[],"num":[],"Comparable":["num"]},"JSInt":{"double":[],"int":[],"num":[],"Comparable":["num"],"TrustedGetRuntimeType":[]},"JSNumNotInt":{"double":[],"num":[],"Comparable":["num"],"TrustedGetRuntimeType":[]},"JSString":{"String":[],"Comparable":["String"],"Pattern":[],"TrustedGetRuntimeType":[]},"_CastIterableBase":{"Iterable":["2"]},"CastIterator":{"Iterator":["2"]},"CastIterable":{"_CastIterableBase":["1","2"],"Iterable":["2"],"Iterable.E":"2"},"_EfficientLengthCastIterable":{"CastIterable":["1","2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"_CastListBase":{"ListBase":["2"],"List":["2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"]},"CastList":{"_CastListBase":["1","2"],"ListBase":["2"],"List":["2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"ListBase.E":"2","Iterable.E":"2"},"CastMap":{"MapBase":["3","4"],"Map":["3","4"],"MapBase.K":"3","MapBase.V":"4"},"LateError":{"Error":[]},"CodeUnits":{"ListBase":["int"],"UnmodifiableListMixin":["int"],"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"ListBase.E":"int","UnmodifiableListMixin.E":"int"},"EfficientLengthIterable":{"Iterable":["1"]},"ListIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"SubListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1","ListIterable.E":"1"},"ListIterator":{"Iterator":["1"]},"MappedIterable":{"Iterable":["2"],"Iterable.E":"2"},"EfficientLengthMappedIterable":{"MappedIterable":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"MappedIterator":{"Iterator":["2"]},"MappedListIterable":{"ListIterable":["2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2","ListIterable.E":"2"},"WhereIterable":{"Iterable":["1"],"Iterable.E":"1"},"WhereIterator":{"Iterator":["1"]},"ExpandIterable":{"Iterable":["2"],"Iterable.E":"2"},"ExpandIterator":{"Iterator":["2"]},"SkipIterable":{"Iterable":["1"],"Iterable.E":"1"},"EfficientLengthSkipIterable":{"SkipIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"SkipIterator":{"Iterator":["1"]},"EmptyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"EmptyIterator":{"Iterator":["1"]},"WhereTypeIterable":{"Iterable":["1"],"Iterable.E":"1"},"WhereTypeIterator":{"Iterator":["1"]},"UnmodifiableListBase":{"ListBase":["1"],"UnmodifiableListMixin":["1"],"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"ReversedListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1","ListIterable.E":"1"},"ConstantMap":{"Map":["1","2"]},"ConstantStringMap":{"ConstantMap":["1","2"],"Map":["1","2"]},"_KeysOrValues":{"Iterable":["1"],"Iterable.E":"1"},"_KeysOrValuesOrElementsIterator":{"Iterator":["1"]},"Instantiation":{"Closure":[],"Function":[]},"Instantiation1":{"Closure":[],"Function":[]},"Instantiation2":{"Closure":[],"Function":[]},"NullError":{"TypeError":[],"Error":[]},"JsNoSuchMethodError":{"Error":[]},"UnknownJsTypeError":{"Error":[]},"NullThrownFromJavaScriptException":{"Exception":[]},"_StackTrace":{"StackTrace":[]},"Closure":{"Function":[]},"Closure0Args":{"Closure":[],"Function":[]},"Closure2Args":{"Closure":[],"Function":[]},"TearOffClosure":{"Closure":[],"Function":[]},"StaticClosure":{"Closure":[],"Function":[]},"BoundClosure":{"Closure":[],"Function":[]},"RuntimeError":{"Error":[]},"JsLinkedHashMap":{"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"LinkedHashMapKeysIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"LinkedHashMapKeyIterator":{"Iterator":["1"]},"LinkedHashMapValuesIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"LinkedHashMapValueIterator":{"Iterator":["1"]},"LinkedHashMapEntriesIterable":{"EfficientLengthIterable":["MapEntry<1,2>"],"Iterable":["MapEntry<1,2>"],"Iterable.E":"MapEntry<1,2>"},"LinkedHashMapEntryIterator":{"Iterator":["MapEntry<1,2>"]},"JsIdentityLinkedHashMap":{"JsLinkedHashMap":["1","2"],"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"JSSyntaxRegExp":{"RegExp":[],"Pattern":[]},"_MatchImplementation":{"RegExpMatch":[],"Match":[]},"_AllMatchesIterable":{"Iterable":["RegExpMatch"],"Iterable.E":"RegExpMatch"},"_AllMatchesIterator":{"Iterator":["RegExpMatch"]},"StringMatch":{"Match":[]},"_StringAllMatchesIterable":{"Iterable":["Match"],"Iterable.E":"Match"},"_StringAllMatchesIterator":{"Iterator":["Match"]},"NativeByteBuffer":{"JSObject":[],"ByteBuffer":[],"TrustedGetRuntimeType":[]},"NativeTypedData":{"JSObject":[],"TypedData":[]},"_UnmodifiableNativeByteBufferView":{"ByteBuffer":[]},"NativeByteData":{"NativeTypedData":[],"ByteData":[],"JSObject":[],"TypedData":[],"TrustedGetRuntimeType":[]},"NativeTypedArray":{"NativeTypedData":[],"JavaScriptIndexingBehavior":["1"],"JSObject":[],"TypedData":[]},"NativeTypedArrayOfDouble":{"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"]},"NativeTypedArrayOfInt":{"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"]},"NativeFloat32List":{"Float32List":[],"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double","FixedLengthListMixin.E":"double"},"NativeFloat64List":{"Float64List":[],"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double","FixedLengthListMixin.E":"double"},"NativeInt16List":{"NativeTypedArrayOfInt":[],"Int16List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeInt32List":{"NativeTypedArrayOfInt":[],"Int32List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeInt8List":{"NativeTypedArrayOfInt":[],"Int8List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeUint16List":{"NativeTypedArrayOfInt":[],"Uint16List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeUint32List":{"NativeTypedArrayOfInt":[],"Uint32List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeUint8ClampedList":{"NativeTypedArrayOfInt":[],"Uint8ClampedList":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeUint8List":{"NativeTypedArrayOfInt":[],"Uint8List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"_Error":{"Error":[]},"_TypeError":{"TypeError":[],"Error":[]},"_Future":{"Future":["1"]},"_AsyncAwaitCompleter":{"Completer":["1"]},"_SyncStarIterator":{"Iterator":["1"]},"_SyncStarIterable":{"Iterable":["1"],"Iterable.E":"1"},"AsyncError":{"Error":[]},"TimeoutException":{"Exception":[]},"_Completer":{"Completer":["1"]},"_AsyncCompleter":{"_Completer":["1"],"Completer":["1"]},"StreamView":{"Stream":["1"]},"_StreamController":{"StreamController":["1"],"_StreamControllerLifecycle":["1"],"_EventSink":["1"],"_EventDispatch":["1"]},"_AsyncStreamController":{"_AsyncStreamControllerDispatch":["1"],"_StreamController":["1"],"StreamController":["1"],"_StreamControllerLifecycle":["1"],"_EventSink":["1"],"_EventDispatch":["1"]},"_ControllerStream":{"_StreamImpl":["1"],"Stream":["1"],"Stream.T":"1"},"_ControllerSubscription":{"_BufferingStreamSubscription":["1"],"StreamSubscription":["1"],"_EventSink":["1"],"_EventDispatch":["1"],"_BufferingStreamSubscription.T":"1"},"_StreamControllerAddStreamState":{"_AddStreamState":["1"]},"_BufferingStreamSubscription":{"StreamSubscription":["1"],"_EventSink":["1"],"_EventDispatch":["1"],"_BufferingStreamSubscription.T":"1"},"_StreamImpl":{"Stream":["1"]},"_DelayedData":{"_DelayedEvent":["1"]},"_DelayedError":{"_DelayedEvent":["@"]},"_DelayedDone":{"_DelayedEvent":["@"]},"_DoneStreamSubscription":{"StreamSubscription":["1"]},"_EmptyStream":{"Stream":["1"],"Stream.T":"1"},"_ForwardingStream":{"Stream":["2"]},"_ForwardingStreamSubscription":{"_BufferingStreamSubscription":["2"],"StreamSubscription":["2"],"_EventSink":["2"],"_EventDispatch":["2"],"_BufferingStreamSubscription.T":"2"},"_MapStream":{"_ForwardingStream":["1","2"],"Stream":["2"],"Stream.T":"2"},"_Zone":{"Zone":[]},"_RootZone":{"_Zone":[],"Zone":[]},"_HashMap":{"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_IdentityHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_CustomHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_HashMapKeyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"_HashMapKeyIterator":{"Iterator":["1"]},"_LinkedCustomHashMap":{"JsLinkedHashMap":["1","2"],"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_LinkedHashSet":{"_SetBase":["1"],"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_LinkedHashSetIterator":{"Iterator":["1"]},"ListBase":{"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"MapBase":{"Map":["1","2"]},"MapView":{"Map":["1","2"]},"UnmodifiableMapView":{"_UnmodifiableMapView_MapView__UnmodifiableMapMixin":["1","2"],"MapView":["1","2"],"_UnmodifiableMapMixin":["1","2"],"Map":["1","2"]},"SetBase":{"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_SetBase":{"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"Encoding":{"Codec":["String","List<int>"]},"_JsonMap":{"MapBase":["String","@"],"Map":["String","@"],"MapBase.K":"String","MapBase.V":"@"},"_JsonMapKeyIterable":{"ListIterable":["String"],"EfficientLengthIterable":["String"],"Iterable":["String"],"Iterable.E":"String","ListIterable.E":"String"},"AsciiCodec":{"Encoding":[],"Codec":["String","List<int>"]},"Base64Codec":{"Codec":["List<int>","String"]},"JsonUnsupportedObjectError":{"Error":[]},"JsonCyclicError":{"Error":[]},"JsonCodec":{"Codec":["Object?","String"]},"Latin1Codec":{"Encoding":[],"Codec":["String","List<int>"]},"Utf8Codec":{"Encoding":[],"Codec":["String","List<int>"]},"BigInt":{"Comparable":["BigInt"]},"DateTime":{"Comparable":["DateTime"]},"double":{"num":[],"Comparable":["num"]},"Duration":{"Comparable":["Duration"]},"int":{"num":[],"Comparable":["num"]},"List":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"num":{"Comparable":["num"]},"RegExpMatch":{"Match":[]},"String":{"Comparable":["String"],"Pattern":[]},"_BigIntImpl":{"BigInt":[],"Comparable":["BigInt"]},"AssertionError":{"Error":[]},"TypeError":{"Error":[]},"ArgumentError":{"Error":[]},"RangeError":{"Error":[]},"IndexError":{"Error":[]},"UnsupportedError":{"Error":[]},"UnimplementedError":{"Error":[]},"StateError":{"Error":[]},"ConcurrentModificationError":{"Error":[]},"OutOfMemoryError":{"Error":[]},"StackOverflowError":{"Error":[]},"_Exception":{"Exception":[]},"FormatException":{"Exception":[]},"IntegerDivisionByZeroException":{"Exception":[],"Error":[]},"_StringStackTrace":{"StackTrace":[]},"StringBuffer":{"StringSink":[]},"_Uri":{"Uri":[]},"_SimpleUri":{"Uri":[]},"_DataUri":{"Uri":[]},"NullRejectionException":{"Exception":[]},"ArchiveException":{"FormatException":[],"Exception":[]},"InputStream":{"InputStreamBase":[]},"CanonicalizedMap":{"Map":["2","3"]},"RequestAbortedException":{"Exception":[]},"BaseClient":{"Client":[]},"BrowserClient":{"Client":[]},"ByteStream":{"StreamView":["List<int>"],"Stream":["List<int>"],"StreamView.T":"List<int>","Stream.T":"List<int>"},"ClientException":{"Exception":[]},"Request":{"BaseRequest":[]},"StreamedResponseV2":{"StreamedResponse":[]},"CaseInsensitiveMap":{"CanonicalizedMap":["String","String","1"],"Map":["String","1"],"CanonicalizedMap.K":"String","CanonicalizedMap.V":"1","CanonicalizedMap.C":"String"},"_$TimedUriService$WorkerService":{"WorkerService":[]},"PathException":{"Exception":[]},"PosixStyle":{"InternalStyle":[]},"UrlStyle":{"InternalStyle":[]},"WindowsStyle":{"InternalStyle":[]},"FileLocation":{"SourceLocation":[],"Comparable":["SourceLocation"]},"_FileSpan":{"SourceSpanWithContext":[],"SourceSpan":[],"Comparable":["SourceSpan"]},"SourceLocation":{"Comparable":["SourceLocation"]},"SourceLocationMixin":{"SourceLocation":[],"Comparable":["SourceLocation"]},"SourceSpan":{"Comparable":["SourceSpan"]},"SourceSpanBase":{"SourceSpan":[],"Comparable":["SourceSpan"]},"SourceSpanException":{"Exception":[]},"SourceSpanFormatException":{"FormatException":[],"Exception":[]},"SourceSpanMixin":{"SourceSpan":[],"Comparable":["SourceSpan"]},"SourceSpanWithContext":{"SourceSpan":[],"Comparable":["SourceSpan"]},"_WebWorkerChannel":{"WorkerChannel":[]},"InternalLogger":{"Logger":[]},"_NoLogOutput":{"LogOutput":[]},"_DummyPrinter":{"LogPrinter":[]},"_LogAllFilter":{"LogFilter":[]},"CastConverter":{"Converter0":[]},"ContextAwareConverter":{"Converter0":[]},"LazyInPlaceMap":{"Map":["1","2"]},"SquadronCanceledException":{"SquadronException":[],"CanceledException":[],"Exception":[]},"SquadronCanceledExceptions":{"SquadronCanceledException":[],"SquadronException":[],"CanceledException":[],"Exception":[]},"SquadronError":{"SquadronException":[],"Exception":[]},"SquadronException":{"Exception":[]},"SquadronTimeoutException":{"SquadronCanceledException":[],"SquadronException":[],"CanceledException":[],"TimeoutException":[],"Exception":[]},"WorkerException":{"SquadronException":[],"Exception":[]},"CancelationTokenReference":{"SquadronCancelationToken":[],"CancelationToken":[]},"SquadronCancelationToken":{"CancelationToken":[]},"StringScannerException":{"FormatException":[],"Exception":[]},"ByteData":{"TypedData":[]},"Int8List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint8List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint8ClampedList":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Int16List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint16List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Int32List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint32List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Float32List":{"List":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"]},"Float64List":{"List":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"]},"CanceledException":{"Exception":[]}}'));
+  A._Universe_addRules(init.typeUniverse, JSON.parse('{"JavaScriptFunction":"LegacyJavaScriptObject","PlainJavaScriptObject":"LegacyJavaScriptObject","UnknownJavaScriptObject":"LegacyJavaScriptObject","NativeArrayBuffer":"NativeByteBuffer","JSArray":{"List":["1"],"EfficientLengthIterable":["1"],"JSObject":[],"Iterable":["1"]},"JSBool":{"bool":[],"TrustedGetRuntimeType":[]},"JSNull":{"Null":[],"TrustedGetRuntimeType":[]},"JavaScriptObject":{"JSObject":[]},"LegacyJavaScriptObject":{"JSObject":[]},"JSArraySafeToStringHook":{"SafeToStringHook":[]},"JSUnmodifiableArray":{"JSArray":["1"],"List":["1"],"EfficientLengthIterable":["1"],"JSObject":[],"Iterable":["1"]},"ArrayIterator":{"Iterator":["1"]},"JSNumber":{"double":[],"num":[],"Comparable":["num"]},"JSInt":{"double":[],"int":[],"num":[],"Comparable":["num"],"TrustedGetRuntimeType":[]},"JSNumNotInt":{"double":[],"num":[],"Comparable":["num"],"TrustedGetRuntimeType":[]},"JSString":{"String":[],"Comparable":["String"],"Pattern":[],"TrustedGetRuntimeType":[]},"_CastIterableBase":{"Iterable":["2"]},"CastIterator":{"Iterator":["2"]},"CastIterable":{"_CastIterableBase":["1","2"],"Iterable":["2"],"Iterable.E":"2"},"_EfficientLengthCastIterable":{"CastIterable":["1","2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"_CastListBase":{"ListBase":["2"],"List":["2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"]},"CastList":{"_CastListBase":["1","2"],"ListBase":["2"],"List":["2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"ListBase.E":"2","Iterable.E":"2"},"CastMap":{"MapBase":["3","4"],"Map":["3","4"],"MapBase.K":"3","MapBase.V":"4"},"LateError":{"Error":[]},"CodeUnits":{"ListBase":["int"],"UnmodifiableListMixin":["int"],"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"ListBase.E":"int","UnmodifiableListMixin.E":"int"},"EfficientLengthIterable":{"Iterable":["1"]},"ListIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"SubListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1","ListIterable.E":"1"},"ListIterator":{"Iterator":["1"]},"MappedIterable":{"Iterable":["2"],"Iterable.E":"2"},"EfficientLengthMappedIterable":{"MappedIterable":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"MappedIterator":{"Iterator":["2"]},"MappedListIterable":{"ListIterable":["2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2","ListIterable.E":"2"},"WhereIterable":{"Iterable":["1"],"Iterable.E":"1"},"WhereIterator":{"Iterator":["1"]},"ExpandIterable":{"Iterable":["2"],"Iterable.E":"2"},"ExpandIterator":{"Iterator":["2"]},"SkipIterable":{"Iterable":["1"],"Iterable.E":"1"},"EfficientLengthSkipIterable":{"SkipIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"SkipIterator":{"Iterator":["1"]},"EmptyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"EmptyIterator":{"Iterator":["1"]},"WhereTypeIterable":{"Iterable":["1"],"Iterable.E":"1"},"WhereTypeIterator":{"Iterator":["1"]},"UnmodifiableListBase":{"ListBase":["1"],"UnmodifiableListMixin":["1"],"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"ReversedListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1","ListIterable.E":"1"},"ConstantMap":{"Map":["1","2"]},"ConstantStringMap":{"ConstantMap":["1","2"],"Map":["1","2"]},"_KeysOrValues":{"Iterable":["1"],"Iterable.E":"1"},"_KeysOrValuesOrElementsIterator":{"Iterator":["1"]},"Instantiation":{"Closure":[],"Function":[]},"Instantiation1":{"Closure":[],"Function":[]},"Instantiation2":{"Closure":[],"Function":[]},"NullError":{"TypeError":[],"Error":[]},"JsNoSuchMethodError":{"Error":[]},"UnknownJsTypeError":{"Error":[]},"NullThrownFromJavaScriptException":{"Exception":[]},"_StackTrace":{"StackTrace":[]},"Closure":{"Function":[]},"Closure0Args":{"Closure":[],"Function":[]},"Closure2Args":{"Closure":[],"Function":[]},"TearOffClosure":{"Closure":[],"Function":[]},"StaticClosure":{"Closure":[],"Function":[]},"BoundClosure":{"Closure":[],"Function":[]},"RuntimeError":{"Error":[]},"JsLinkedHashMap":{"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"LinkedHashMapKeysIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"LinkedHashMapKeyIterator":{"Iterator":["1"]},"LinkedHashMapValuesIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"LinkedHashMapValueIterator":{"Iterator":["1"]},"LinkedHashMapEntriesIterable":{"EfficientLengthIterable":["MapEntry<1,2>"],"Iterable":["MapEntry<1,2>"],"Iterable.E":"MapEntry<1,2>"},"LinkedHashMapEntryIterator":{"Iterator":["MapEntry<1,2>"]},"JsIdentityLinkedHashMap":{"JsLinkedHashMap":["1","2"],"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"JSSyntaxRegExp":{"RegExp":[],"Pattern":[]},"_MatchImplementation":{"RegExpMatch":[],"Match":[]},"_AllMatchesIterable":{"Iterable":["RegExpMatch"],"Iterable.E":"RegExpMatch"},"_AllMatchesIterator":{"Iterator":["RegExpMatch"]},"StringMatch":{"Match":[]},"_StringAllMatchesIterable":{"Iterable":["Match"],"Iterable.E":"Match"},"_StringAllMatchesIterator":{"Iterator":["Match"]},"NativeByteBuffer":{"JSObject":[],"ByteBuffer":[],"TrustedGetRuntimeType":[]},"NativeTypedData":{"JSObject":[],"TypedData":[]},"_UnmodifiableNativeByteBufferView":{"ByteBuffer":[]},"NativeByteData":{"NativeTypedData":[],"ByteData":[],"JSObject":[],"TypedData":[],"TrustedGetRuntimeType":[]},"NativeTypedArray":{"NativeTypedData":[],"JavaScriptIndexingBehavior":["1"],"JSObject":[],"TypedData":[]},"NativeTypedArrayOfDouble":{"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"]},"NativeTypedArrayOfInt":{"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"]},"NativeFloat32List":{"Float32List":[],"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double","FixedLengthListMixin.E":"double"},"NativeFloat64List":{"Float64List":[],"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double","FixedLengthListMixin.E":"double"},"NativeInt16List":{"NativeTypedArrayOfInt":[],"Int16List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeInt32List":{"NativeTypedArrayOfInt":[],"Int32List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeInt8List":{"NativeTypedArrayOfInt":[],"Int8List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeUint16List":{"NativeTypedArrayOfInt":[],"Uint16List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeUint32List":{"NativeTypedArrayOfInt":[],"Uint32List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeUint8ClampedList":{"NativeTypedArrayOfInt":[],"Uint8ClampedList":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeUint8List":{"NativeTypedArrayOfInt":[],"Uint8List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"_Error":{"Error":[]},"_TypeError":{"TypeError":[],"Error":[]},"_Future":{"Future":["1"]},"_AsyncAwaitCompleter":{"Completer":["1"]},"_SyncStarIterator":{"Iterator":["1"]},"_SyncStarIterable":{"Iterable":["1"],"Iterable.E":"1"},"AsyncError":{"Error":[]},"TimeoutException":{"Exception":[]},"_Completer":{"Completer":["1"]},"_AsyncCompleter":{"_Completer":["1"],"Completer":["1"]},"StreamView":{"Stream":["1"]},"_StreamController":{"StreamController":["1"],"_StreamControllerLifecycle":["1"],"_EventSink":["1"],"_EventDispatch":["1"]},"_AsyncStreamController":{"_AsyncStreamControllerDispatch":["1"],"_StreamController":["1"],"StreamController":["1"],"_StreamControllerLifecycle":["1"],"_EventSink":["1"],"_EventDispatch":["1"]},"_ControllerStream":{"_StreamImpl":["1"],"Stream":["1"],"Stream.T":"1"},"_ControllerSubscription":{"_BufferingStreamSubscription":["1"],"StreamSubscription":["1"],"_EventSink":["1"],"_EventDispatch":["1"],"_BufferingStreamSubscription.T":"1"},"_StreamControllerAddStreamState":{"_AddStreamState":["1"]},"_BufferingStreamSubscription":{"StreamSubscription":["1"],"_EventSink":["1"],"_EventDispatch":["1"],"_BufferingStreamSubscription.T":"1"},"_StreamImpl":{"Stream":["1"]},"_DelayedData":{"_DelayedEvent":["1"]},"_DelayedError":{"_DelayedEvent":["@"]},"_DelayedDone":{"_DelayedEvent":["@"]},"_DoneStreamSubscription":{"StreamSubscription":["1"]},"_EmptyStream":{"Stream":["1"],"Stream.T":"1"},"_ForwardingStream":{"Stream":["2"]},"_ForwardingStreamSubscription":{"_BufferingStreamSubscription":["2"],"StreamSubscription":["2"],"_EventSink":["2"],"_EventDispatch":["2"],"_BufferingStreamSubscription.T":"2"},"_MapStream":{"_ForwardingStream":["1","2"],"Stream":["2"],"Stream.T":"2"},"_Zone":{"Zone":[]},"_RootZone":{"_Zone":[],"Zone":[]},"_HashMap":{"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_IdentityHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_CustomHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_HashMapKeyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"_HashMapKeyIterator":{"Iterator":["1"]},"_LinkedCustomHashMap":{"JsLinkedHashMap":["1","2"],"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_LinkedHashSet":{"_SetBase":["1"],"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_LinkedHashSetIterator":{"Iterator":["1"]},"ListBase":{"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"MapBase":{"Map":["1","2"]},"MapView":{"Map":["1","2"]},"UnmodifiableMapView":{"_UnmodifiableMapView_MapView__UnmodifiableMapMixin":["1","2"],"MapView":["1","2"],"_UnmodifiableMapMixin":["1","2"],"Map":["1","2"]},"SetBase":{"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_SetBase":{"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"Encoding":{"Codec":["String","List<int>"]},"_JsonMap":{"MapBase":["String","@"],"Map":["String","@"],"MapBase.K":"String","MapBase.V":"@"},"_JsonMapKeyIterable":{"ListIterable":["String"],"EfficientLengthIterable":["String"],"Iterable":["String"],"Iterable.E":"String","ListIterable.E":"String"},"AsciiCodec":{"Encoding":[],"Codec":["String","List<int>"]},"Base64Codec":{"Codec":["List<int>","String"]},"JsonUnsupportedObjectError":{"Error":[]},"JsonCyclicError":{"Error":[]},"JsonCodec":{"Codec":["Object?","String"]},"Latin1Codec":{"Encoding":[],"Codec":["String","List<int>"]},"Utf8Codec":{"Encoding":[],"Codec":["String","List<int>"]},"BigInt":{"Comparable":["BigInt"]},"DateTime":{"Comparable":["DateTime"]},"double":{"num":[],"Comparable":["num"]},"Duration":{"Comparable":["Duration"]},"int":{"num":[],"Comparable":["num"]},"List":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"num":{"Comparable":["num"]},"RegExpMatch":{"Match":[]},"String":{"Comparable":["String"],"Pattern":[]},"_BigIntImpl":{"BigInt":[],"Comparable":["BigInt"]},"AssertionError":{"Error":[]},"TypeError":{"Error":[]},"ArgumentError":{"Error":[]},"RangeError":{"Error":[]},"IndexError":{"Error":[]},"UnsupportedError":{"Error":[]},"UnimplementedError":{"Error":[]},"StateError":{"Error":[]},"ConcurrentModificationError":{"Error":[]},"OutOfMemoryError":{"Error":[]},"StackOverflowError":{"Error":[]},"_Exception":{"Exception":[]},"FormatException":{"Exception":[]},"IntegerDivisionByZeroException":{"Exception":[],"Error":[]},"_StringStackTrace":{"StackTrace":[]},"StringBuffer":{"StringSink":[]},"_Uri":{"Uri":[]},"_SimpleUri":{"Uri":[]},"_DataUri":{"Uri":[]},"NullRejectionException":{"Exception":[]},"InputMemoryStream":{"InputStream":[]},"OutputMemoryStream":{"OutputStream":[]},"CanonicalizedMap":{"Map":["2","3"]},"RequestAbortedException":{"Exception":[]},"BaseClient":{"Client":[]},"BrowserClient":{"Client":[]},"ByteStream":{"StreamView":["List<int>"],"Stream":["List<int>"],"StreamView.T":"List<int>","Stream.T":"List<int>"},"ClientException":{"Exception":[]},"Request":{"BaseRequest":[]},"StreamedResponseV2":{"StreamedResponse":[]},"CaseInsensitiveMap":{"CanonicalizedMap":["String","String","1"],"Map":["String","1"],"CanonicalizedMap.K":"String","CanonicalizedMap.V":"1","CanonicalizedMap.C":"String"},"_$TimedUriService$WorkerService":{"WorkerService":[]},"PathException":{"Exception":[]},"PosixStyle":{"InternalStyle":[]},"UrlStyle":{"InternalStyle":[]},"WindowsStyle":{"InternalStyle":[]},"FileLocation":{"SourceLocation":[],"Comparable":["SourceLocation"]},"_FileSpan":{"SourceSpanWithContext":[],"SourceSpan":[],"Comparable":["SourceSpan"]},"SourceLocation":{"Comparable":["SourceLocation"]},"SourceLocationMixin":{"SourceLocation":[],"Comparable":["SourceLocation"]},"SourceSpan":{"Comparable":["SourceSpan"]},"SourceSpanBase":{"SourceSpan":[],"Comparable":["SourceSpan"]},"SourceSpanException":{"Exception":[]},"SourceSpanFormatException":{"FormatException":[],"Exception":[]},"SourceSpanMixin":{"SourceSpan":[],"Comparable":["SourceSpan"]},"SourceSpanWithContext":{"SourceSpan":[],"Comparable":["SourceSpan"]},"_WebWorkerChannel":{"WorkerChannel":[]},"InternalLogger":{"Logger":[]},"_NoLogOutput":{"LogOutput":[]},"_DummyPrinter":{"LogPrinter":[]},"_LogAllFilter":{"LogFilter":[]},"CastConverter":{"Converter0":[]},"ContextAwareConverter":{"Converter0":[]},"LazyInPlaceMap":{"Map":["1","2"]},"SquadronCanceledException":{"SquadronException":[],"CanceledException":[],"Exception":[]},"SquadronCanceledExceptions":{"SquadronCanceledException":[],"SquadronException":[],"CanceledException":[],"Exception":[]},"SquadronError":{"SquadronException":[],"Exception":[]},"SquadronException":{"Exception":[]},"SquadronTimeoutException":{"SquadronCanceledException":[],"SquadronException":[],"CanceledException":[],"TimeoutException":[],"Exception":[]},"WorkerException":{"SquadronException":[],"Exception":[]},"CancelationTokenReference":{"SquadronCancelationToken":[],"CancelationToken":[]},"SquadronCancelationToken":{"CancelationToken":[]},"StringScannerException":{"FormatException":[],"Exception":[]},"ByteData":{"TypedData":[]},"Int8List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint8List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint8ClampedList":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Int16List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint16List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Int32List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint32List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Float32List":{"List":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"]},"Float64List":{"List":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"]},"CanceledException":{"Exception":[]}}'));
   A._Universe_addErasedTypes(init.typeUniverse, JSON.parse('{"UnmodifiableListBase":1,"__CastListBase__CastIterableBase_ListMixin":2,"NativeTypedArray":1,"_DelayedEvent":1,"Converter":2}'));
   var string$ = {
     x00_____: "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\u03f6\x00\u0404\u03f4 \u03f4\u03f6\u01f6\u01f6\u03f6\u03fc\u01f4\u03ff\u03ff\u0584\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u05d4\u01f4\x00\u01f4\x00\u0504\u05c4\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u0400\x00\u0400\u0200\u03f7\u0200\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u03ff\u0200\u0200\u0200\u03f7\x00",
@@ -21707,6 +21396,8 @@
     B.UnknownJavaScriptObject_methods = J.UnknownJavaScriptObject.prototype;
     B.AsciiDecoder_false_127 = new A.AsciiDecoder(false, 127);
     B.AsciiEncoder_127 = new A.AsciiEncoder(127);
+    B.ByteOrder_0 = new A.ByteOrder("littleEndian");
+    B.ByteOrder_1 = new A.ByteOrder("bigEndian");
     B.C__EmptyStream = new A._EmptyStream(A.findType("_EmptyStream<List<int>>"));
     B.ByteStream__EmptyStream = new A.ByteStream(B.C__EmptyStream);
     B.CONSTANT = new A.Instantiation1(A.math__max$closure(), A.findType("Instantiation1<int>"));
@@ -21849,7 +21540,9 @@
     B.C_Utf8Codec = new A.Utf8Codec();
     B.C_Utf8Encoder = new A.Utf8Encoder();
     B.C__DelayedDone = new A._DelayedDone();
+    B.C__GZipDecoder = new A._GZipDecoder();
     B.C__RootZone = new A._RootZone();
+    B.C__ZLibDecoder = new A._ZLibDecoder();
     B.Duration_0 = new A.Duration(0);
     B.JsonDecoder_null = new A.JsonDecoder(null);
     B.JsonEncoder_null_null = new A.JsonEncoder(null, null);

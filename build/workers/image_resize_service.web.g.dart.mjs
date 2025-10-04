@@ -123,6 +123,7 @@ class CompiledApp {
       _110: (s, p, i) => s.lastIndexOf(p, i),
       _111: (string, token) => string.split(token),
       _113: o => o instanceof Array,
+      _121: (a, s, e) => a.slice(s, e),
       _124: a => a.length,
       _126: (a, i) => a[i],
       _127: (a, i, v) => a[i] = v,
@@ -301,10 +302,22 @@ class CompiledApp {
           jsArray[jsArrayOffset + i] = getValue(wasmArray, wasmArrayOffset + i);
         }
       },
+      _317: (jsArray, jsArrayOffset, wasmArray, wasmArrayOffset, length) => {
+        const setValue = dartInstance.exports.$wasmF32ArraySet;
+        for (let i = 0; i < length; i++) {
+          setValue(wasmArray, wasmArrayOffset + i, jsArray[jsArrayOffset + i]);
+        }
+      },
       _318: (jsArray, jsArrayOffset, wasmArray, wasmArrayOffset, length) => {
         const getValue = dartInstance.exports.$wasmF64ArrayGet;
         for (let i = 0; i < length; i++) {
           jsArray[jsArrayOffset + i] = getValue(wasmArray, wasmArrayOffset + i);
+        }
+      },
+      _319: (jsArray, jsArrayOffset, wasmArray, wasmArrayOffset, length) => {
+        const setValue = dartInstance.exports.$wasmF64ArraySet;
+        for (let i = 0; i < length; i++) {
+          setValue(wasmArray, wasmArrayOffset + i, jsArray[jsArrayOffset + i]);
         }
       },
       _320: x0 => new ArrayBuffer(x0),

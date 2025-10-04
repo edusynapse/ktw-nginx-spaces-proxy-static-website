@@ -67265,7 +67265,7 @@ $S:9}
 A.cT1.prototype={
 $1(a){var s=A.jN().b
 s=s==null?null:s.canvasKitBaseUrl
-return(s==null?"https://www.gstatic.com/flutter-canvaskit/c29809135135e262a912cf583b2c90deb9ded610/":s)+a},
+return(s==null?"https://www.gstatic.com/flutter-canvaskit/d3d45dcf251823c1769909cd43698d126db38deb/":s)+a},
 $S:36}
 A.XM.prototype={
 j4(a,b){var s,r=this.a
@@ -140003,7 +140003,7 @@ r=l.p4
 r.toString
 j.a7v(s,r,m)
 break
-case 2:l.P4()
+case 2:if(l.a.d.gcU())l.P4()
 if(l.p2!=null&&l.p4!=null){l.id.sp(0,0)
 j=l.id
 j.z=B.cC

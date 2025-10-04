@@ -155,11 +155,6 @@ class CompiledApp {
       _124: a => a.length,
       _126: (a, i) => a[i],
       _127: (a, i, v) => a[i] = v,
-      _130: (o, offsetInBytes, lengthInBytes) => {
-        var dst = new ArrayBuffer(lengthInBytes);
-        new Uint8Array(dst).set(new Uint8Array(o, offsetInBytes, lengthInBytes));
-        return new DataView(dst);
-      },
       _132: o => o instanceof Uint8Array,
       _133: (o, start, length) => new Uint8Array(o.buffer, o.byteOffset + start, length),
       _134: o => o instanceof Int8Array,

@@ -444,9 +444,6 @@
         return receiver;
       return J.getNativeInterceptor(receiver);
     },
-    get$buffer$x(receiver) {
-      return J.getInterceptor$x(receiver).get$buffer(receiver);
-    },
     get$hashCode$(receiver) {
       return J.getInterceptor$(receiver).get$hashCode(receiver);
     },
@@ -5489,42 +5486,6 @@
     NullRejectionException: function NullRejectionException(t0) {
       this.isUndefined = t0;
     },
-    ArchiveException$(message) {
-      return new A.ArchiveException(message, null, null);
-    },
-    ArchiveException: function ArchiveException(t0, t1, t2) {
-      this.message = t0;
-      this.source = t1;
-      this.offset = t2;
-    },
-    InputStream$(data, byteOrder, $length, start) {
-      var t1, t2;
-      if (type$.TypedData._is(data))
-        t1 = J.asUint8List$2$x(J.get$buffer$x(data), data.byteOffset, data.byteLength);
-      else
-        t1 = type$.List_int._is(data) ? data : A.List_List$from(type$.Iterable_dynamic._as(data), true, type$.int);
-      t2 = new A.InputStream(t1, start, start, byteOrder);
-      t2.__InputStream__length_A = $length == null ? t1.length : $length;
-      return t2;
-    },
-    InputStreamBase: function InputStreamBase() {
-    },
-    InputStream: function InputStream(t0, t1, t2, t3) {
-      var _ = this;
-      _.buffer = t0;
-      _.offset = t1;
-      _.start = t2;
-      _.byteOrder = t3;
-      _.__InputStream__length_A = $;
-    },
-    OutputStreamBase: function OutputStreamBase() {
-    },
-    OutputStream: function OutputStream(t0) {
-      this.length = 0;
-      this._output_stream$_buffer = t0;
-    },
-    _ZLibDecoder: function _ZLibDecoder() {
-    },
     HuffmanTable$(lengths) {
       var t1 = new A.HuffmanTable();
       t1.HuffmanTable$1(lengths);
@@ -5535,18 +5496,59 @@
       this.maxCodeLength = 0;
       this.minCodeLength = 2147483647;
     },
+    ZLibDecoderBase: function ZLibDecoderBase() {
+    },
+    _ZLibDecoder: function _ZLibDecoder() {
+    },
     Inflate: function Inflate(t0, t1, t2, t3) {
       var _ = this;
-      _.__Inflate_input_A = t0;
-      _.inputSet = false;
-      _.output = t1;
+      _._inflate$_input = t0;
+      _._nextInput = null;
+      _._inflate$_output = t1;
       _._bitBufferLen = _._bitBuffer = 0;
       _._fixedLiteralLengthTable = t2;
       _._fixedDistanceTable = t3;
     },
-    ZLibDecoderBase: function ZLibDecoderBase() {
-    },
     ZLibDecoder: function ZLibDecoder() {
+    },
+    ByteOrder: function ByteOrder(t0, t1) {
+      this.index = t0;
+      this._core$_name = t1;
+    },
+    InputMemoryStream$(bytes, byteOrder, $length, offset) {
+      var t2, data,
+        t1 = new A.InputMemoryStream(byteOrder);
+      if (offset == null)
+        offset = 0;
+      if ($length == null)
+        $length = bytes.length - offset;
+      t2 = bytes.length;
+      if (offset + $length > t2)
+        $length = t2 - offset;
+      data = type$.Uint8List._is(bytes) ? bytes : new Uint8Array(A._ensureNativeList(bytes));
+      t2 = J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(data), data.byteOffset + offset, $length);
+      t1.buffer = t2;
+      t1.__InputMemoryStream__length_A = t2.length;
+      return t1;
+    },
+    InputMemoryStream: function InputMemoryStream(t0) {
+      var _ = this;
+      _.buffer = null;
+      _._position = 0;
+      _.__InputMemoryStream__length_A = $;
+      _.byteOrder = t0;
+    },
+    InputStream: function InputStream() {
+    },
+    OutputMemoryStream$(size) {
+      var t1 = size == null ? 32768 : size;
+      return new A.OutputMemoryStream(new Uint8Array(t1));
+    },
+    OutputMemoryStream: function OutputMemoryStream(t0) {
+      this.length = 0;
+      this._output_memory_stream$_buffer = t0;
+    },
+    OutputStream: function OutputStream() {
     },
     CancelationToken: function CancelationToken() {
     },
@@ -5606,6 +5608,12 @@
       this.data = t0;
     },
     ColorRgba8: function ColorRgba8(t0) {
+      this.data = t0;
+    },
+    ConstColorUint8: function ConstColorUint8(t0) {
+      this.data = t0;
+    },
+    ConstColorRgb8: function ConstColorRgb8(t0) {
       this.data = t0;
     },
     convertFormatValue(value, from, to) {
@@ -6786,17 +6794,129 @@
     },
     PnmDecoder__getNextToken_closure: function PnmDecoder__getNextToken_closure() {
     },
+    PsdBevelEffect: function PsdBevelEffect() {
+      this.version = null;
+    },
+    PsdDropShadowEffect: function PsdDropShadowEffect() {
+      this.version = null;
+    },
+    PsdEffect: function PsdEffect() {
+    },
+    PsdInnerGlowEffect: function PsdInnerGlowEffect() {
+      this.version = null;
+    },
+    PsdInnerShadowEffect: function PsdInnerShadowEffect() {
+      this.version = null;
+    },
+    PsdOuterGlowEffect: function PsdOuterGlowEffect() {
+      this.version = null;
+    },
+    PsdSolidFillEffect: function PsdSolidFillEffect() {
+      this.version = null;
+    },
+    PsdLayerAdditionalData: function PsdLayerAdditionalData(t0) {
+      this.data = t0;
+    },
+    PsdLayerSectionDivider: function PsdLayerSectionDivider() {
+    },
+    PsdBlendingRanges: function PsdBlendingRanges() {
+      var _ = this;
+      _.__PsdBlendingRanges_whiteDst_A = _.__PsdBlendingRanges_blackDst_A = _.__PsdBlendingRanges_whiteSrc_A = _.__PsdBlendingRanges_blackSrc_A = $;
+    },
     PsdChannel: function PsdChannel(t0) {
       this.id = t0;
-      this.__PsdChannel_data_A = $;
+      this.data = null;
     },
     PsdImage$(bytes) {
       var t1 = new A.PsdImage(A.LinkedHashMap_LinkedHashMap$_empty(type$.int, type$.PsdImageResource));
       t1.PsdImage$1(bytes);
       return t1;
     },
+    PsdImage__blendOverlay(a, b, aAlpha, bAlpha) {
+      var x = a / 255,
+        y = b / 255,
+        aa = aAlpha / 255,
+        ba = bAlpha / 255,
+        t1 = y * (1 - aa),
+        t2 = x * (1 - ba);
+      return B.JSNumber_methods.toInt$0(B.JSNumber_methods.clamp$2((2 * x < aa ? 2 * y * x + t1 + t2 : ba * aa - 2 * (aa - x) * (ba - y) + t1 + t2) * 255, 0, 255));
+    },
+    PsdImage__blendColorBurn(a, b) {
+      if (b === 0)
+        return 0;
+      return B.JSInt_methods.toInt$0(B.JSInt_methods.clamp$2(B.JSNumber_methods.toInt$0(255 * (1 - (1 - a / 255) / (b / 255))), 0, 255));
+    },
+    PsdImage__blendLinearBurn(a, b) {
+      return B.JSInt_methods.toInt$0(B.JSInt_methods.clamp$2(a + b - 255, 0, 255));
+    },
+    PsdImage__blendScreen(a, b) {
+      return B.JSInt_methods.toInt$0(B.JSInt_methods.clamp$2(255 - (255 - b) * (255 - a), 0, 255));
+    },
+    PsdImage__blendColorDodge(a, b) {
+      if (b === 255)
+        return 255;
+      return B.JSNumber_methods.toInt$0(B.JSNumber_methods.clamp$2(a / 255 / (1 - b / 255) * 255, 0, 255));
+    },
+    PsdImage__blendSoftLight(a, b) {
+      var aa = a / 255,
+        bb = b / 255,
+        t1 = 1 - bb;
+      return B.JSNumber_methods.round$0(255 * (t1 * bb * aa + bb * (1 - t1 * (1 - aa))));
+    },
+    PsdImage__blendHardLight(bottom, $top) {
+      var a = $top / 255,
+        b = bottom / 255;
+      if (b < 0.5)
+        return B.JSNumber_methods.round$0(510 * a * b);
+      else
+        return B.JSNumber_methods.round$0(255 * (1 - 2 * (1 - a) * (1 - b)));
+    },
+    PsdImage__blendVividLight(bottom, $top) {
+      if ($top < 128)
+        return A.PsdImage__blendColorBurn(bottom, 2 * $top);
+      else
+        return A.PsdImage__blendColorDodge(bottom, 2 * ($top - 128));
+    },
+    PsdImage__blendLinearLight(bottom, $top) {
+      var t1;
+      if ($top < 128)
+        return A.PsdImage__blendLinearBurn(bottom, 2 * $top);
+      else {
+        t1 = 2 * ($top - 128);
+        return t1 + bottom > 255 ? 255 : bottom + t1;
+      }
+    },
+    PsdImage__blendPinLight(bottom, $top) {
+      return $top < 128 ? Math.min(bottom, 2 * $top) : Math.max(bottom, 2 * ($top - 128));
+    },
+    PsdImage__blendExclusion(bottom, $top) {
+      return B.JSNumber_methods.round$0($top + bottom - 2 * $top * bottom / 255);
+    },
+    PsdImage__ch(data, si, ns) {
+      var t1, t2, t3;
+      if (data == null)
+        t1 = 0;
+      else {
+        t1 = data.length;
+        if (ns === 1) {
+          if (!(si >= 0 && si < t1))
+            return A.ioore(data, si);
+          t1 = data[si];
+        } else {
+          if (!(si >= 0 && si < t1))
+            return A.ioore(data, si);
+          t2 = data[si];
+          t3 = si + 1;
+          if (!(t3 < t1))
+            return A.ioore(data, t3);
+          t3 = (t2 << 8 | data[t3]) >>> 8;
+          t1 = t3;
+        }
+      }
+      return t1;
+    },
     PsdImage_createImageFromChannels(colorMode, bitDepth, width, height, channelList) {
-      var t1, _i, t2, ch, ns, output, channel0, channel1, channel2, channel_1, si, t3, t4, t5, t6, p, t7, t8, t9, t10, t11, t12, alpha, t13, y, x, z, y3, x3, z3, $R, $G, $B, rgb, gray, c, m, k, _null = null, _s4_ = "data",
+      var t1, _i, t2, ch, ns, output, channel0, channel1, channel2, channel_1, rgb, si, t3, t4, t5, p, t6, t7, t8, alpha, y, x, z, y3, x3, z3, $R, $G, $B, rgb0, gray, c, m, k, _null = null,
         channels = A.LinkedHashMap_LinkedHashMap$_empty(type$.int, type$.PsdChannel);
       for (t1 = channelList.length, _i = 0; t2 = channelList.length, _i < t2; channelList.length === t1 || (0, A.throwConcurrentModificationError)(channelList), ++_i) {
         ch = channelList[_i];
@@ -6813,87 +6933,17 @@
       channel1 = channels.$index(0, 1);
       channel2 = channels.$index(0, 2);
       channel_1 = channels.$index(0, -1);
+      rgb = A._setArrayType([0, 0, 0], type$.JSArray_int);
       si = -ns;
-      for (t1 = output.data, t1 = t1.get$iterator(t1), t3 = t2 >= 5, t4 = ns === 1, t5 = t2 === 4, t6 = t2 >= 2, t2 = t2 >= 4; t1.moveNext$0();) {
+      for (t1 = output.data, t1 = t1.get$iterator(t1), t3 = t2 >= 5, t4 = t2 === 4, t5 = t2 >= 2, t2 = t2 >= 4; t1.moveNext$0();) {
         p = t1.get$current();
         si += ns;
         switch (colorMode) {
           case B.PsdColorMode_3:
-            t7 = channel0.__PsdChannel_data_A;
-            t7 === $ && A.throwLateFieldNI(_s4_);
-            t8 = t7.length;
-            if (t4) {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t7 = t7[si];
-            } else {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t9 = t7[si];
-              t10 = si + 1;
-              if (!(t10 < t8))
-                return A.ioore(t7, t10);
-              t10 = (t9 << 8 | t7[t10]) >>> 8;
-              t7 = t10;
-            }
-            p.set$r(t7);
-            t7 = channel1.__PsdChannel_data_A;
-            t7 === $ && A.throwLateFieldNI(_s4_);
-            t8 = t7.length;
-            if (t4) {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t7 = t7[si];
-            } else {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t9 = t7[si];
-              t10 = si + 1;
-              if (!(t10 < t8))
-                return A.ioore(t7, t10);
-              t10 = (t9 << 8 | t7[t10]) >>> 8;
-              t7 = t10;
-            }
-            p.set$g(t7);
-            t7 = channel2.__PsdChannel_data_A;
-            t7 === $ && A.throwLateFieldNI(_s4_);
-            t8 = t7.length;
-            if (t4) {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t7 = t7[si];
-            } else {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t9 = t7[si];
-              t10 = si + 1;
-              if (!(t10 < t8))
-                return A.ioore(t7, t10);
-              t10 = (t9 << 8 | t7[t10]) >>> 8;
-              t7 = t10;
-            }
-            p.set$b(t7);
-            if (t2) {
-              t7 = channel_1.__PsdChannel_data_A;
-              t7 === $ && A.throwLateFieldNI(_s4_);
-              t8 = t7.length;
-              if (t4) {
-                if (!(si >= 0 && si < t8))
-                  return A.ioore(t7, si);
-                t7 = t7[si];
-              } else {
-                if (!(si >= 0 && si < t8))
-                  return A.ioore(t7, si);
-                t9 = t7[si];
-                t10 = si + 1;
-                if (!(t10 < t8))
-                  return A.ioore(t7, t10);
-                t10 = (t9 << 8 | t7[t10]) >>> 8;
-                t7 = t10;
-              }
-            } else
-              t7 = 255;
-            p.set$a(t7);
+            p.set$r(A.PsdImage__ch(channel0.data, si, ns));
+            p.set$g(A.PsdImage__ch(channel1.data, si, ns));
+            p.set$b(A.PsdImage__ch(channel2.data, si, ns));
+            p.set$a(t2 ? A.PsdImage__ch(channel_1.data, si, ns) : 255);
             if (p.get$a() !== 0) {
               p.set$r((p.get$r() + p.get$a() - 255) * 255 / p.get$a());
               p.set$g((p.get$g() + p.get$a() - 255) * 255 / p.get$a());
@@ -6901,81 +6951,13 @@
             }
             break;
           case B.PsdColorMode_7:
-            t7 = channel0.__PsdChannel_data_A;
-            t7 === $ && A.throwLateFieldNI(_s4_);
-            t8 = t7.length;
-            if (t4) {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t7 = t7[si];
-            } else {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t9 = t7[si];
-              t10 = si + 1;
-              if (!(t10 < t8))
-                return A.ioore(t7, t10);
-              t10 = (t9 << 8 | t7[t10]) >>> 8;
-              t7 = t10;
-            }
-            t8 = channel1.__PsdChannel_data_A;
-            t8 === $ && A.throwLateFieldNI(_s4_);
-            t9 = t8.length;
-            if (t4) {
-              if (!(si >= 0 && si < t9))
-                return A.ioore(t8, si);
-              t8 = t8[si];
-            } else {
-              if (!(si >= 0 && si < t9))
-                return A.ioore(t8, si);
-              t10 = t8[si];
-              t11 = si + 1;
-              if (!(t11 < t9))
-                return A.ioore(t8, t11);
-              t11 = (t10 << 8 | t8[t11]) >>> 8;
-              t8 = t11;
-            }
-            t9 = channel2.__PsdChannel_data_A;
-            t9 === $ && A.throwLateFieldNI(_s4_);
-            t10 = t9.length;
-            if (t4) {
-              if (!(si >= 0 && si < t10))
-                return A.ioore(t9, si);
-              t9 = t9[si];
-            } else {
-              if (!(si >= 0 && si < t10))
-                return A.ioore(t9, si);
-              t11 = t9[si];
-              t12 = si + 1;
-              if (!(t12 < t10))
-                return A.ioore(t9, t12);
-              t12 = (t11 << 8 | t9[t12]) >>> 8;
-              t9 = t12;
-            }
-            if (t2) {
-              t10 = channel_1.__PsdChannel_data_A;
-              t10 === $ && A.throwLateFieldNI(_s4_);
-              t11 = t10.length;
-              if (t4) {
-                if (!(si >= 0 && si < t11))
-                  return A.ioore(t10, si);
-                t10 = t10[si];
-                alpha = t10;
-              } else {
-                if (!(si >= 0 && si < t11))
-                  return A.ioore(t10, si);
-                t12 = t10[si];
-                t13 = si + 1;
-                if (!(t13 < t11))
-                  return A.ioore(t10, t13);
-                t13 = (t12 << 8 | t10[t13]) >>> 8;
-                alpha = t13;
-              }
-            } else
-              alpha = 255;
-            y = ((t7 * 100 >>> 8) + 16) / 116;
-            x = (t8 - 128) / 500 + y;
-            z = y - (t9 - 128) / 200;
+            t6 = A.PsdImage__ch(channel0.data, si, ns);
+            t7 = A.PsdImage__ch(channel1.data, si, ns);
+            t8 = A.PsdImage__ch(channel2.data, si, ns);
+            alpha = t2 ? A.PsdImage__ch(channel_1.data, si, ns) : 255;
+            y = ((t6 * 100 >>> 8) + 16) / 116;
+            x = (t7 - 128) / 500 + y;
+            z = y - (t8 - 128) / 200;
             y3 = Math.pow(y, 3);
             y = y3 > 0.008856 ? y3 : (y - 0.13793103448275862) / 7.787;
             x3 = Math.pow(x, 3);
@@ -6991,142 +6973,27 @@
             $R = $R > 0.0031308 ? 1.055 * Math.pow($R, 0.4166666666666667) - 0.055 : 12.92 * $R;
             $G = $G > 0.0031308 ? 1.055 * Math.pow($G, 0.4166666666666667) - 0.055 : 12.92 * $G;
             $B = $B > 0.0031308 ? 1.055 * Math.pow($B, 0.4166666666666667) - 0.055 : 12.92 * $B;
-            rgb = [B.JSNumber_methods.toInt$0(B.JSNumber_methods.clamp$2($R * 255, 0, 255)), B.JSNumber_methods.toInt$0(B.JSNumber_methods.clamp$2($G * 255, 0, 255)), B.JSNumber_methods.toInt$0(B.JSNumber_methods.clamp$2($B * 255, 0, 255))];
-            p.set$r(rgb[0]);
-            p.set$g(rgb[1]);
-            p.set$b(rgb[2]);
+            rgb0 = [B.JSNumber_methods.toInt$0(B.JSNumber_methods.clamp$2($R * 255, 0, 255)), B.JSNumber_methods.toInt$0(B.JSNumber_methods.clamp$2($G * 255, 0, 255)), B.JSNumber_methods.toInt$0(B.JSNumber_methods.clamp$2($B * 255, 0, 255))];
+            p.set$r(rgb0[0]);
+            p.set$g(rgb0[1]);
+            p.set$b(rgb0[2]);
             p.set$a(alpha);
             break;
           case B.PsdColorMode_1:
-            t7 = channel0.__PsdChannel_data_A;
-            t7 === $ && A.throwLateFieldNI(_s4_);
-            t8 = t7.length;
-            if (t4) {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              gray = t7[si];
-            } else {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t9 = t7[si];
-              t10 = si + 1;
-              if (!(t10 < t8))
-                return A.ioore(t7, t10);
-              gray = (t9 << 8 | t7[t10]) >>> 8;
-            }
-            if (t6) {
-              t7 = channel_1.__PsdChannel_data_A;
-              t7 === $ && A.throwLateFieldNI(_s4_);
-              t8 = t7.length;
-              if (t4) {
-                if (!(si >= 0 && si < t8))
-                  return A.ioore(t7, si);
-                t7 = t7[si];
-                alpha = t7;
-              } else {
-                if (!(si >= 0 && si < t8))
-                  return A.ioore(t7, si);
-                t9 = t7[si];
-                t10 = si + 1;
-                if (!(t10 < t8))
-                  return A.ioore(t7, t10);
-                t10 = (t9 << 8 | t7[t10]) >>> 8;
-                alpha = t10;
-              }
-            } else
-              alpha = 255;
+            gray = A.PsdImage__ch(channel0.data, si, ns);
+            alpha = t5 ? A.PsdImage__ch(channel_1.data, si, ns) : 255;
             p.set$r(gray);
             p.set$g(gray);
             p.set$b(gray);
             p.set$a(alpha);
             break;
           case B.PsdColorMode_4:
-            t7 = channel0.__PsdChannel_data_A;
-            t7 === $ && A.throwLateFieldNI(_s4_);
-            t8 = t7.length;
-            if (t4) {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              c = t7[si];
-            } else {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t9 = t7[si];
-              t10 = si + 1;
-              if (!(t10 < t8))
-                return A.ioore(t7, t10);
-              c = (t9 << 8 | t7[t10]) >>> 8;
-            }
-            t7 = channel1.__PsdChannel_data_A;
-            t7 === $ && A.throwLateFieldNI(_s4_);
-            t8 = t7.length;
-            if (t4) {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              m = t7[si];
-            } else {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t9 = t7[si];
-              t10 = si + 1;
-              if (!(t10 < t8))
-                return A.ioore(t7, t10);
-              m = (t9 << 8 | t7[t10]) >>> 8;
-            }
-            t7 = channel2.__PsdChannel_data_A;
-            t7 === $ && A.throwLateFieldNI(_s4_);
-            t8 = t7.length;
-            if (t4) {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              y = t7[si];
-            } else {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t9 = t7[si];
-              t10 = si + 1;
-              if (!(t10 < t8))
-                return A.ioore(t7, t10);
-              y = (t9 << 8 | t7[t10]) >>> 8;
-            }
-            t7 = channels.$index(0, t5 ? -1 : 3).__PsdChannel_data_A;
-            t7 === $ && A.throwLateFieldNI(_s4_);
-            t8 = t7.length;
-            if (t4) {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              k = t7[si];
-            } else {
-              if (!(si >= 0 && si < t8))
-                return A.ioore(t7, si);
-              t9 = t7[si];
-              t10 = si + 1;
-              if (!(t10 < t8))
-                return A.ioore(t7, t10);
-              k = (t9 << 8 | t7[t10]) >>> 8;
-            }
-            if (t3) {
-              t7 = channel_1.__PsdChannel_data_A;
-              t7 === $ && A.throwLateFieldNI(_s4_);
-              t8 = t7.length;
-              if (t4) {
-                if (!(si >= 0 && si < t8))
-                  return A.ioore(t7, si);
-                t7 = t7[si];
-                alpha = t7;
-              } else {
-                if (!(si >= 0 && si < t8))
-                  return A.ioore(t7, si);
-                t9 = t7[si];
-                t10 = si + 1;
-                if (!(t10 < t8))
-                  return A.ioore(t7, t10);
-                t10 = (t9 << 8 | t7[t10]) >>> 8;
-                alpha = t10;
-              }
-            } else
-              alpha = 255;
-            rgb = A.cmykToRgb(255 - c, 255 - m, 255 - y, 255 - k);
+            c = A.PsdImage__ch(channel0.data, si, ns);
+            m = A.PsdImage__ch(channel1.data, si, ns);
+            y = A.PsdImage__ch(channel2.data, si, ns);
+            k = A.PsdImage__ch(channels.$index(0, t4 ? -1 : 3).data, si, ns);
+            alpha = t3 ? A.PsdImage__ch(channel_1.data, si, ns) : 255;
+            A.cmykToRgb(255 - c, 255 - m, 255 - y, 255 - k, rgb);
             p.set$r(rgb[0]);
             p.set$g(rgb[1]);
             p.set$b(rgb[2]);
@@ -7148,10 +7015,44 @@
       _.version = _.signature = null;
       _.__PsdImage_channels_A = $;
       _.colorMode = _.depth = null;
-      _.__PsdImage_mergeImageChannels_A = $;
+      _.__PsdImage_mergeImageChannels_A = _.__PsdImage_layers_A = $;
       _.mergedImage = null;
       _.imageResources = t0;
-      _.__PsdImage__imageData_A = _.__PsdImage__input_A = $;
+      _.__PsdImage__input_A = $;
+      _._imageData = _._layerAndMaskData = _._imageResourceData = null;
+    },
+    PsdImageResource: function PsdImageResource() {
+    },
+    PsdLayer: function PsdLayer(t0, t1, t2) {
+      var _ = this;
+      _.left = _.top = null;
+      _.__PsdLayer_height_A = _.__PsdLayer_width_A = _.__PsdLayer_right_A = _.__PsdLayer_bottom_A = $;
+      _.blendMode = null;
+      _.__PsdLayer_channels_A = _.__PsdLayer_flags_A = _.__PsdLayer_opacity_A = $;
+      _.additionalData = t0;
+      _.children = t1;
+      _.layerImage = null;
+      _.effects = t2;
+    },
+    PsdLayerData_PsdLayerData(tag, data) {
+      var len;
+      switch (tag) {
+        case "lsct":
+          len = data.end - data.offset;
+          data.readUint32$0();
+          if (len >= 12) {
+            if (data.readString$1(4) !== "8BIM")
+              A.throwExpression(A.ImageException$("Invalid key in layer additional data"));
+            data.readString$1(4);
+          }
+          if (len >= 16)
+            data.readUint32$0();
+          return new A.PsdLayerSectionDivider();
+        default:
+          return new A.PsdLayerAdditionalData(data);
+      }
+    },
+    PsdLayerData: function PsdLayerData() {
     },
     PsdDecoder: function PsdDecoder() {
       this.info = null;
@@ -7261,7 +7162,7 @@
       _.tags = t0;
       _.height = _.width = 0;
       _.photometricType = t1;
-      _.samplesPerPixel = _.bitsPerSample = _.compression = 1;
+      _.channelsPerPixel = _.samplesPerPixel = _.bitsPerSample = _.compression = 1;
       _.sampleFormat = t2;
       _.imageType = t3;
       _.isWhiteZero = false;
@@ -8457,8 +8358,8 @@
     },
     PixelFloat64: function PixelFloat64(t0, t1, t2, t3) {
       var _ = this;
-      _._pixel_float64$_x = t0;
-      _._pixel_float64$_y = t1;
+      _._x = t0;
+      _._y = t1;
       _._pixel_float64$_index = t2;
       _.image = t3;
     },
@@ -8563,8 +8464,8 @@
     },
     PixelUint8: function PixelUint8(t0, t1, t2, t3) {
       var _ = this;
-      _._x = t0;
-      _._y = t1;
+      _._pixel_uint8$_x = t0;
+      _._pixel_uint8$_y = t1;
       _._pixel_uint8$_index = t2;
       _.image = t3;
     },
@@ -8780,14 +8681,18 @@
       this.message = t0;
     },
     InputBuffer$(buffer, bigEndian, $length, offset) {
-      return new A.InputBuffer(buffer, offset, $length == null ? J.get$length$asx(buffer) : offset + $length, offset, bigEndian);
+      var t1 = J.getInterceptor$asx(buffer),
+        t2 = t1.get$length(buffer);
+      t1 = $length == null ? t1.get$length(buffer) : offset + $length;
+      return new A.InputBuffer(buffer, offset, Math.min(t2, t1), offset, bigEndian);
     },
     InputBuffer$from(other, $length, offset) {
       var t1 = other.buffer,
-        t2 = other.offset + offset,
+        t2 = other.offset,
         t3 = other.start,
-        t4 = $length == null ? other.end : t2 + $length;
-      return new A.InputBuffer(t1, t3, t4, t2, other.bigEndian);
+        t4 = J.get$length$asx(t1),
+        t5 = $length == null ? other.end : other.offset + offset + $length;
+      return new A.InputBuffer(t1, t3, Math.min(t4, t5), t2 + offset, other.bigEndian);
     },
     InputBuffer: function InputBuffer(t0, t1, t2, t3, t4) {
       var _ = this;
@@ -10588,7 +10493,7 @@
       return bakedImage;
     },
     copyResize(src, height, width) {
-      var scaleX, dx, x, numFrames, firstFrame, i, value, frame, dst, t2, t3, t4, dy, y, y2, _null = null,
+      var scaleX, dx, x, scaleY, dy, y, numFrames, firstFrame, i, value, frame, dst, t2, t3, t4, y2, srcPixel, t5, t6, _null = null,
         t1 = width == null;
       if (t1 && height == null)
         throw A.wrapException(A.ImageException$("Invalid size"));
@@ -10610,6 +10515,14 @@
         if (!(x < width))
           return A.ioore(scaleX, x);
         scaleX[x] = t1;
+      }
+      scaleY = new Int32Array(height);
+      dy = src.get$height() / height;
+      for (y = 0; y < height; ++y) {
+        t1 = B.JSNumber_methods.toInt$0(y * dy);
+        if (!(y < height))
+          return A.ioore(scaleY, y);
+        scaleY[y] = t1;
       }
       numFrames = src.get$frames().length;
       for (t1 = type$.JSArray_Image, firstFrame = _null, i = 0; i < numFrames; ++i) {
@@ -10645,18 +10558,28 @@
                 t3.setPixelR$3(x, y, t2);
             }
           }
-        else
-          for (y = 0; y < height; ++y) {
-            y2 = B.JSNumber_methods.toInt$0(y * dy);
+        else {
+          srcPixel = frame.getPixelSafe$2(0, 0);
+          for (y = 0; y < height; ++y)
             for (x = 0; x < width; ++x) {
               if (!(x < width))
                 return A.ioore(scaleX, x);
               t2 = scaleX[x];
-              t3 = frame.data;
-              t2 = t3 == null ? _null : t3.getPixel$3(t2, y2, _null);
-              dst.setPixel$3(x, y, t2 == null ? new A.PixelUndefined() : t2);
+              if (!(y < height))
+                return A.ioore(scaleY, y);
+              t3 = scaleY[y];
+              t4 = frame.data;
+              if (t4 != null)
+                t4.getPixel$3(t2, t3, srcPixel);
+              t2 = srcPixel.get$r();
+              t3 = srcPixel.get$g();
+              t4 = srcPixel.get$b();
+              t5 = srcPixel.get$a();
+              t6 = dst.data;
+              if (t6 != null)
+                t6.setPixelRgba$6(x, y, t2, t3, t4, t5);
             }
-          }
+        }
       }
       firstFrame.toString;
       return firstFrame;
@@ -11014,9 +10937,11 @@
     getLuminance(c) {
       return 0.299 * c.get$r() + 0.587 * c.get$g() + 0.114 * c.get$b();
     },
-    cmykToRgb(c, m, y, k) {
+    cmykToRgb(c, m, y, k, rgb) {
       var t1 = 1 - k / 255;
-      return A._setArrayType([B.JSNumber_methods.round$0(255 * (1 - c / 255) * t1), B.JSNumber_methods.round$0(255 * (1 - m / 255) * t1), B.JSNumber_methods.round$0(255 * (1 - y / 255) * t1)], type$.JSArray_int);
+      B.JSArray_methods.$indexSet(rgb, 0, B.JSNumber_methods.round$0(255 * (1 - c / 255) * t1));
+      B.JSArray_methods.$indexSet(rgb, 1, B.JSNumber_methods.round$0(255 * (1 - m / 255) * t1));
+      B.JSArray_methods.$indexSet(rgb, 2, B.JSNumber_methods.round$0(255 * (1 - y / 255) * t1));
     },
     Float16_doubleToFloat16(n) {
       var xI, e, m,
@@ -11696,9 +11621,6 @@
     },
     _shrBothPositive$1(receiver, other) {
       return other > 31 ? 0 : receiver >>> other;
-    },
-    $lt(receiver, other) {
-      return receiver < other;
     },
     get$runtimeType(receiver) {
       return A.createRuntimeType(type$.num);
@@ -16037,543 +15959,9 @@
       return "Promise was rejected with a value of `" + (this.isUndefined ? "undefined" : "null") + "`.";
     }
   };
-  A.ArchiveException.prototype = {};
-  A.InputStreamBase.prototype = {};
-  A.InputStream.prototype = {
-    get$length(_) {
-      var t1 = this.__InputStream__length_A;
-      t1 === $ && A.throwLateFieldNI("_length");
-      return t1 - (this.offset - this.start);
-    },
-    get$isEOS() {
-      var t1 = this.offset,
-        t2 = this.__InputStream__length_A;
-      t2 === $ && A.throwLateFieldNI("_length");
-      return t1 >= this.start + t2;
-    },
-    readByte$0() {
-      var t1 = this.buffer,
-        t2 = this.offset++;
-      if (!(t2 >= 0 && t2 < t1.length))
-        return A.ioore(t1, t2);
-      return t1[t2];
-    },
-    readUint32$0() {
-      var b1, b2, b3, b4, _this = this,
-        t1 = _this.buffer,
-        t2 = _this.offset,
-        t3 = _this.offset = t2 + 1,
-        t4 = t1.length;
-      if (!(t2 >= 0 && t2 < t4))
-        return A.ioore(t1, t2);
-      b1 = t1[t2] & 255;
-      t2 = _this.offset = t3 + 1;
-      if (!(t3 >= 0 && t3 < t4))
-        return A.ioore(t1, t3);
-      b2 = t1[t3] & 255;
-      t3 = _this.offset = t2 + 1;
-      if (!(t2 >= 0 && t2 < t4))
-        return A.ioore(t1, t2);
-      b3 = t1[t2] & 255;
-      _this.offset = t3 + 1;
-      if (!(t3 >= 0 && t3 < t4))
-        return A.ioore(t1, t3);
-      b4 = t1[t3] & 255;
-      if (_this.byteOrder === 1)
-        return (b1 << 24 | b2 << 16 | b3 << 8 | b4) >>> 0;
-      return (b4 << 24 | b3 << 16 | b2 << 8 | b1) >>> 0;
-    }
-  };
-  A.OutputStreamBase.prototype = {};
-  A.OutputStream.prototype = {
-    writeBytes$1(bytes) {
-      var len, j, t1, t2, t3, t4, t5, i, _this = this;
-      type$.List_int._as(bytes);
-      len = bytes.length;
-      for (; j = _this.length, t1 = j + len, t2 = _this._output_stream$_buffer, t3 = t2.length, t1 > t3;)
-        _this._output_stream$_expandBuffer$1(t1 - t3);
-      if (len === 1) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-      } else if (len === 2) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-      } else if (len === 3) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-      } else if (len === 4) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-      } else if (len === 5) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 4;
-        if (4 >= len)
-          return A.ioore(bytes, 4);
-        t4 = bytes[4];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-      } else if (len === 6) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 4;
-        if (4 >= len)
-          return A.ioore(bytes, 4);
-        t4 = bytes[4];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 5;
-        if (5 >= len)
-          return A.ioore(bytes, 5);
-        t5 = bytes[5];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-      } else if (len === 7) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 4;
-        if (4 >= len)
-          return A.ioore(bytes, 4);
-        t4 = bytes[4];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 5;
-        if (5 >= len)
-          return A.ioore(bytes, 5);
-        t5 = bytes[5];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 6;
-        if (6 >= len)
-          return A.ioore(bytes, 6);
-        t4 = bytes[6];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-      } else if (len === 8) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 4;
-        if (4 >= len)
-          return A.ioore(bytes, 4);
-        t4 = bytes[4];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 5;
-        if (5 >= len)
-          return A.ioore(bytes, 5);
-        t5 = bytes[5];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 6;
-        if (6 >= len)
-          return A.ioore(bytes, 6);
-        t4 = bytes[6];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 7;
-        if (7 >= len)
-          return A.ioore(bytes, 7);
-        t5 = bytes[7];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-      } else if (len === 9) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 4;
-        if (4 >= len)
-          return A.ioore(bytes, 4);
-        t4 = bytes[4];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 5;
-        if (5 >= len)
-          return A.ioore(bytes, 5);
-        t5 = bytes[5];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 6;
-        if (6 >= len)
-          return A.ioore(bytes, 6);
-        t4 = bytes[6];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 7;
-        if (7 >= len)
-          return A.ioore(bytes, 7);
-        t5 = bytes[7];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 8;
-        if (8 >= len)
-          return A.ioore(bytes, 8);
-        t4 = bytes[8];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-      } else if (len === 10) {
-        if (0 >= len)
-          return A.ioore(bytes, 0);
-        t4 = bytes[0];
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (!(j >= 0 && j < t3))
-          return A.ioore(t2, j);
-        t2[j] = t4;
-        t4 = j + 1;
-        if (1 >= len)
-          return A.ioore(bytes, 1);
-        t5 = bytes[1];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 2;
-        if (2 >= len)
-          return A.ioore(bytes, 2);
-        t4 = bytes[2];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 3;
-        if (3 >= len)
-          return A.ioore(bytes, 3);
-        t5 = bytes[3];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 4;
-        if (4 >= len)
-          return A.ioore(bytes, 4);
-        t4 = bytes[4];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 5;
-        if (5 >= len)
-          return A.ioore(bytes, 5);
-        t5 = bytes[5];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 6;
-        if (6 >= len)
-          return A.ioore(bytes, 6);
-        t4 = bytes[6];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 7;
-        if (7 >= len)
-          return A.ioore(bytes, 7);
-        t5 = bytes[7];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-        t5 = j + 8;
-        if (8 >= len)
-          return A.ioore(bytes, 8);
-        t4 = bytes[8];
-        if (!(t5 < t3))
-          return A.ioore(t2, t5);
-        t2[t5] = t4;
-        t4 = j + 9;
-        if (9 >= len)
-          return A.ioore(bytes, 9);
-        t5 = bytes[9];
-        if (!(t4 < t3))
-          return A.ioore(t2, t4);
-        t2[t4] = t5;
-      } else
-        for (t4 = t2.$flags | 0, i = 0; i < len; ++i, ++j) {
-          if (!(i < len))
-            return A.ioore(bytes, i);
-          t5 = bytes[i];
-          t4 & 2 && A.throwUnsupportedOperation(t2);
-          if (!(j >= 0 && j < t3))
-            return A.ioore(t2, j);
-          t2[j] = t5;
-        }
-      _this.length = t1;
-    },
-    writeInputStream$1(stream) {
-      var t2, t3, t4, t5, t6, _this = this,
-        t1 = stream.start;
-      while (true) {
-        t2 = _this.length;
-        t3 = stream.__InputStream__length_A;
-        t3 === $ && A.throwLateFieldNI("_length");
-        t4 = stream.offset;
-        t3 = t2 + (t3 - (t4 - t1));
-        t5 = _this._output_stream$_buffer;
-        t6 = t5.length;
-        if (!(t3 > t6))
-          break;
-        _this._output_stream$_expandBuffer$1(t3 - t6);
-      }
-      B.NativeUint8List_methods.setRange$4(t5, t2, t2 + stream.get$length(0), stream.buffer, t4);
-      _this.length = _this.length + stream.get$length(0);
-    },
-    subset$2(start, end) {
-      var _this = this;
-      if (start < 0)
-        start = _this.length + start;
-      if (end == null)
-        end = _this.length;
-      else if (end < 0)
-        end = _this.length + end;
-      return J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(_this._output_stream$_buffer), start, end - start);
-    },
-    subset$1(start) {
-      return this.subset$2(start, null);
-    },
-    _output_stream$_expandBuffer$1(required) {
-      var blockSize = required != null ? required > 32768 ? required : 32768 : 32768,
-        t1 = this._output_stream$_buffer,
-        t2 = t1.length,
-        newBuffer = new Uint8Array((t2 + blockSize) * 2);
-      B.NativeUint8List_methods.setRange$3(newBuffer, 0, t2, t1);
-      this._output_stream$_buffer = newBuffer;
-    },
-    _output_stream$_expandBuffer$0() {
-      return this._output_stream$_expandBuffer$1(null);
-    },
-    get$length(receiver) {
-      return this.length;
-    }
-  };
-  A._ZLibDecoder.prototype = {
-    decodeBuffer$2$verify(input, verify) {
-      var t1, t2, t3, buffer,
-        cmf = input.readByte$0(),
-        flg = input.readByte$0(),
-        method = cmf & 8;
-      B.JSInt_methods._shrOtherPositive$1(cmf, 3);
-      if (method !== 8)
-        throw A.wrapException(A.ArchiveException$("Only DEFLATE compression supported: " + method));
-      if (B.JSInt_methods.$mod((cmf << 8 >>> 0) + flg, 31) !== 0)
-        throw A.wrapException(A.ArchiveException$("Invalid FCHECK"));
-      if ((flg >>> 5 & 1) !== 0) {
-        input.readUint32$0();
-        throw A.wrapException(A.ArchiveException$("FDICT Encoding not currently supported"));
-      }
-      t1 = A.HuffmanTable$(B.List_w2t);
-      t2 = A.HuffmanTable$(B.List_AC1);
-      t3 = new A.OutputStream(new Uint8Array(32768));
-      t2 = new A.Inflate(input, t3, t1, t2);
-      t2.inputSet = true;
-      t2._inflate$0();
-      buffer = type$.List_int._as(J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(t3._output_stream$_buffer), 0, t3.length));
-      input.readUint32$0();
-      return buffer;
-    }
-  };
   A.HuffmanTable.prototype = {
     HuffmanTable$1(lengths) {
-      var i, t1, size, t2, bitLength, code, skip, t3, rtemp, reversed, j, t4, _this = this,
+      var i, t1, size, t2, bitLength, code, skip, t3, rTemp, reversed, j, t4, _this = this,
         listSize = lengths.length;
       for (i = 0; i < listSize; ++i) {
         t1 = lengths[i];
@@ -16588,9 +15976,9 @@
       for (bitLength = 1, code = 0, skip = 2; bitLength <= t1;) {
         for (t3 = bitLength << 16, i = 0; i < listSize; ++i)
           if (lengths[i] === bitLength) {
-            for (rtemp = code, reversed = 0, j = 0; j < bitLength; ++j) {
-              reversed = (reversed << 1 | rtemp & 1) >>> 0;
-              rtemp = rtemp >>> 1;
+            for (rTemp = code, reversed = 0, j = 0; j < bitLength; ++j) {
+              reversed = (reversed << 1 | rTemp & 1) >>> 0;
+              rTemp = rTemp >>> 1;
             }
             for (t4 = (t3 | i) >>> 0, j = reversed; j < size; j += skip) {
               if (!(j >= 0))
@@ -16605,30 +15993,87 @@
       }
     }
   };
-  A.Inflate.prototype = {
-    _inflate$0() {
-      var t1, t2, t3, t4, _this = this;
-      _this._bitBufferLen = _this._bitBuffer = 0;
-      if (!_this.inputSet)
-        return;
-      t1 = _this.__Inflate_input_A;
-      t1 === $ && A.throwLateFieldNI("input");
-      t2 = t1.start;
+  A.ZLibDecoderBase.prototype = {};
+  A._ZLibDecoder.prototype = {
+    decodeStream$4$raw$verify(input, output, raw, verify) {
+      var t1, t2, t3, t4, b, b0, buffer = null;
       while (true) {
-        t3 = t1.offset;
-        t4 = t1.__InputStream__length_A;
-        t4 === $ && A.throwLateFieldNI("_length");
-        if (!(t3 < t2 + t4))
+        t1 = input._position;
+        t2 = input.__InputMemoryStream__length_A;
+        t2 === $ && A.throwLateFieldNI("_length");
+        if (!(t1 < t2))
+          break;
+        t2 = input.buffer;
+        t2.toString;
+        t3 = input._position = t1 + 1;
+        t4 = t2.length;
+        if (!(t1 >= 0 && t1 < t4))
+          return A.ioore(t2, t1);
+        b = t2[t1];
+        input._position = t3 + 1;
+        if (!(t3 >= 0 && t3 < t4))
+          return A.ioore(t2, t3);
+        b0 = t2[t3];
+        if ((b & 8) !== 8)
+          return false;
+        if (B.JSInt_methods.$mod(b * 256 + b0, 31) !== 0)
+          return false;
+        if ((b0 >>> 5 & 1) !== 0) {
+          input.readUint32$0();
+          return false;
+        }
+        if (buffer != null)
+          output.writeBytes$1(buffer);
+        t1 = new A.HuffmanTable();
+        t1.HuffmanTable$1(B.List_w2t);
+        t2 = new A.HuffmanTable();
+        t2.HuffmanTable$1(B.List_AC1);
+        t3 = new A.OutputMemoryStream(new Uint8Array(32768));
+        new A.Inflate(input, t3, t1, t2)._inflate$0();
+        buffer = J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(t3._output_memory_stream$_buffer), t3._output_memory_stream$_buffer.byteOffset, t3.length);
+        input.readUint32$0();
+      }
+      if (buffer != null)
+        output.writeBytes$1(buffer);
+      return true;
+    }
+  };
+  A.Inflate.prototype = {
+    get$_inputStream() {
+      var t1 = this._inflate$_input;
+      if (t1 == null)
+        return t1;
+      t1.__InputMemoryStream__length_A === $ && A.throwLateFieldNI("_length");
+      return t1;
+    },
+    _inflate$0() {
+      var t1, t2, _this = this;
+      _this._bitBufferLen = _this._bitBuffer = 0;
+      if (_this.get$_inputStream() == null)
+        return;
+      while (true) {
+        t1 = _this.get$_inputStream();
+        t2 = t1._position;
+        t1 = t1.__InputMemoryStream__length_A;
+        t1 === $ && A.throwLateFieldNI("_length");
+        if (!(t2 < t1))
           break;
         if (!_this._parseBlock$0())
-          break;
+          return;
       }
     },
     _parseBlock$0() {
-      var blockHeader, _this = this,
-        t1 = _this.__Inflate_input_A;
-      t1 === $ && A.throwLateFieldNI("input");
-      if (t1.get$isEOS())
+      var t1, t2, blockHeader, _this = this,
+        input = _this.get$_inputStream();
+      if (input != null) {
+        t1 = input._position;
+        t2 = input.__InputMemoryStream__length_A;
+        t2 === $ && A.throwLateFieldNI("_length");
+        t2 = t1 >= t2;
+        t1 = t2;
+      } else
+        t1 = true;
+      if (t1)
         return false;
       blockHeader = _this._readBits$1(3);
       switch (B.JSInt_methods._shrOtherPositive$1(blockHeader, 1)) {
@@ -16650,82 +16095,81 @@
       return (blockHeader & 1) === 0;
     },
     _readBits$1($length) {
-      var t1, t2, t3, t4, octet, _this = this;
+      var t1, t2, b, t3, _this = this;
       if ($length === 0)
         return 0;
-      for (t1 = _this.__Inflate_input_A; t2 = _this._bitBufferLen, t2 < $length;) {
-        t1 === $ && A.throwLateFieldNI("input");
-        t3 = t1.offset;
-        t4 = t1.__InputStream__length_A;
-        t4 === $ && A.throwLateFieldNI("_length");
-        if (t3 >= t1.start + t4)
+      for (; t1 = _this._bitBufferLen, t1 < $length;) {
+        t1 = _this.get$_inputStream();
+        t2 = t1._position;
+        t1 = t1.__InputMemoryStream__length_A;
+        t1 === $ && A.throwLateFieldNI("_length");
+        if (t2 >= t1)
           return -1;
-        t4 = t1.buffer;
-        t1.offset = t3 + 1;
-        if (!(t3 >= 0 && t3 < t4.length))
-          return A.ioore(t4, t3);
-        octet = t4[t3];
-        _this._bitBuffer = (_this._bitBuffer | B.JSInt_methods.$shl(octet, t2)) >>> 0;
+        t1 = _this.get$_inputStream();
+        t2 = t1.buffer;
+        t2.toString;
+        t1 = t1._position++;
+        if (!(t1 >= 0 && t1 < t2.length))
+          return A.ioore(t2, t1);
+        b = t2[t1];
+        t1 = _this._bitBuffer;
+        t2 = _this._bitBufferLen;
+        _this._bitBuffer = (t1 | B.JSInt_methods.$shl(b, t2)) >>> 0;
         _this._bitBufferLen = t2 + 8;
       }
-      t1 = _this._bitBuffer;
+      t2 = _this._bitBuffer;
       t3 = B.JSInt_methods._shlPositive$1(1, $length);
-      _this._bitBuffer = B.JSInt_methods._shrBothPositive$1(t1, $length);
-      _this._bitBufferLen = t2 - $length;
-      return (t1 & t3 - 1) >>> 0;
+      _this._bitBuffer = B.JSInt_methods._shrBothPositive$1(t2, $length);
+      _this._bitBufferLen = t1 - $length;
+      return (t2 & t3 - 1) >>> 0;
     },
     _readCodeByTable$1(table) {
-      var maxCodeLength, t2, t3, t4, t5, octet, codeWithLength, codeLength, _this = this,
+      var maxCodeLength, t2, t3, b, t4, codeWithLength, codeLength, _this = this,
         t1 = table.__HuffmanTable_table_A;
       t1 === $ && A.throwLateFieldNI("table");
       maxCodeLength = table.maxCodeLength;
-      for (t2 = _this.__Inflate_input_A; t3 = _this._bitBufferLen, t3 < maxCodeLength;) {
-        t2 === $ && A.throwLateFieldNI("input");
-        t4 = t2.offset;
-        t5 = t2.__InputStream__length_A;
-        t5 === $ && A.throwLateFieldNI("_length");
-        if (t4 >= t2.start + t5)
+      for (; t2 = _this._bitBufferLen, t2 < maxCodeLength;) {
+        t2 = _this.get$_inputStream();
+        t3 = t2._position;
+        t2 = t2.__InputMemoryStream__length_A;
+        t2 === $ && A.throwLateFieldNI("_length");
+        if (t3 >= t2)
           return -1;
-        t5 = t2.buffer;
-        t2.offset = t4 + 1;
-        if (!(t4 >= 0 && t4 < t5.length))
-          return A.ioore(t5, t4);
-        octet = t5[t4];
-        _this._bitBuffer = (_this._bitBuffer | B.JSInt_methods.$shl(octet, t3)) >>> 0;
+        t2 = _this.get$_inputStream();
+        t3 = t2.buffer;
+        t3.toString;
+        t2 = t2._position++;
+        if (!(t2 >= 0 && t2 < t3.length))
+          return A.ioore(t3, t2);
+        b = t3[t2];
+        t2 = _this._bitBuffer;
+        t3 = _this._bitBufferLen;
+        _this._bitBuffer = (t2 | B.JSInt_methods.$shl(b, t3)) >>> 0;
         _this._bitBufferLen = t3 + 8;
       }
-      t2 = _this._bitBuffer;
-      t4 = (t2 & B.JSInt_methods.$shl(1, maxCodeLength) - 1) >>> 0;
+      t3 = _this._bitBuffer;
+      t4 = (t3 & B.JSInt_methods.$shl(1, maxCodeLength) - 1) >>> 0;
       if (!(t4 < t1.length))
         return A.ioore(t1, t4);
       codeWithLength = t1[t4];
       codeLength = codeWithLength >>> 16;
-      _this._bitBuffer = B.JSInt_methods._shrBothPositive$1(t2, codeLength);
-      _this._bitBufferLen = t3 - codeLength;
+      _this._bitBuffer = B.JSInt_methods._shrBothPositive$1(t3, codeLength);
+      _this._bitBufferLen = t2 - codeLength;
       return codeWithLength & 65535;
     },
     _parseUncompressedBlock$0() {
-      var len, t1, t2, position, t3, $length, bytes, _this = this;
+      var len, t1, bytes, _this = this;
       _this._bitBufferLen = _this._bitBuffer = 0;
       len = _this._readBits$1(16);
       t1 = _this._readBits$1(16);
       if (len !== 0 && len !== (t1 ^ 65535) >>> 0)
         return -1;
-      t1 = _this.__Inflate_input_A;
-      t1 === $ && A.throwLateFieldNI("input");
-      if (len > t1.get$length(0))
+      if (len > _this.get$_inputStream().get$length(0))
         return -1;
-      t2 = t1.start;
-      position = t1.offset - t2 + t2;
-      if (len < 0) {
-        t3 = t1.__InputStream__length_A;
-        t3 === $ && A.throwLateFieldNI("_length");
-        $length = t3 - (position - t2);
-      } else
-        $length = len;
-      bytes = A.InputStream$(t1.buffer, t1.byteOrder, $length, position);
-      t1.offset = t1.offset + bytes.get$length(0);
-      _this.output.writeInputStream$1(bytes);
+      t1 = _this.get$_inputStream();
+      bytes = t1.subset$2$length$position(len, t1._position);
+      t1._position = t1._position + bytes.get$length(0);
+      _this._inflate$_output.writeStream$1(bytes);
       return 0;
     },
     _parseDynamicHuffmanBlock$0() {
@@ -16767,18 +16211,18 @@
         return -1;
       return _this._decodeHuffman$2(A.HuffmanTable$(litlenLengths), A.HuffmanTable$(distLengths));
     },
-    _decodeHuffman$2(litlen, dist) {
+    _decodeHuffman$2(litLen, dist) {
       var t1, code, t2, t3, ti, codeLength, distCode, distance, _this = this;
-      for (t1 = _this.output; true;) {
-        code = _this._readCodeByTable$1(litlen);
+      for (t1 = _this._inflate$_output; true;) {
+        code = _this._readCodeByTable$1(litLen);
         if (code < 0 || code > 285)
           return -1;
         if (code === 256)
           break;
         if (code < 256) {
-          if (t1.length === t1._output_stream$_buffer.length)
-            t1._output_stream$_expandBuffer$0();
-          t2 = t1._output_stream$_buffer;
+          if (t1.length === t1._output_memory_stream$_buffer.length)
+            t1._output_memory_stream$_expandBuffer$0();
+          t2 = t1._output_memory_stream$_buffer;
           t3 = t1.length++;
           t2.$flags & 2 && A.throwUnsupportedOperation(t2);
           if (!(t3 >= 0 && t3 < t2.length))
@@ -16805,17 +16249,18 @@
         else
           t1.writeBytes$1(t1.subset$2(t2, codeLength - distance));
       }
-      for (t1 = _this.__Inflate_input_A; t2 = _this._bitBufferLen, t2 >= 8;) {
-        _this._bitBufferLen = t2 - 8;
-        t1 === $ && A.throwLateFieldNI("input");
-        if (--t1.offset < 0)
-          t1.offset = 0;
+      for (; t1 = _this._bitBufferLen, t1 >= 8;) {
+        _this._bitBufferLen = t1 - 8;
+        t1 = _this.get$_inputStream();
+        t2 = --t1._position;
+        t3 = t1.__InputMemoryStream__length_A;
+        t3 === $ && A.throwLateFieldNI("_length");
+        t1._position = B.JSInt_methods.clamp$2(t2, 0, t3);
       }
       return 0;
     },
     _decode$3(num, table, codeLengths) {
       var prev, i, code, prev0, repeat, t1, repeat0, i0, _this = this;
-      type$.List_int._as(codeLengths);
       for (prev = 0, i = 0; i < num;) {
         code = _this._readCodeByTable$1(table);
         if (code === -1)
@@ -16879,8 +16324,112 @@
       return 0;
     }
   };
-  A.ZLibDecoderBase.prototype = {};
-  A.ZLibDecoder.prototype = {};
+  A.ZLibDecoder.prototype = {
+    decodeBytes$1(bytes) {
+      var output;
+      type$.List_int._as(bytes);
+      output = A.OutputMemoryStream$(32768);
+      B.C__ZLibDecoder.decodeStream$4$raw$verify(A.InputMemoryStream$(bytes, B.ByteOrder_1, null, null), output, false, false);
+      return output.getBytes$0();
+    }
+  };
+  A.ByteOrder.prototype = {
+    _enumToString$0() {
+      return "ByteOrder." + this._core$_name;
+    }
+  };
+  A.InputMemoryStream.prototype = {
+    get$length(_) {
+      var t1 = this.buffer;
+      return t1 == null ? 0 : t1.length - this._position;
+    },
+    subset$2$length$position($length, position) {
+      var t1 = this.buffer;
+      if (t1 == null)
+        return A.InputMemoryStream$(A._setArrayType([], type$.JSArray_int), B.ByteOrder_0, null, null);
+      return A.InputMemoryStream$(t1, this.byteOrder, $length, position);
+    },
+    readByte$0() {
+      var t2,
+        t1 = this.buffer;
+      t1.toString;
+      t2 = this._position++;
+      if (!(t2 >= 0 && t2 < t1.length))
+        return A.ioore(t1, t2);
+      return t1[t2];
+    }
+  };
+  A.InputStream.prototype = {
+    readUint32$0() {
+      var _this = this,
+        b1 = _this.readByte$0(),
+        b2 = _this.readByte$0(),
+        b3 = _this.readByte$0(),
+        b4 = _this.readByte$0();
+      if (_this.byteOrder === B.ByteOrder_1)
+        return (b1 << 24 | b2 << 16 | b3 << 8 | b4) >>> 0;
+      return (b4 << 24 | b3 << 16 | b2 << 8 | b1) >>> 0;
+    }
+  };
+  A.OutputMemoryStream.prototype = {
+    getBytes$0() {
+      return J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(this._output_memory_stream$_buffer), this._output_memory_stream$_buffer.byteOffset, this.length);
+    },
+    writeBytes$1(bytes) {
+      var $length, t1, t2, t3, t4, _this = this;
+      type$.List_int._as(bytes);
+      $length = bytes.length;
+      for (; t1 = _this.length, t2 = t1 + $length, t3 = _this._output_memory_stream$_buffer, t4 = t3.length, t2 > t4;)
+        _this._output_memory_stream$_expandBuffer$1(t2 - t4);
+      B.NativeUint8List_methods.setRange$3(t3, t1, t2, bytes);
+      _this.length += $length;
+    },
+    writeStream$1(stream) {
+      var t1, t2, t3, t4, t5, t6, _this = this;
+      while (true) {
+        t1 = _this.length;
+        t2 = stream.buffer;
+        t3 = t2 == null;
+        t4 = t3 ? 0 : t2.length - stream._position;
+        t5 = _this._output_memory_stream$_buffer;
+        t6 = t5.length;
+        if (!(t1 + t4 > t6))
+          break;
+        _this._output_memory_stream$_expandBuffer$1(t1 + (t3 ? 0 : t2.length - stream._position) - t6);
+      }
+      if (!t3)
+        B.NativeUint8List_methods.setRange$4(t5, t1, t1 + stream.get$length(0), t2, stream._position);
+      _this.length = _this.length + stream.get$length(0);
+    },
+    subset$2(start, end) {
+      var _this = this;
+      if (start < 0)
+        start = _this.length + start;
+      if (end == null)
+        end = _this.length;
+      else if (end < 0)
+        end = _this.length + end;
+      return J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(_this._output_memory_stream$_buffer), _this._output_memory_stream$_buffer.byteOffset + start, end - start);
+    },
+    subset$1(start) {
+      return this.subset$2(start, null);
+    },
+    _output_memory_stream$_expandBuffer$1(required) {
+      var blockSize = required != null ? required > 32768 ? required : 32768 : 32768,
+        t1 = this._output_memory_stream$_buffer,
+        t2 = t1.length,
+        newBuffer = new Uint8Array((t2 + blockSize) * 2);
+      B.NativeUint8List_methods.setRange$3(newBuffer, 0, t2, t1);
+      this._output_memory_stream$_buffer = newBuffer;
+    },
+    _output_memory_stream$_expandBuffer$0() {
+      return this._output_memory_stream$_expandBuffer$1(null);
+    },
+    get$length(receiver) {
+      return this.length;
+    }
+  };
+  A.OutputStream.prototype = {};
   A.CancelationToken.prototype = {
     throwIfCanceled$0() {
       var t1 = this.__squadron_cancelation_token$_exception;
@@ -16963,6 +16512,17 @@
         t1 = 0;
       return t1;
     },
+    set$r(v) {
+      var t2,
+        t1 = this.data;
+      if (!B.NativeUint16List_methods.get$isEmpty(t1)) {
+        t2 = A.Float16_doubleToFloat16(v);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        if (0 >= t1.length)
+          return A.ioore(t1, 0);
+        t1[0] = t2;
+      }
+    },
     get$g() {
       var t2,
         t1 = this.data;
@@ -16976,6 +16536,15 @@
       } else
         t1 = 0;
       return t1;
+    },
+    set$g(v) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 1) {
+        t2 = A.Float16_doubleToFloat16(v);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[1] = t2;
+      }
     },
     get$b() {
       var t2,
@@ -16991,6 +16560,15 @@
         t1 = 0;
       return t1;
     },
+    set$b(v) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 2) {
+        t2 = A.Float16_doubleToFloat16(v);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[2] = t2;
+      }
+    },
     get$a() {
       var t2,
         t1 = this.data;
@@ -17005,35 +16583,20 @@
         t1 = 0;
       return t1;
     },
+    get$aNormalized() {
+      return this.get$a() / 1;
+    },
     get$luminance() {
       return A.getLuminance(this);
     },
     $set$1(c) {
-      var t3,
-        t1 = c.get$r(),
-        t2 = this.data;
-      if (!B.NativeUint16List_methods.get$isEmpty(t2)) {
-        t1 = A.Float16_doubleToFloat16(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (0 >= t2.length)
-          return A.ioore(t2, 0);
-        t2[0] = t1;
-      }
-      t1 = c.get$g();
-      t3 = t2.length;
-      if (t3 > 1) {
-        t1 = A.Float16_doubleToFloat16(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[1] = t1;
-      }
-      t1 = c.get$b();
-      if (t3 > 2) {
-        t1 = A.Float16_doubleToFloat16(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[2] = t1;
-      }
+      var t1, t2, _this = this;
+      _this.set$r(c.get$r());
+      _this.set$g(c.get$g());
+      _this.set$b(c.get$b());
       t1 = c.get$a();
-      if (t3 > 3) {
+      t2 = _this.data;
+      if (t2.length > 3) {
         t1 = A.Float16_doubleToFloat16(t1);
         t2.$flags & 2 && A.throwUnsupportedOperation(t2);
         t2[3] = t1;
@@ -17115,44 +16678,55 @@
         t1 = 0;
       return t1;
     },
+    set$r(r) {
+      var t1 = this.data;
+      if (!B.NativeFloat32List_methods.get$isEmpty(t1)) {
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        if (0 >= t1.length)
+          return A.ioore(t1, 0);
+        t1[0] = r;
+      }
+    },
     get$g() {
       var t1 = this.data;
       return t1.length > 1 ? t1[1] : 0;
+    },
+    set$g(g) {
+      var t1 = this.data;
+      if (t1.length > 1) {
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[1] = g;
+      }
     },
     get$b() {
       var t1 = this.data;
       return t1.length > 2 ? t1[2] : 0;
     },
+    set$b(b) {
+      var t1 = this.data;
+      if (t1.length > 2) {
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[2] = b;
+      }
+    },
     get$a() {
       var t1 = this.data;
       return t1.length > 3 ? t1[3] : 1;
+    },
+    get$aNormalized() {
+      return this.get$a() / 1;
     },
     get$luminance() {
       return A.getLuminance(this);
     },
     $set$1(c) {
-      var t3,
-        t1 = c.get$r(),
-        t2 = this.data;
-      if (!B.NativeFloat32List_methods.get$isEmpty(t2)) {
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (0 >= t2.length)
-          return A.ioore(t2, 0);
-        t2[0] = t1;
-      }
-      t1 = c.get$g();
-      t3 = t2.length;
-      if (t3 > 1) {
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[1] = t1;
-      }
-      t1 = c.get$b();
-      if (t3 > 2) {
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[2] = t1;
-      }
+      var t1, t2, _this = this;
+      _this.set$r(c.get$r());
+      _this.set$g(c.get$g());
+      _this.set$b(c.get$b());
       t1 = c.get$a();
-      if (t3 > 3) {
+      t2 = _this.data;
+      if (t2.length > 3) {
         t2.$flags & 2 && A.throwUnsupportedOperation(t2);
         t2[3] = t1;
       }
@@ -17233,44 +16807,55 @@
         t1 = 0;
       return t1;
     },
+    set$r(r) {
+      var t1 = this.data;
+      if (!B.NativeFloat64List_methods.get$isEmpty(t1)) {
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        if (0 >= t1.length)
+          return A.ioore(t1, 0);
+        t1[0] = r;
+      }
+    },
     get$g() {
       var t1 = this.data;
       return t1.length > 1 ? t1[1] : 0;
+    },
+    set$g(g) {
+      var t1 = this.data;
+      if (t1.length > 1) {
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[1] = g;
+      }
     },
     get$b() {
       var t1 = this.data;
       return t1.length > 2 ? t1[2] : 0;
     },
+    set$b(b) {
+      var t1 = this.data;
+      if (t1.length > 2) {
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[2] = b;
+      }
+    },
     get$a() {
       var t1 = this.data;
       return t1.length > 3 ? t1[3] : 1;
+    },
+    get$aNormalized() {
+      return this.get$a() / 1;
     },
     get$luminance() {
       return A.getLuminance(this);
     },
     $set$1(c) {
-      var t3,
-        t1 = c.get$r(),
-        t2 = this.data;
-      if (!B.NativeFloat64List_methods.get$isEmpty(t2)) {
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (0 >= t2.length)
-          return A.ioore(t2, 0);
-        t2[0] = t1;
-      }
-      t1 = c.get$g();
-      t3 = t2.length;
-      if (t3 > 1) {
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[1] = t1;
-      }
-      t1 = c.get$b();
-      if (t3 > 2) {
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[2] = t1;
-      }
+      var t1, t2, _this = this;
+      _this.set$r(c.get$r());
+      _this.set$g(c.get$g());
+      _this.set$b(c.get$b());
       t1 = c.get$a();
-      if (t3 > 3) {
+      t2 = _this.data;
+      if (t2.length > 3) {
         t2.$flags & 2 && A.throwUnsupportedOperation(t2);
         t2[3] = t1;
       }
@@ -17353,47 +16938,61 @@
         t1 = 0;
       return t1;
     },
+    set$r(r) {
+      var t2,
+        t1 = this.data;
+      if (!B.NativeInt16List_methods.get$isEmpty(t1)) {
+        t2 = B.JSNumber_methods.toInt$0(r);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        if (0 >= t1.length)
+          return A.ioore(t1, 0);
+        t1[0] = t2;
+      }
+    },
     get$g() {
       var t1 = this.data;
       return t1.length > 1 ? t1[1] : 0;
+    },
+    set$g(g) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 1) {
+        t2 = B.JSNumber_methods.toInt$0(g);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[1] = t2;
+      }
     },
     get$b() {
       var t1 = this.data;
       return t1.length > 2 ? t1[2] : 0;
     },
+    set$b(b) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 2) {
+        t2 = B.JSNumber_methods.toInt$0(b);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[2] = t2;
+      }
+    },
     get$a() {
       var t1 = this.data;
       return t1.length > 3 ? t1[3] : 0;
+    },
+    get$aNormalized() {
+      return this.get$a() / 32767;
     },
     get$luminance() {
       return A.getLuminance(this);
     },
     $set$1(c) {
-      var t3,
-        t1 = c.get$r(),
-        t2 = this.data;
-      if (!B.NativeInt16List_methods.get$isEmpty(t2)) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (0 >= t2.length)
-          return A.ioore(t2, 0);
-        t2[0] = t1;
-      }
-      t1 = c.get$g();
-      t3 = t2.length;
-      if (t3 > 1) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[1] = t1;
-      }
-      t1 = c.get$b();
-      if (t3 > 2) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[2] = t1;
-      }
+      var t1, t2, _this = this;
+      _this.set$r(c.get$r());
+      _this.set$g(c.get$g());
+      _this.set$b(c.get$b());
       t1 = c.get$a();
-      if (t3 > 3) {
+      t2 = _this.data;
+      if (t2.length > 3) {
         t1 = B.JSNumber_methods.toInt$0(t1);
         t2.$flags & 2 && A.throwUnsupportedOperation(t2);
         t2[3] = t1;
@@ -17477,47 +17076,60 @@
         t1 = 0;
       return t1;
     },
+    set$r(r) {
+      var t1 = this.data;
+      if (!B.NativeInt32List_methods.get$isEmpty(t1)) {
+        A._asInt(r);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        if (0 >= t1.length)
+          return A.ioore(t1, 0);
+        t1[0] = r;
+      }
+    },
     get$g() {
       var t1 = this.data;
       return t1.length > 1 ? t1[1] : 0;
+    },
+    set$g(g) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 1) {
+        t2 = B.JSNumber_methods.toInt$0(g);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[1] = t2;
+      }
     },
     get$b() {
       var t1 = this.data;
       return t1.length > 2 ? t1[2] : 0;
     },
+    set$b(b) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 2) {
+        t2 = B.JSNumber_methods.toInt$0(b);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[2] = t2;
+      }
+    },
     get$a() {
       var t1 = this.data;
       return t1.length > 3 ? t1[3] : 0;
+    },
+    get$aNormalized() {
+      return this.get$a() / 2147483647;
     },
     get$luminance() {
       return A.getLuminance(this);
     },
     $set$1(c) {
-      var t3,
-        t1 = c.get$r(),
-        t2 = this.data;
-      if (!B.NativeInt32List_methods.get$isEmpty(t2)) {
-        A._asInt(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (0 >= t2.length)
-          return A.ioore(t2, 0);
-        t2[0] = t1;
-      }
-      t1 = c.get$g();
-      t3 = t2.length;
-      if (t3 > 1) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[1] = t1;
-      }
-      t1 = c.get$b();
-      if (t3 > 2) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[2] = t1;
-      }
+      var t1, t2, _this = this;
+      _this.set$r(c.get$r());
+      _this.set$g(c.get$g());
+      _this.set$b(c.get$b());
       t1 = c.get$a();
-      if (t3 > 3) {
+      t2 = _this.data;
+      if (t2.length > 3) {
         t1 = B.JSNumber_methods.toInt$0(t1);
         t2.$flags & 2 && A.throwUnsupportedOperation(t2);
         t2[3] = t1;
@@ -17601,47 +17213,61 @@
         t1 = 0;
       return t1;
     },
+    set$r(r) {
+      var t2,
+        t1 = this.data;
+      if (!B.NativeInt8List_methods.get$isEmpty(t1)) {
+        t2 = B.JSNumber_methods.toInt$0(r);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        if (0 >= t1.length)
+          return A.ioore(t1, 0);
+        t1[0] = t2;
+      }
+    },
     get$g() {
       var t1 = this.data;
       return t1.length > 1 ? t1[1] : 0;
+    },
+    set$g(g) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 1) {
+        t2 = B.JSNumber_methods.toInt$0(g);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[1] = t2;
+      }
     },
     get$b() {
       var t1 = this.data;
       return t1.length > 2 ? t1[2] : 0;
     },
+    set$b(b) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 2) {
+        t2 = B.JSNumber_methods.toInt$0(b);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[2] = t2;
+      }
+    },
     get$a() {
       var t1 = this.data;
       return t1.length > 3 ? t1[3] : 0;
+    },
+    get$aNormalized() {
+      return this.get$a() / 127;
     },
     get$luminance() {
       return A.getLuminance(this);
     },
     $set$1(c) {
-      var t3,
-        t1 = c.get$r(),
-        t2 = this.data;
-      if (!B.NativeInt8List_methods.get$isEmpty(t2)) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (0 >= t2.length)
-          return A.ioore(t2, 0);
-        t2[0] = t1;
-      }
-      t1 = c.get$g();
-      t3 = t2.length;
-      if (t3 > 1) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[1] = t1;
-      }
-      t1 = c.get$b();
-      if (t3 > 2) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[2] = t1;
-      }
+      var t1, t2, _this = this;
+      _this.set$r(c.get$r());
+      _this.set$g(c.get$g());
+      _this.set$b(c.get$b());
       t1 = c.get$a();
-      if (t3 > 3) {
+      t2 = _this.data;
+      if (t2.length > 3) {
         t1 = B.JSNumber_methods.toInt$0(t1);
         t2.$flags & 2 && A.throwUnsupportedOperation(t2);
         t2[3] = t1;
@@ -17712,14 +17338,26 @@
     get$r() {
       return this._color_uint1$_getChannel$1(0);
     },
+    set$r(v) {
+      this._color_uint1$_setChannel$2(0, v);
+    },
     get$g() {
       return this._color_uint1$_getChannel$1(1);
+    },
+    set$g(v) {
+      this._color_uint1$_setChannel$2(1, v);
     },
     get$b() {
       return this._color_uint1$_getChannel$1(2);
     },
+    set$b(v) {
+      this._color_uint1$_setChannel$2(2, v);
+    },
     get$a() {
       return this._color_uint1$_getChannel$1(3);
+    },
+    get$aNormalized() {
+      return this._color_uint1$_getChannel$1(3) / 1;
     },
     get$luminance() {
       return A.getLuminance(this);
@@ -17815,47 +17453,61 @@
         t1 = 0;
       return t1;
     },
+    set$r(r) {
+      var t2,
+        t1 = this.data;
+      if (!B.NativeUint16List_methods.get$isEmpty(t1)) {
+        t2 = B.JSNumber_methods.toInt$0(r);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        if (0 >= t1.length)
+          return A.ioore(t1, 0);
+        t1[0] = t2;
+      }
+    },
     get$g() {
       var t1 = this.data;
       return t1.length > 1 ? t1[1] : 0;
+    },
+    set$g(g) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 1) {
+        t2 = B.JSNumber_methods.toInt$0(g);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[1] = t2;
+      }
     },
     get$b() {
       var t1 = this.data;
       return t1.length > 2 ? t1[2] : 0;
     },
+    set$b(b) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 2) {
+        t2 = B.JSNumber_methods.toInt$0(b);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[2] = t2;
+      }
+    },
     get$a() {
       var t1 = this.data;
       return t1.length > 3 ? t1[3] : 0;
+    },
+    get$aNormalized() {
+      return this.get$a() / 65535;
     },
     get$luminance() {
       return A.getLuminance(this);
     },
     $set$1(c) {
-      var t3,
-        t1 = c.get$r(),
-        t2 = this.data;
-      if (!B.NativeUint16List_methods.get$isEmpty(t2)) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (0 >= t2.length)
-          return A.ioore(t2, 0);
-        t2[0] = t1;
-      }
-      t1 = c.get$g();
-      t3 = t2.length;
-      if (t3 > 1) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[1] = t1;
-      }
-      t1 = c.get$b();
-      if (t3 > 2) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[2] = t1;
-      }
+      var t1, t2, _this = this;
+      _this.set$r(c.get$r());
+      _this.set$g(c.get$g());
+      _this.set$b(c.get$b());
       t1 = c.get$a();
-      if (t3 > 3) {
+      t2 = _this.data;
+      if (t2.length > 3) {
         t1 = B.JSNumber_methods.toInt$0(t1);
         t2.$flags & 2 && A.throwUnsupportedOperation(t2);
         t2[3] = t1;
@@ -17929,14 +17581,26 @@
     get$r() {
       return this._color_uint2$_getChannel$1(0);
     },
+    set$r(v) {
+      this._color_uint2$_setChannel$2(0, v);
+    },
     get$g() {
       return this._color_uint2$_getChannel$1(1);
+    },
+    set$g(v) {
+      this._color_uint2$_setChannel$2(1, v);
     },
     get$b() {
       return this._color_uint2$_getChannel$1(2);
     },
+    set$b(v) {
+      this._color_uint2$_setChannel$2(2, v);
+    },
     get$a() {
       return this._color_uint2$_getChannel$1(3);
+    },
+    get$aNormalized() {
+      return this._color_uint2$_getChannel$1(3) / 3;
     },
     get$luminance() {
       return A.getLuminance(this);
@@ -18032,47 +17696,61 @@
         t1 = 0;
       return t1;
     },
+    set$r(r) {
+      var t2,
+        t1 = this.data;
+      if (!B.NativeUint32List_methods.get$isEmpty(t1)) {
+        t2 = B.JSNumber_methods.toInt$0(r);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        if (0 >= t1.length)
+          return A.ioore(t1, 0);
+        t1[0] = t2;
+      }
+    },
     get$g() {
       var t1 = this.data;
       return t1.length > 1 ? t1[1] : 0;
+    },
+    set$g(g) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 1) {
+        t2 = B.JSNumber_methods.toInt$0(g);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[1] = t2;
+      }
     },
     get$b() {
       var t1 = this.data;
       return t1.length > 2 ? t1[2] : 0;
     },
+    set$b(b) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 2) {
+        t2 = B.JSNumber_methods.toInt$0(b);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[2] = t2;
+      }
+    },
     get$a() {
       var t1 = this.data;
       return t1.length > 3 ? t1[3] : 0;
+    },
+    get$aNormalized() {
+      return this.get$a() / 4294967295;
     },
     get$luminance() {
       return A.getLuminance(this);
     },
     $set$1(c) {
-      var t3,
-        t1 = c.get$r(),
-        t2 = this.data;
-      if (!B.NativeUint32List_methods.get$isEmpty(t2)) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (0 >= t2.length)
-          return A.ioore(t2, 0);
-        t2[0] = t1;
-      }
-      t1 = c.get$g();
-      t3 = t2.length;
-      if (t3 > 1) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[1] = t1;
-      }
-      t1 = c.get$b();
-      if (t3 > 2) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[2] = t1;
-      }
+      var t1, t2, _this = this;
+      _this.set$r(c.get$r());
+      _this.set$g(c.get$g());
+      _this.set$b(c.get$b());
       t1 = c.get$a();
-      if (t3 > 3) {
+      t2 = _this.data;
+      if (t2.length > 3) {
         t1 = B.JSNumber_methods.toInt$0(t1);
         t2.$flags & 2 && A.throwUnsupportedOperation(t2);
         t2[3] = t1;
@@ -18167,14 +17845,26 @@
     get$r() {
       return this._getChannel$1(0);
     },
+    set$r(v) {
+      this._setChannel$2(0, v);
+    },
     get$g() {
       return this._getChannel$1(1);
+    },
+    set$g(v) {
+      this._setChannel$2(1, v);
     },
     get$b() {
       return this._getChannel$1(2);
     },
+    set$b(v) {
+      this._setChannel$2(2, v);
+    },
     get$a() {
       return this._getChannel$1(3);
+    },
+    get$aNormalized() {
+      return this._getChannel$1(3) / 15;
     },
     get$luminance() {
       return A.getLuminance(this);
@@ -18288,47 +17978,61 @@
         t1 = 0;
       return t1;
     },
+    set$r(r) {
+      var t2,
+        t1 = this.data;
+      if (!B.NativeUint8List_methods.get$isEmpty(t1)) {
+        t2 = B.JSNumber_methods.toInt$0(r);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        if (0 >= t1.length)
+          return A.ioore(t1, 0);
+        t1[0] = t2;
+      }
+    },
     get$g() {
       var t1 = this.data;
       return t1.length > 1 ? t1[1] : 0;
+    },
+    set$g(g) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 1) {
+        t2 = B.JSNumber_methods.toInt$0(g);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[1] = t2;
+      }
     },
     get$b() {
       var t1 = this.data;
       return t1.length > 2 ? t1[2] : 0;
     },
+    set$b(b) {
+      var t2,
+        t1 = this.data;
+      if (t1.length > 2) {
+        t2 = B.JSNumber_methods.toInt$0(b);
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[2] = t2;
+      }
+    },
     get$a() {
       var t1 = this.data;
       return t1.length > 3 ? t1[3] : 255;
+    },
+    get$aNormalized() {
+      return this.get$a() / 255;
     },
     get$luminance() {
       return A.getLuminance(this);
     },
     $set$1(c) {
-      var t3,
-        t1 = c.get$r(),
-        t2 = this.data;
-      if (!B.NativeUint8List_methods.get$isEmpty(t2)) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        if (0 >= t2.length)
-          return A.ioore(t2, 0);
-        t2[0] = t1;
-      }
-      t1 = c.get$g();
-      t3 = t2.length;
-      if (t3 > 1) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[1] = t1;
-      }
-      t1 = c.get$b();
-      if (t3 > 2) {
-        t1 = B.JSNumber_methods.toInt$0(t1);
-        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-        t2[2] = t1;
-      }
+      var t1, t2, _this = this;
+      _this.set$r(c.get$r());
+      _this.set$g(c.get$g());
+      _this.set$b(c.get$b());
       t1 = c.get$a();
-      if (t3 > 3) {
+      t2 = _this.data;
+      if (t2.length > 3) {
         t1 = B.JSNumber_methods.toInt$0(t1);
         t2.$flags & 2 && A.throwUnsupportedOperation(t2);
         t2[3] = t1;
@@ -18358,6 +18062,92 @@
   };
   A.ColorRgb8.prototype = {};
   A.ColorRgba8.prototype = {};
+  A.ConstColorUint8.prototype = {
+    clone$0() {
+      return new A.ConstColorUint8(this.data);
+    },
+    get$format() {
+      return B.Format_3;
+    },
+    get$length(_) {
+      return 4;
+    },
+    get$palette() {
+      return null;
+    },
+    $index(_, index) {
+      var t1;
+      if (index >= 0 && index < 4) {
+        t1 = index << 3 >>> 0;
+        t1 = B.JSInt_methods._shrBothPositive$1((this.data & B.JSInt_methods._shlPositive$1(255, t1)) >>> 0, t1);
+      } else
+        t1 = 0;
+      return t1;
+    },
+    $indexSet(_, index, value) {
+    },
+    $set$1(c) {
+    },
+    get$index() {
+      return this.$index(0, 0);
+    },
+    get$r() {
+      return this.$index(0, 0);
+    },
+    set$r(v) {
+    },
+    get$g() {
+      return this.$index(0, 1);
+    },
+    set$g(v) {
+    },
+    get$b() {
+      return this.$index(0, 2);
+    },
+    set$b(v) {
+    },
+    get$a() {
+      return this.$index(0, 3);
+    },
+    get$aNormalized() {
+      return this.get$a() / 255;
+    },
+    get$luminance() {
+      return A.getLuminance(this);
+    },
+    get$iterator(_) {
+      return new A.ChannelIterator(this);
+    },
+    $eq(_, other) {
+      var t1, t2, _this = this;
+      if (other == null)
+        return false;
+      t1 = false;
+      if (type$.Color._is(other))
+        if (other.get$length(other) === _this.get$length(_this)) {
+          t1 = other.get$hashCode(other);
+          t2 = A.List_List$_of(_this, A._instanceType(_this)._eval$1("Iterable.E"));
+          t1 = t1 === A.Object_hashAll(t2);
+        }
+      return t1;
+    },
+    get$hashCode(_) {
+      var t1 = A.List_List$_of(this, A._instanceType(this)._eval$1("Iterable.E"));
+      return A.Object_hashAll(t1);
+    },
+    $isColor: 1
+  };
+  A.ConstColorRgb8.prototype = {
+    get$a() {
+      return 255;
+    },
+    get$aNormalized() {
+      return 1;
+    },
+    get$length(_) {
+      return 3;
+    }
+  };
   A.Format.prototype = {
     _enumToString$0() {
       return "Format." + this._core$_name;
@@ -18565,7 +18355,7 @@
       }
     },
     read$1(block) {
-      var blockOffset, endian, ifdOffset, t1, t2, t3, t4, t5, t6, index, directory, numEntries, dir, i, t7, _i, entry, t8, nextIfdOffset, t9, t10, t11, t12, t13,
+      var blockOffset, endian, ifdOffset, t1, t2, t3, t4, t5, t6, t7, index, t8, directory, numEntries, dir, i, _i, entry, t9, nextIfdOffset, t10, t11, t12, t13,
         saveEndian = block.bigEndian;
       block.bigEndian = true;
       blockOffset = block.offset;
@@ -18585,18 +18375,21 @@
       } else
         return false;
       ifdOffset = block.readUint32$0();
-      for (t1 = this.directories, t2 = type$.JSArray__ExifEntry, t3 = type$.int, t4 = type$.IfdValue, t5 = type$.String, t6 = type$.IfdDirectory, index = 0; ifdOffset > 0; ifdOffset = nextIfdOffset) {
-        block.offset = blockOffset + ifdOffset;
+      for (t1 = this.directories, t2 = type$.JSArray__ExifEntry, t3 = type$.int, t4 = type$.IfdValue, t5 = type$.String, t6 = type$.IfdDirectory, t7 = block.end, index = 0; ifdOffset > 0; ifdOffset = nextIfdOffset) {
+        t8 = blockOffset + ifdOffset;
+        block.offset = t8;
+        if (t7 - t8 < 2)
+          break;
         directory = new A.IfdDirectory(A.LinkedHashMap_LinkedHashMap$_empty(t3, t4), new A.IfdContainer(A.LinkedHashMap_LinkedHashMap$_empty(t5, t6)));
         numEntries = block.readUint16$0();
         dir = A._setArrayType(new Array(numEntries), t2);
         for (i = 0; i < numEntries; ++i)
           dir[i] = this._readEntry$2(block, blockOffset);
-        for (t7 = dir.length, _i = 0; _i < dir.length; dir.length === t7 || (0, A.throwConcurrentModificationError)(dir), ++_i) {
+        for (t8 = dir.length, _i = 0; _i < dir.length; dir.length === t8 || (0, A.throwConcurrentModificationError)(dir), ++_i) {
           entry = dir[_i];
-          t8 = entry.value;
-          if (t8 != null)
-            directory.$indexSet(0, entry.tag, t8);
+          t9 = entry.value;
+          if (t9 != null)
+            directory.$indexSet(0, entry.tag, t9);
         }
         t1.$indexSet(0, "ifd" + index, directory);
         ++index;
@@ -19925,11 +19718,6 @@
     }
   };
   A.ExrChannel.prototype = {
-    get$dataType() {
-      var t1 = this.__ExrChannel_dataType_A;
-      t1 === $ && A.throwLateFieldNI("dataType");
-      return t1;
-    },
     ExrChannel$1(input) {
       var _this = this,
         t1 = input.readString$0();
@@ -19971,8 +19759,6 @@
         case 2:
           _this.__ExrChannel_dataSize_A = 4;
           break;
-        default:
-          throw A.wrapException(A.ImageException$("EXR Invalid pixel type: " + _this.get$dataType().toString$0(0)));
       }
     }
   };
@@ -20040,7 +19826,7 @@
       }
     },
     _readTiledPart$2(part, input) {
-      var multiPart, compressor, offsets, imgData, t2, t3, ly, l, t4, lx, ty, oi, t5, tx, tileX, tileY, bytes, ty0, t6, len, uncompressedData, tileWidth, tileHeight, numChannels, si, yi, ci, ch, tx0, xx, v, p, slice, _null = null,
+      var multiPart, compressor, offsets, imgData, t2, t3, ly, l, t4, lx, ty, oi, t5, tx, tileX, tileY, bytes, ty0, t6, uncompressedData, tileWidth, tileHeight, numChannels, si, yi, ci, ch, tx0, xx, t7, v, p, slice, _null = null,
         t1 = this.__ExrImage_flags_A;
       t1 === $ && A.throwLateFieldNI("flags");
       multiPart = (t1 & 16) !== 0;
@@ -20103,8 +19889,9 @@
               t6 = part._tileWidth;
               t6.toString;
               t5 = compressor.uncompress$5(bytes, tileX * t6, ty0, t6, t5);
-              len = t5.length;
-              uncompressedData = new A.InputBuffer(t5, 0, len, 0, false);
+              t6 = t5.length;
+              t6 = Math.min(t6, t6);
+              uncompressedData = new A.InputBuffer(t5, 0, t6, 0, false);
               tileWidth = compressor.decodedWidth;
               tileHeight = compressor.decodedHeight;
               numChannels = t2.length;
@@ -20114,7 +19901,7 @@
                 if (!(yi < tileHeight && ty0 < this.height))
                   break;
                 for (ci = 0; ci < numChannels; ++ci) {
-                  if (si >= len)
+                  if (si >= t6)
                     break;
                   if (!(ci < t2.length))
                     return A.ioore(t2, ci);
@@ -20128,11 +19915,11 @@
                     switch (t5.index) {
                       case 1:
                         t5 = uncompressedData.readUint16$0();
-                        t6 = $.Float16__toFloatFloat32Data;
-                        t6 = t6 != null ? t6 : A.Float16__initialize();
-                        if (!(t5 < t6.length))
-                          return A.ioore(t6, t5);
-                        v = t6[t5];
+                        t7 = $.Float16__toFloatFloat32Data;
+                        t7 = t7 != null ? t7 : A.Float16__initialize();
+                        if (!(t5 < t7.length))
+                          return A.ioore(t7, t5);
+                        v = t7[t5];
                         break;
                       case 2:
                         v = uncompressedData.readUint16$0();
@@ -20159,8 +19946,8 @@
                     } else {
                       t5 = ch.__ExrChannel_name_A;
                       t5 === $ && A.throwLateFieldNI("name");
-                      t6 = t1.extraChannels;
-                      slice = t6 != null ? t6.$index(0, t5) : _null;
+                      t7 = t1.extraChannels;
+                      slice = t7 != null ? t7.$index(0, t5) : _null;
                       if (slice != null)
                         slice.setPixelRgb$5(tx0, ty0, v, 0, 0);
                     }
@@ -20211,7 +19998,8 @@
         imgData.offset = imgData.offset + (bytes.end - bytes.offset);
         if (t4) {
           t5 = compressor.uncompress$3(bytes, 0, yy);
-          uncompressedData = new A.InputBuffer(t5, 0, t5.length, 0, false);
+          t6 = t5.length;
+          uncompressedData = new A.InputBuffer(t5, 0, Math.min(t6, t6), 0, false);
         } else
           uncompressedData = bytes;
         len = uncompressedData.end - uncompressedData.offset;
@@ -20898,7 +20686,7 @@
     },
     uncompress$5(input, x, y, width, height) {
       var ptr, pixel, pixelBytes, maxX, maxY, t2, numChannels, t3, yi, tmpEnd, ci, ch, t4, a1, b1, n, j, t5, t6, k, _this = this,
-        data = B.C__ZLibDecoder.decodeBuffer$2$verify(A.InputStream$(type$.List_int._as(input.toUint8List$0()), 1, null, 0), false),
+        data = B.C_ZLibDecoder.decodeBytes$1(input.toUint8List$0()),
         t1 = _this._exr_pxr24_compressor$_output;
       if (t1 == null) {
         t1 = _this._exr_pxr24_compressor$_maxScanLineSize;
@@ -21138,7 +20926,7 @@
     },
     uncompress$5(input, x, y, width, height) {
       var maxX, maxY, t1, t2, len, i, t3, t10, si, si0, t11, t4, t20, _this = this,
-        data = B.C__ZLibDecoder.decodeBuffer$2$verify(A.InputStream$(type$.List_int._as(input.toUint8List$0()), 1, null, 0), false);
+        data = B.C_ZLibDecoder.decodeBytes$1(input.toUint8List$0());
       if (width == null)
         width = _this._header.width;
       if (height == null)
@@ -21478,68 +21266,43 @@
           t3 = nextImage.data;
           if (t3 != null)
             t3.clear$1(0, new A.ColorUint8(t2));
-        } else if (t2 !== 3) {
-          t2 = frame.__GifImageDesc_x_A;
-          t2 === $ && A.throwLateFieldNI("x");
-          t3 = true;
-          if (t2 === 0) {
-            t2 = frame.__GifImageDesc_y_A;
-            t2 === $ && A.throwLateFieldNI("y");
-            if (t2 === 0) {
-              t2 = frame.__GifImageDesc_width_A;
-              t2 === $ && A.throwLateFieldNI("width");
-              t4 = lastImage.data;
-              t5 = t4 == null;
-              t6 = t5 ? _null : t4.width;
-              if (t2 === (t6 == null ? 0 : t6)) {
-                t2 = frame.__GifImageDesc_height_A;
-                t2 === $ && A.throwLateFieldNI("height");
-                t3 = t5 ? _null : t4.height;
-                t2 = t2 !== (t3 == null ? 0 : t3);
-              } else
-                t2 = t3;
-            } else
-              t2 = t3;
-          } else
-            t2 = t3;
-          if (t2)
-            if (frame.colorMap != null) {
-              t2 = lastImage.data;
-              t2 = t2 == null ? _null : t2.get$palette();
-              t2.toString;
-              remapColors = A.LinkedHashMap_LinkedHashMap$_empty(t1, t1);
-              for (t3 = colorMap.numColors, ci = 0; ci < t3; ++ci)
-                remapColors.$indexSet(0, ci, colorMap.findColor$4(t2.getRed$1(ci), t2.getGreen$1(ci), t2.getBlue$1(ci), t2.getAlpha$1(ci)));
+        } else if (t2 !== 3)
+          if (frame.colorMap != null) {
+            t2 = lastImage.data;
+            t2 = t2 == null ? _null : t2.get$palette();
+            t2.toString;
+            remapColors = A.LinkedHashMap_LinkedHashMap$_empty(t1, t1);
+            for (t3 = colorMap.numColors, ci = 0; ci < t3; ++ci)
+              remapColors.$indexSet(0, ci, colorMap.findColor$4(t2.getRed$1(ci), t2.getGreen$1(ci), t2.getBlue$1(ci), t2.getAlpha$1(ci)));
+            t2 = nextImage.data;
+            nextBytes = t2 == null ? _null : J.asUint8List$0$x(t2.get$buffer(t2));
+            if (nextBytes == null) {
               t2 = nextImage.data;
-              nextBytes = t2 == null ? _null : J.asUint8List$0$x(t2.get$buffer(t2));
-              if (nextBytes == null) {
-                t2 = nextImage.data;
-                t2 = t2 == null ? _null : t2.get$buffer(t2);
-                if (t2 == null)
-                  t2 = B.NativeUint8List_methods.get$buffer(new Uint8Array(0));
-                nextBytes = J.asUint8List$0$x(t2);
-              }
+              t2 = t2 == null ? _null : t2.get$buffer(t2);
+              if (t2 == null)
+                t2 = B.NativeUint8List_methods.get$buffer(new Uint8Array(0));
+              nextBytes = J.asUint8List$0$x(t2);
+            }
+            t2 = lastImage.data;
+            lastBytes = t2 == null ? _null : J.asUint8List$0$x(t2.get$buffer(t2));
+            if (lastBytes == null) {
               t2 = lastImage.data;
-              lastBytes = t2 == null ? _null : J.asUint8List$0$x(t2.get$buffer(t2));
-              if (lastBytes == null) {
-                t2 = lastImage.data;
-                t2 = t2 == null ? _null : t2.get$buffer(t2);
-                if (t2 == null)
-                  t2 = B.NativeUint8List_methods.get$buffer(new Uint8Array(0));
-                lastBytes = J.asUint8List$0$x(t2);
-              }
-              for (l = nextBytes.length, t2 = lastBytes.length, i0 = 0; i0 < l; ++i0) {
-                if (!(i0 < t2))
-                  return A.ioore(lastBytes, i0);
-                nc = remapColors.$index(0, lastBytes[i0]);
-                if (nc !== -1) {
-                  nc.toString;
-                  nextBytes.$flags & 2 && A.throwUnsupportedOperation(nextBytes);
-                  nextBytes[i0] = nc;
-                }
+              t2 = t2 == null ? _null : t2.get$buffer(t2);
+              if (t2 == null)
+                t2 = B.NativeUint8List_methods.get$buffer(new Uint8Array(0));
+              lastBytes = J.asUint8List$0$x(t2);
+            }
+            for (l = nextBytes.length, t2 = lastBytes.length, i0 = 0; i0 < l; ++i0) {
+              if (!(i0 < t2))
+                return A.ioore(lastBytes, i0);
+              nc = remapColors.$index(0, lastBytes[i0]);
+              if (nc !== -1) {
+                nc.toString;
+                nextBytes.$flags & 2 && A.throwUnsupportedOperation(nextBytes);
+                nextBytes[i0] = nc;
               }
             }
-        }
+          }
         nextImage.frameDuration = image.frameDuration;
         for (t2 = image.data, t2 = t2.get$iterator(t2); t2.moveNext$0();) {
           p = t2.get$current();
@@ -23240,7 +23003,7 @@
       return J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(fp._buffer), 0, fp.length);
     },
     _calculateYUV$8(image, x, y, width, height, ydu, udu, vdu) {
-      var t1, t2, pos, row, yy, xx, t3, p, r, g, b, t4, t5;
+      var t1, t2, pos, row, yy, xx, t3, p, a, invA, r, g, b, t4, t5;
       for (t1 = this._rgbYuvTable, t2 = y + 1, pos = 0; pos < 64; ++pos) {
         row = pos >>> 3;
         yy = y + row;
@@ -23255,6 +23018,13 @@
           p = new A.PixelUndefined();
         if (p.get$format() !== B.Format_3)
           p = p.convert$1$format(B.Format_3);
+        if (p.get$length(p) > 3) {
+          a = p.get$aNormalized();
+          invA = 1 - a;
+          p.set$r(B.JSNumber_methods.round$0(p.get$r() * a + B.ConstColorRgb8_4294967295.$index(0, 0) * invA));
+          p.set$g(B.JSNumber_methods.round$0(p.get$g() * a + B.ConstColorRgb8_4294967295.$index(0, 0) * invA));
+          p.set$b(B.JSNumber_methods.round$0(p.get$b() * a + B.ConstColorRgb8_4294967295.$index(0, 0) * invA));
+        }
         r = B.JSNumber_methods.toInt$0(p.get$r());
         g = B.JSNumber_methods.toInt$0(p.get$g());
         b = B.JSNumber_methods.toInt$0(p.get$b());
@@ -24117,7 +23887,7 @@
         }
       uncompressed = null;
       try {
-        uncompressed = B.C__ZLibDecoder.decodeBuffer$2$verify(A.InputStream$(type$.List_int._as(imageData), 1, _null, 0), false);
+        uncompressed = B.C_ZLibDecoder.decodeBytes$1(imageData);
       } catch (exception) {
         return _null;
       }
@@ -24366,7 +24136,8 @@
         row.toString;
         _this._unfilter$4(filterType, bpp, row, prevRow);
         _this._png_decoder$_bitBufferLen = _this._png_decoder$_bitBuffer = 0;
-        rowInput = new A.InputBuffer(row, 0, row.length, 0, true);
+        t2 = row.length;
+        rowInput = new A.InputBuffer(row, 0, Math.min(t2, t2), 0, true);
         for (t2 = blockWidth <= 1, dstX = xOffset, srcX = 0; srcX < passWidth; ++srcX, dstX += xStep) {
           _this._readPixel$2(rowInput, pixel);
           t3 = image.data;
@@ -24417,7 +24188,7 @@
         _this._png_decoder$_bitBufferLen = _this._png_decoder$_bitBuffer = 0;
         t1 = inData[ri];
         t2 = t1.length;
-        rowInput = new A.InputBuffer(t1, 0, t2, 0, true);
+        rowInput = new A.InputBuffer(t1, 0, Math.min(t2, t2), 0, true);
         for (x = 0; x < w; ++x) {
           _this._readPixel$2(rowInput, pixel);
           _this._setPixel$2(pIter.get$current(), pixel);
@@ -24517,8 +24288,6 @@
             t1.$indexSet(row, x, row[x] + paeth & 255);
           }
           break;
-        default:
-          throw A.wrapException(A.ImageException$("Invalid filter value: " + filterType.toString$0(0)));
       }
     },
     _png_decoder$_readBits$2(input, numBits) {
@@ -24808,8 +24577,111 @@
     },
     $signature: 26
   };
+  A.PsdBevelEffect.prototype = {
+    set$highlightColor(highlightColor) {
+      type$.nullable_List_int._as(highlightColor);
+    },
+    set$shadowColor(shadowColor) {
+      type$.nullable_List_int._as(shadowColor);
+    },
+    set$realHighlightColor(realHighlightColor) {
+      type$.nullable_List_int._as(realHighlightColor);
+    },
+    set$realShadowColor(realShadowColor) {
+      type$.nullable_List_int._as(realShadowColor);
+    }
+  };
+  A.PsdDropShadowEffect.prototype = {
+    set$color(color) {
+      type$.nullable_List_int._as(color);
+    },
+    set$nativeColor(nativeColor) {
+      type$.nullable_List_int._as(nativeColor);
+    }
+  };
+  A.PsdEffect.prototype = {};
+  A.PsdInnerGlowEffect.prototype = {
+    set$color(color) {
+      type$.nullable_List_int._as(color);
+    },
+    set$nativeColor(nativeColor) {
+      type$.nullable_List_int._as(nativeColor);
+    }
+  };
+  A.PsdInnerShadowEffect.prototype = {
+    set$color(color) {
+      type$.nullable_List_int._as(color);
+    },
+    set$nativeColor(nativeColor) {
+      type$.nullable_List_int._as(nativeColor);
+    }
+  };
+  A.PsdOuterGlowEffect.prototype = {
+    set$color(color) {
+      type$.nullable_List_int._as(color);
+    },
+    set$nativeColor(nativeColor) {
+      type$.nullable_List_int._as(nativeColor);
+    }
+  };
+  A.PsdSolidFillEffect.prototype = {
+    set$color(color) {
+      type$.nullable_List_int._as(color);
+    },
+    set$nativeColor(nativeColor) {
+      type$.nullable_List_int._as(nativeColor);
+    }
+  };
+  A.PsdLayerAdditionalData.prototype = {};
+  A.PsdLayerSectionDivider.prototype = {};
+  A.PsdBlendingRanges.prototype = {
+    PsdBlendingRanges$1(input) {
+      var numChannels, i, t1, t2, _this = this;
+      input.readUint16$0();
+      input.readUint16$0();
+      input.readUint16$0();
+      input.readUint16$0();
+      numChannels = B.JSInt_methods._tdivFast$1(input.end - input.offset, 8);
+      if (numChannels > 0) {
+        _this.__PsdBlendingRanges_blackSrc_A = new Uint16Array(numChannels);
+        _this.__PsdBlendingRanges_whiteSrc_A = new Uint16Array(numChannels);
+        _this.__PsdBlendingRanges_blackDst_A = new Uint16Array(numChannels);
+        _this.__PsdBlendingRanges_whiteDst_A = new Uint16Array(numChannels);
+        for (i = 0; i < numChannels; ++i) {
+          t1 = _this.__PsdBlendingRanges_blackSrc_A;
+          t2 = input.readUint16$0();
+          t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+          if (!(i < t1.length))
+            return A.ioore(t1, i);
+          t1[i] = t2;
+          t2 = _this.__PsdBlendingRanges_whiteSrc_A;
+          t1 = input.readUint16$0();
+          t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+          if (!(i < t2.length))
+            return A.ioore(t2, i);
+          t2[i] = t1;
+          t1 = _this.__PsdBlendingRanges_blackDst_A;
+          t2 = input.readUint16$0();
+          t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+          if (!(i < t1.length))
+            return A.ioore(t1, i);
+          t1[i] = t2;
+          t2 = _this.__PsdBlendingRanges_whiteDst_A;
+          t1 = input.readUint16$0();
+          t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+          if (!(i < t2.length))
+            return A.ioore(t2, i);
+          t2[i] = t1;
+        }
+      }
+    }
+  };
   A.PsdChannel.prototype = {
     readPlane$7(input, width, height, bitDepth, compression, lineLengths, planeNum) {
+      if (input.end - input.offset < 2)
+        return;
+      if (compression == null)
+        compression = input.readUint16$0();
       switch (compression) {
         case 0:
           bitDepth.toString;
@@ -24824,6 +24696,9 @@
         default:
           throw A.wrapException(A.ImageException$("Unsupported compression: " + compression));
       }
+    },
+    readPlane$4(input, width, height, bitDepth) {
+      return this.readPlane$7(input, width, height, bitDepth, null, null, 0);
     },
     _readLineLengths$2(input, height) {
       var i, t1,
@@ -24843,11 +24718,11 @@
         len *= 2;
       if (len > input.end - input.offset) {
         t1 = new Uint8Array(len);
-        this.__PsdChannel_data_A = t1;
+        this.data = t1;
         B.NativeUint8List_methods.fillRange$3(t1, 0, len, 255);
         return;
       }
-      this.__PsdChannel_data_A = input.readBytes$1(len).toUint8List$0();
+      this.data = input.readBytes$1(len).toUint8List$0();
     },
     _readPlaneRleCompressed$6(input, width, height, bitDepth, lineLengths, planeNum) {
       var t1, lineIndex, t2, pos, i, lineIndex0, bytes,
@@ -24855,7 +24730,7 @@
       if (bitDepth === 16)
         len *= 2;
       t1 = new Uint8Array(len);
-      this.__PsdChannel_data_A = t1;
+      this.data = t1;
       lineIndex = planeNum * height;
       t2 = lineLengths.length;
       if (lineIndex >= t2) {
@@ -24864,11 +24739,13 @@
       }
       for (pos = 0, i = 0; i < height; ++i, lineIndex = lineIndex0) {
         lineIndex0 = lineIndex + 1;
-        if (!(lineIndex < t2))
+        if (!(lineIndex >= 0 && lineIndex < t2))
           return A.ioore(lineLengths, lineIndex);
         bytes = input.subset$1(lineLengths[lineIndex]);
         input.offset = input.offset + (bytes.end - bytes.offset);
-        this._decodeRLE$3(bytes, this.__PsdChannel_data_A, pos);
+        t1 = this.data;
+        t1.toString;
+        this._decodeRLE$3(bytes, t1, pos);
         pos += width;
       }
     },
@@ -24887,7 +24764,12 @@
         n = t3[0];
         if (n < 0) {
           n = 1 - n;
-          b = J.$index$ax(src.buffer, src.offset++);
+          t3 = src.offset;
+          if (t3 >= t1)
+            break;
+          t4 = src.buffer;
+          src.offset = t3 + 1;
+          b = J.$index$ax(t4, t3);
           if (dstIndex + n > t2)
             n = t2 - dstIndex;
           for (t3 = dst.$flags | 0, i = 0; i < n; ++i, dstIndex = dstIndex0) {
@@ -24901,6 +24783,7 @@
           ++n;
           if (dstIndex + n > t2)
             n = t2 - dstIndex;
+          n = Math.min(n, t1 - src.offset);
           for (i = 0; i < n; ++i, dstIndex = dstIndex0) {
             dstIndex0 = dstIndex + 1;
             t3 = J.$index$ax(src.buffer, src.offset++);
@@ -24919,10 +24802,6 @@
     }
   };
   A.PsdImage.prototype = {
-    get$layers() {
-      $ === $ && A.throwLateFieldNI("layers");
-      return $;
-    },
     PsdImage$1(bytes) {
       var len, t1, _this = this;
       _this.__PsdImage__input_A = A.InputBuffer$(bytes, true, null, 0);
@@ -24932,11 +24811,11 @@
       len = _this.__PsdImage__input_A.readUint32$0();
       _this.__PsdImage__input_A.readBytes$1(len);
       len = _this.__PsdImage__input_A.readUint32$0();
-      _this.__PsdImage__input_A.readBytes$1(len);
+      _this._imageResourceData = _this.__PsdImage__input_A.readBytes$1(len);
       len = _this.__PsdImage__input_A.readUint32$0();
-      _this.__PsdImage__input_A.readBytes$1(len);
+      _this._layerAndMaskData = _this.__PsdImage__input_A.readBytes$1(len);
       t1 = _this.__PsdImage__input_A;
-      _this.__PsdImage__imageData_A = t1.readBytes$1(t1.end - t1.offset);
+      _this._imageData = t1.readBytes$1(t1.end - t1.offset);
     },
     decode$0() {
       var t1, _this = this;
@@ -24948,8 +24827,10 @@
         t1 = true;
       if (t1)
         return false;
+      _this._readImageResources$0();
+      _this._readLayerAndMaskData$0();
       _this._readMergeImageData$0();
-      _this.__PsdImage__imageData_A = _this.__PsdImage__input_A = null;
+      _this._imageData = _this._layerAndMaskData = _this._imageResourceData = _this.__PsdImage__input_A = null;
       return true;
     },
     decodeImage$0() {
@@ -24958,7 +24839,7 @@
       return this.renderImage$0();
     },
     renderImage$0() {
-      var li, _this = this, _null = null,
+      var li, layer, opacity, blendMode, src, sy, y, dy, sx, x, t2, srcP, br, bg, bb, ba, t3, p, _this = this, _null = null,
         t1 = _this.mergedImage;
       if (t1 != null)
         return t1;
@@ -24966,14 +24847,257 @@
       t1 = A.Image$(_null, _null, B.Format_3, 0, B.FrameType_2, _this.height, _null, 0, 4, _null, B.Format_3, t1, false);
       _this.mergedImage = t1;
       t1.clear$0(0);
-      for (li = 0; B.JSInt_methods.$lt(li, _this.get$layers().length); ++li) {
-        t1 = _this.get$layers();
+      li = 0;
+      while (true) {
+        t1 = _this.__PsdImage_layers_A;
+        t1 === $ && A.throwLateFieldNI("layers");
         if (!(li < t1.length))
-          return A.ioore(t1, li);
+          break;
+        c$0: {
+          layer = t1[li];
+          t1 = layer.__PsdLayer_flags_A;
+          t1 === $ && A.throwLateFieldNI("flags");
+          if ((t1 & 2) !== 0)
+            break c$0;
+          t1 = layer.__PsdLayer_opacity_A;
+          t1 === $ && A.throwLateFieldNI("opacity");
+          opacity = t1 / 255;
+          blendMode = layer.blendMode;
+          src = layer.layerImage;
+          t1 = layer.top;
+          t1.toString;
+          sy = t1;
+          y = 0;
+          while (true) {
+            t1 = layer.__PsdLayer_height_A;
+            t1 === $ && A.throwLateFieldNI("height");
+            if (!(y < t1))
+              break;
+            t1 = layer.top;
+            t1.toString;
+            dy = t1 + y;
+            sx = layer.left;
+            t1 = sy >= 0;
+            x = 0;
+            while (true) {
+              t2 = layer.__PsdLayer_width_A;
+              t2 === $ && A.throwLateFieldNI("width");
+              if (!(x < t2))
+                break;
+              t2 = src.data;
+              srcP = t2 == null ? _null : t2.getPixel$3(x, y, _null);
+              if (srcP == null)
+                srcP = new A.PixelUndefined();
+              br = B.JSNumber_methods.toInt$0(srcP.get$r());
+              bg = B.JSNumber_methods.toInt$0(srcP.get$g());
+              bb = B.JSNumber_methods.toInt$0(srcP.get$b());
+              ba = B.JSNumber_methods.toInt$0(srcP.get$a());
+              sx.toString;
+              if (sx >= 0 && sx < _this.width && t1 && sy < _this.height) {
+                t2 = layer.left;
+                t2.toString;
+                t3 = _this.mergedImage.data;
+                p = t3 == null ? _null : t3.getPixel$3(t2 + x, dy, _null);
+                if (p == null)
+                  p = new A.PixelUndefined();
+                _this._blend$11(B.JSNumber_methods.toInt$0(p.get$r()), B.JSNumber_methods.toInt$0(p.get$g()), B.JSNumber_methods.toInt$0(p.get$b()), B.JSNumber_methods.toInt$0(p.get$a()), br, bg, bb, ba, blendMode, opacity, p);
+              }
+              ++x;
+              ++sx;
+            }
+            ++y;
+            ++sy;
+          }
+        }
+        ++li;
       }
       t1 = _this.mergedImage;
       t1.toString;
       return t1;
+    },
+    _blend$11(ar, ag, ab, aa, br, bg, bb, ba, blendMode, opacity, p) {
+      var a, b, g, r, t1,
+        da = ba / 255 * opacity;
+      switch (blendMode) {
+        case 1885434739:
+          a = aa;
+          b = ab;
+          g = ag;
+          r = ar;
+          break;
+        case 1852797549:
+          a = ba;
+          b = bb;
+          g = bg;
+          r = br;
+          break;
+        case 1684632435:
+          a = ba;
+          b = bb;
+          g = bg;
+          r = br;
+          break;
+        case 1684107883:
+          r = Math.min(ar, br);
+          g = Math.min(ag, bg);
+          b = Math.min(ab, bb);
+          a = ba;
+          break;
+        case 1836411936:
+          r = B.JSInt_methods._shrOtherPositive$1(ar * br, 8);
+          g = B.JSInt_methods._shrOtherPositive$1(ag * bg, 8);
+          b = B.JSInt_methods._shrOtherPositive$1(ab * bb, 8);
+          a = ba;
+          break;
+        case 1768188278:
+          r = A.PsdImage__blendColorBurn(ar, br);
+          g = A.PsdImage__blendColorBurn(ag, bg);
+          b = A.PsdImage__blendColorBurn(ab, bb);
+          a = ba;
+          break;
+        case 1818391150:
+          r = A.PsdImage__blendLinearBurn(ar, br);
+          g = A.PsdImage__blendLinearBurn(ag, bg);
+          b = A.PsdImage__blendLinearBurn(ab, bb);
+          a = ba;
+          break;
+        case 1684751212:
+          a = ba;
+          b = bb;
+          g = bg;
+          r = br;
+          break;
+        case 1818850405:
+          r = Math.max(ar, br);
+          g = Math.max(ag, bg);
+          b = Math.max(ab, bb);
+          a = ba;
+          break;
+        case 1935897198:
+          r = A.PsdImage__blendScreen(ar, br);
+          g = A.PsdImage__blendScreen(ag, bg);
+          b = A.PsdImage__blendScreen(ab, bb);
+          a = ba;
+          break;
+        case 1684633120:
+          r = A.PsdImage__blendColorDodge(ar, br);
+          g = A.PsdImage__blendColorDodge(ag, bg);
+          b = A.PsdImage__blendColorDodge(ab, bb);
+          a = ba;
+          break;
+        case 1818518631:
+          r = br + ar > 255 ? 255 : ar + br;
+          g = bg + ag > 255 ? 255 : ag + bg;
+          b = bb + ab > 255 ? 255 : ab + bb;
+          a = ba;
+          break;
+        case 1818706796:
+          a = ba;
+          b = bb;
+          g = bg;
+          r = br;
+          break;
+        case 1870030194:
+          r = A.PsdImage__blendOverlay(ar, br, aa, ba);
+          g = A.PsdImage__blendOverlay(ag, bg, aa, ba);
+          b = A.PsdImage__blendOverlay(ab, bb, aa, ba);
+          a = ba;
+          break;
+        case 1934387572:
+          r = A.PsdImage__blendSoftLight(ar, br);
+          g = A.PsdImage__blendSoftLight(ag, bg);
+          b = A.PsdImage__blendSoftLight(ab, bb);
+          a = ba;
+          break;
+        case 1749838196:
+          r = A.PsdImage__blendHardLight(ar, br);
+          g = A.PsdImage__blendHardLight(ag, bg);
+          b = A.PsdImage__blendHardLight(ab, bb);
+          a = ba;
+          break;
+        case 1984719220:
+          r = A.PsdImage__blendVividLight(ar, br);
+          g = A.PsdImage__blendVividLight(ag, bg);
+          b = A.PsdImage__blendVividLight(ab, bb);
+          a = ba;
+          break;
+        case 1816947060:
+          r = A.PsdImage__blendLinearLight(ar, br);
+          g = A.PsdImage__blendLinearLight(ag, bg);
+          b = A.PsdImage__blendLinearLight(ab, bb);
+          a = ba;
+          break;
+        case 1884055924:
+          r = A.PsdImage__blendPinLight(ar, br);
+          g = A.PsdImage__blendPinLight(ag, bg);
+          b = A.PsdImage__blendPinLight(ab, bb);
+          a = ba;
+          break;
+        case 1749903736:
+          r = br < 255 - ar ? 0 : 255;
+          g = bg < 255 - ag ? 0 : 255;
+          b = bb < 255 - ab ? 0 : 255;
+          a = ba;
+          break;
+        case 1684629094:
+          r = Math.abs(br - ar);
+          g = Math.abs(bg - ag);
+          b = Math.abs(bb - ab);
+          a = ba;
+          break;
+        case 1936553316:
+          r = A.PsdImage__blendExclusion(ar, br);
+          g = A.PsdImage__blendExclusion(ag, bg);
+          b = A.PsdImage__blendExclusion(ab, bb);
+          a = ba;
+          break;
+        case 1718842722:
+          a = ba;
+          b = bb;
+          g = bg;
+          r = br;
+          break;
+        case 1717856630:
+          a = ba;
+          b = bb;
+          g = bg;
+          r = br;
+          break;
+        case 1752524064:
+          a = ba;
+          b = bb;
+          g = bg;
+          r = br;
+          break;
+        case 1935766560:
+          a = ba;
+          b = bb;
+          g = bg;
+          r = br;
+          break;
+        case 1668246642:
+          a = ba;
+          b = bb;
+          g = bg;
+          r = br;
+          break;
+        case 1819634976:
+          a = ba;
+          b = bb;
+          g = bg;
+          r = br;
+          break;
+        default:
+          a = ba;
+          b = bb;
+          g = bg;
+          r = br;
+      }
+      t1 = 1 - da;
+      p.set$r(B.JSNumber_methods.toInt$0(ar * t1 + r * da));
+      p.set$g(B.JSNumber_methods.toInt$0(ag * t1 + g * da));
+      p.set$b(B.JSNumber_methods.toInt$0(ab * t1 + b * da));
+      p.set$a(B.JSNumber_methods.toInt$0(aa * t1 + a * da));
     },
     _psd_image$_readHeader$0() {
       var padding, i, _this = this,
@@ -25001,11 +25125,73 @@
         return A.ioore(B.List_wIt, t1);
       _this.colorMode = B.List_wIt[t1];
     },
+    _readImageResources$0() {
+      var t2, blockSignature, blockId, len, bytes, _this = this,
+        t1 = _this._imageResourceData;
+      t1.offset = t1.start;
+      for (t1 = _this.imageResources; t2 = _this._imageResourceData, t2.offset < t2.end;) {
+        blockSignature = t2.readUint32$0();
+        blockId = _this._imageResourceData.readUint16$0();
+        t2 = _this._imageResourceData;
+        len = J.$index$ax(t2.buffer, t2.offset++);
+        _this._imageResourceData.readString$1(len);
+        if ((len & 1) === 0)
+          ++_this._imageResourceData.offset;
+        len = _this._imageResourceData.readUint32$0();
+        t2 = _this._imageResourceData;
+        bytes = t2.subset$1(len);
+        t2.offset = t2.offset + (bytes.end - bytes.offset);
+        if ((len & 1) === 1)
+          ++_this._imageResourceData.offset;
+        if (blockSignature === 943868237)
+          t1.$indexSet(0, blockId, new A.PsdImageResource());
+      }
+    },
+    _readLayerAndMaskData$0() {
+      var len, layerData, t2, t3, count, t4, i, layer, maskData, _this = this,
+        t1 = _this._layerAndMaskData;
+      t1.offset = t1.start;
+      len = t1.readUint32$0();
+      if ((len & 1) !== 0)
+        ++len;
+      layerData = _this._layerAndMaskData.readBytes$1(len);
+      t1 = type$.JSArray_PsdLayer;
+      _this.__PsdImage_layers_A = type$.List_PsdLayer._as(A._setArrayType([], t1));
+      if (len > 0) {
+        t2 = layerData.readUint16$0();
+        t3 = $.$get$__uint16();
+        t3.$flags & 2 && A.throwUnsupportedOperation(t3);
+        t3[0] = t2;
+        t2 = $.$get$__uint16ToInt16();
+        if (0 >= t2.length)
+          return A.ioore(t2, 0);
+        count = t2[0];
+        if (count < 0)
+          count = -count;
+        for (t2 = type$.String, t3 = type$.PsdLayerData, t4 = type$.JSArray_PsdEffect, i = 0; i < count; ++i) {
+          layer = new A.PsdLayer(A.LinkedHashMap_LinkedHashMap$_empty(t2, t3), A._setArrayType([], t1), A._setArrayType([], t4));
+          layer.PsdLayer$1(layerData);
+          B.JSArray_methods.add$1(_this.__PsdImage_layers_A, layer);
+        }
+      }
+      for (i = 0; t1 = _this.__PsdImage_layers_A, i < t1.length; ++i)
+        t1[i].readImageData$2(layerData, _this);
+      len = _this._layerAndMaskData.readUint32$0();
+      maskData = _this._layerAndMaskData.readBytes$1(len);
+      if (len > 0) {
+        maskData.readUint16$0();
+        maskData.readUint16$0();
+        maskData.readUint16$0();
+        maskData.readUint16$0();
+        maskData.readUint16$0();
+        maskData.readUint16$0();
+        maskData.readByte$0();
+      }
+    },
     _readMergeImageData$0() {
       var compression, t2, numLines, lineLengths, i, t3, _this = this,
         _s8_ = "channels",
-        t1 = _this.__PsdImage__imageData_A;
-      t1 === $ && A.throwLateFieldNI("_imageData");
+        t1 = _this._imageData;
       t1.offset = t1.start;
       compression = t1.readUint16$0();
       if (compression === 1) {
@@ -25015,7 +25201,7 @@
         numLines = t1 * t2;
         lineLengths = new Uint16Array(numLines);
         for (i = 0; i < numLines; ++i)
-          lineLengths[i] = _this.__PsdImage__imageData_A.readUint16$0();
+          lineLengths[i] = _this._imageData.readUint16$0();
       } else
         lineLengths = null;
       _this.__PsdImage_mergeImageChannels_A = type$.List_PsdChannel._as(A._setArrayType([], type$.JSArray_PsdChannel));
@@ -25026,7 +25212,7 @@
         if (!(i < t1))
           break;
         t1 = _this.__PsdImage_mergeImageChannels_A;
-        t2 = _this.__PsdImage__imageData_A;
+        t2 = _this._imageData;
         t2.toString;
         t3 = i === 3 ? -1 : i;
         t3 = new A.PsdChannel(t3);
@@ -25038,6 +25224,223 @@
     },
     $isDecodeInfo: 1
   };
+  A.PsdImageResource.prototype = {};
+  A.PsdLayer.prototype = {
+    PsdLayer$1(input) {
+      var numChannels, i, id, sig, len, extra, maskData, padding, t3, t4, t5, tag, bytes, t6, data, numFx, j, fxTag, size, fx, _this = this,
+        t1 = input.readUint32$0(),
+        t2 = $.$get$__uint32();
+      t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+      t2[0] = t1;
+      t1 = $.$get$__uint32ToInt32();
+      if (0 >= t1.length)
+        return A.ioore(t1, 0);
+      _this.top = t1[0];
+      t2[0] = input.readUint32$0();
+      _this.left = t1[0];
+      t2[0] = input.readUint32$0();
+      _this.__PsdLayer_bottom_A = t1[0];
+      t2[0] = input.readUint32$0();
+      t1 = t1[0];
+      _this.__PsdLayer_right_A = t1;
+      t2 = _this.left;
+      t2.toString;
+      _this.__PsdLayer_width_A = t1 - t2;
+      t2 = _this.__PsdLayer_bottom_A;
+      t1 = _this.top;
+      t1.toString;
+      _this.__PsdLayer_height_A = t2 - t1;
+      _this.__PsdLayer_channels_A = type$.List_PsdChannel._as(A._setArrayType([], type$.JSArray_PsdChannel));
+      numChannels = input.readUint16$0();
+      for (i = 0; i < numChannels; ++i) {
+        t1 = input.readUint16$0();
+        t2 = $.$get$__uint16();
+        t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+        t2[0] = t1;
+        t1 = $.$get$__uint16ToInt16();
+        if (0 >= t1.length)
+          return A.ioore(t1, 0);
+        id = t1[0];
+        input.readUint32$0();
+        B.JSArray_methods.add$1(_this.__PsdLayer_channels_A, new A.PsdChannel(id));
+      }
+      sig = input.readUint32$0();
+      if (sig !== 943868237)
+        throw A.wrapException(A.ImageException$("Invalid PSD layer signature: " + B.JSInt_methods.toRadixString$1(sig, 16)));
+      _this.blendMode = input.readUint32$0();
+      _this.__PsdLayer_opacity_A = input.readByte$0();
+      input.readByte$0();
+      _this.__PsdLayer_flags_A = input.readByte$0();
+      if (input.readByte$0() !== 0)
+        throw A.wrapException(A.ImageException$("Invalid PSD layer data"));
+      len = input.readUint32$0();
+      extra = input.readBytes$1(len);
+      if (len > 0) {
+        len = extra.readUint32$0();
+        if (len > 0) {
+          maskData = extra.readBytes$1(len);
+          t1 = maskData.offset;
+          maskData.readUint32$0();
+          maskData.readUint32$0();
+          maskData.readUint32$0();
+          maskData.readUint32$0();
+          maskData.readByte$0();
+          maskData.readByte$0();
+          if (maskData.end - t1 === 20)
+            maskData.offset += 2;
+          else {
+            maskData.readByte$0();
+            maskData.readByte$0();
+            maskData.readUint32$0();
+            maskData.readUint32$0();
+            maskData.readUint32$0();
+            maskData.readUint32$0();
+          }
+        }
+        len = extra.readUint32$0();
+        if (len > 0)
+          new A.PsdBlendingRanges().PsdBlendingRanges$1(extra.readBytes$1(len));
+        len = extra.readByte$0();
+        extra.readString$1(len);
+        padding = 4 - B.JSInt_methods.$mod(len, 4) - 1;
+        if (padding > 0)
+          extra.offset += padding;
+        for (t1 = extra.end, t2 = _this.additionalData, t3 = _this.effects, t4 = type$.JSArray_int, t5 = type$.PsdLayerAdditionalData; extra.offset < t1;) {
+          sig = extra.readUint32$0();
+          if (sig !== 943868237)
+            throw A.wrapException(A.ImageException$("PSD invalid signature for layer additional data: " + B.JSInt_methods.toRadixString$1(sig, 16)));
+          tag = extra.readString$1(4);
+          len = extra.readUint32$0();
+          bytes = extra.subset$1(len);
+          t6 = extra.offset + (bytes.end - bytes.offset);
+          extra.offset = t6;
+          if ((len & 1) === 1)
+            extra.offset = t6 + 1;
+          t2.$indexSet(0, tag, A.PsdLayerData_PsdLayerData(tag, bytes));
+          if (tag === "lrFX") {
+            data = A.InputBuffer$from(t5._as(t2.$index(0, "lrFX")).data, null, 0);
+            data.readUint16$0();
+            numFx = data.readUint16$0();
+            for (j = 0; j < numFx; ++j) {
+              data.readString$1(4);
+              fxTag = data.readString$1(4);
+              size = data.readUint32$0();
+              if (fxTag === "dsdw") {
+                fx = new A.PsdDropShadowEffect();
+                B.JSArray_methods.add$1(t3, fx);
+                fx.version = data.readUint32$0();
+                data.readUint32$0();
+                data.readUint32$0();
+                data.readUint32$0();
+                data.readUint32$0();
+                fx.set$color(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+                data.readString$1(8);
+                J.$index$ax(data.buffer, data.offset++);
+                J.$index$ax(data.buffer, data.offset++);
+                J.$index$ax(data.buffer, data.offset++);
+                fx.set$nativeColor(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+              } else if (fxTag === "isdw") {
+                fx = new A.PsdInnerShadowEffect();
+                B.JSArray_methods.add$1(t3, fx);
+                fx.version = data.readUint32$0();
+                data.readUint32$0();
+                data.readUint32$0();
+                data.readUint32$0();
+                data.readUint32$0();
+                fx.set$color(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+                data.readString$1(8);
+                J.$index$ax(data.buffer, data.offset++);
+                J.$index$ax(data.buffer, data.offset++);
+                J.$index$ax(data.buffer, data.offset++);
+                fx.set$nativeColor(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+              } else if (fxTag === "oglw") {
+                fx = new A.PsdOuterGlowEffect();
+                B.JSArray_methods.add$1(t3, fx);
+                fx.version = data.readUint32$0();
+                data.readUint32$0();
+                data.readUint32$0();
+                fx.set$color(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+                data.readString$1(8);
+                J.$index$ax(data.buffer, data.offset++);
+                J.$index$ax(data.buffer, data.offset++);
+                if (fx.version === 2)
+                  fx.set$nativeColor(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+              } else if (fxTag === "iglw") {
+                fx = new A.PsdInnerGlowEffect();
+                B.JSArray_methods.add$1(t3, fx);
+                fx.version = data.readUint32$0();
+                data.readUint32$0();
+                data.readUint32$0();
+                fx.set$color(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+                data.readString$1(8);
+                J.$index$ax(data.buffer, data.offset++);
+                J.$index$ax(data.buffer, data.offset++);
+                if (fx.version === 2) {
+                  J.$index$ax(data.buffer, data.offset++);
+                  fx.set$nativeColor(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+                }
+              } else if (fxTag === "bevl") {
+                fx = new A.PsdBevelEffect();
+                B.JSArray_methods.add$1(t3, fx);
+                fx.version = data.readUint32$0();
+                data.readUint32$0();
+                data.readUint32$0();
+                data.readUint32$0();
+                data.readString$1(8);
+                data.readString$1(8);
+                fx.set$highlightColor(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+                fx.set$shadowColor(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+                J.$index$ax(data.buffer, data.offset++);
+                J.$index$ax(data.buffer, data.offset++);
+                J.$index$ax(data.buffer, data.offset++);
+                J.$index$ax(data.buffer, data.offset++);
+                J.$index$ax(data.buffer, data.offset++);
+                J.$index$ax(data.buffer, data.offset++);
+                if (fx.version === 2) {
+                  fx.set$realHighlightColor(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+                  fx.set$realShadowColor(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+                }
+              } else if (fxTag === "sofi") {
+                fx = new A.PsdSolidFillEffect();
+                B.JSArray_methods.add$1(t3, fx);
+                fx.version = data.readUint32$0();
+                data.readString$1(4);
+                fx.set$color(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+                J.$index$ax(data.buffer, data.offset++);
+                J.$index$ax(data.buffer, data.offset++);
+                fx.set$nativeColor(A._setArrayType([data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0(), data.readUint16$0()], t4));
+              } else
+                data.offset += size;
+            }
+          }
+        }
+      }
+    },
+    readImageData$2(input, psd) {
+      var t1, t2, t3, t4, t5, _this = this, i = 0;
+      while (true) {
+        t1 = _this.__PsdLayer_channels_A;
+        t1 === $ && A.throwLateFieldNI("channels");
+        if (!(i < t1.length))
+          break;
+        t1 = t1[i];
+        t2 = _this.__PsdLayer_width_A;
+        t2 === $ && A.throwLateFieldNI("width");
+        t3 = _this.__PsdLayer_height_A;
+        t3 === $ && A.throwLateFieldNI("height");
+        t1.readPlane$4(input, t2, t3, psd.depth);
+        ++i;
+      }
+      t2 = psd.colorMode;
+      t3 = psd.depth;
+      t4 = _this.__PsdLayer_width_A;
+      t4 === $ && A.throwLateFieldNI("width");
+      t5 = _this.__PsdLayer_height_A;
+      t5 === $ && A.throwLateFieldNI("height");
+      _this.layerImage = A.PsdImage_createImageFromChannels(t2, t3, t4, t5, t1);
+    }
+  };
+  A.PsdLayerData.prototype = {};
   A.PsdDecoder.prototype = {
     decode$2$frame(bytes, frame) {
       var len, firstImage, i, _null = null,
@@ -26814,6 +27217,7 @@
       }
       if (_this.photometricType === B.TiffPhotometricType_0)
         _this.isWhiteZero = true;
+      _this.channelsPerPixel = _this.samplesPerPixel;
       if (t1.containsKey$1(324)) {
         _this.tileWidth = _this._readTag$1(322);
         _this.tileHeight = _this._readTag$1(323);
@@ -26904,6 +27308,15 @@
               _this.imageType = B.TiffImageType_7;
           }
           break;
+        case 5:
+          if (B.JSInt_methods.$mod(_this.bitsPerSample, 8) === 0)
+            _this.imageType = B.TiffImageType_8;
+          t1 = _this.samplesPerPixel;
+          if (t1 === 4)
+            _this.channelsPerPixel = 3;
+          else if (t1 === 5)
+            _this.channelsPerPixel = 4;
+          break;
         default:
           if (B.JSInt_methods.$mod(_this.bitsPerSample, 8) === 0)
             _this.imageType = B.TiffImageType_8;
@@ -26942,7 +27355,7 @@
         format = t1;
       }
       hasPalette = _this.colorMap != null && _this.photometricType === B.TiffPhotometricType_3;
-      numChannels = hasPalette ? 3 : _this.samplesPerPixel;
+      numChannels = hasPalette ? 3 : _this.channelsPerPixel;
       t1 = _this.width;
       image = A.Image$(_null, _null, format, 0, B.FrameType_2, _this.height, _null, 0, numChannels, _null, format, t1, hasPalette);
       if (hasPalette) {
@@ -26991,7 +27404,7 @@
       return image;
     },
     _decodeTile$4(p, image, tileX, tileY) {
-      var byteCount, byteData, decoder, t1, tileIndex, outX, t2, outY, t3, bytesInThisTile, exception, j, i, count, len, t4, py, y, px, x, sample, mx, gray, alpha, r, g, b, a, rgba, _this = this, _null = null;
+      var byteCount, byteData, decoder, t1, tileIndex, outX, t2, outY, t3, bytesInThisTile, exception, j, i, count, len, t4, rgb, py, y, px, x, sample, mx, gray, alpha, r, g, b, a, _this = this, _null = null;
       if (_this.imageType === B.TiffImageType_0) {
         _this._decodeBilevelTile$4(p, image, tileX, tileY);
         return;
@@ -27050,18 +27463,19 @@
           byteData = A.InputBuffer$(new Uint8Array(bytesInThisTile), false, _null, 0);
           _this._decodePackBits$3(p, bytesInThisTile, byteData.buffer);
         } else if (t1 === 32946)
-          byteData = A.InputBuffer$(B.C__ZLibDecoder.decodeBuffer$2$verify(A.InputStream$(type$.List_int._as(p.toList$2(0, 0, byteCount)), 1, _null, 0), false), false, _null, 0);
+          byteData = A.InputBuffer$(B.C_ZLibDecoder.decodeBytes$1(p.toList$2(0, 0, byteCount)), false, _null, 0);
         else if (t1 === 8)
-          byteData = A.InputBuffer$(B.C__ZLibDecoder.decodeBuffer$2$verify(A.InputStream$(type$.List_int._as(p.toList$2(0, 0, byteCount)), 1, _null, 0), false), false, _null, 0);
+          byteData = A.InputBuffer$(B.C_ZLibDecoder.decodeBytes$1(p.toList$2(0, 0, byteCount)), false, _null, 0);
         else if (t1 === 6) {
           _this._jpegToImage$6(new A.JpegDecoder().decode$1(type$.Uint8List._as(p.toList$2(0, 0, byteCount))), image, outX, outY, _this.tileWidth, _this.tileHeight);
           return;
         } else
           throw A.wrapException(A.ImageException$("Unsupported Compression Type: " + t1));
+        rgb = A._setArrayType([0, 0, 0], type$.JSArray_int);
         for (py = outY, y = 0; y < _this.tileHeight; ++y, ++py)
           for (px = outX, x = 0; x < _this.tileWidth; ++x, ++px) {
             t1 = byteData;
-            if (t1.offset >= t1.end)
+            if (t1.offset >= t1.end || px >= _this.width || py >= _this.height)
               break;
             t1 = _this.samplesPerPixel;
             if (t1 === 1) {
@@ -27406,9 +27820,8 @@
                     t1.setPixelRgb$5(px, py, r, g, b);
                 }
               }
-            } else if (t1 >= 4) {
-              t1 = _this.sampleFormat;
-              if (t1 === B.TiffFormat_3) {
+            } else if (t1 >= 4)
+              if (_this.sampleFormat === B.TiffFormat_3) {
                 t1 = _this.bitsPerSample;
                 if (t1 === 32) {
                   t1 = byteData.readUint32$0();
@@ -27465,9 +27878,13 @@
                     t1.setPixelRgba$6(px, py, r, g, b, a);
                 }
               } else {
-                t2 = _this.bitsPerSample;
-                if (t2 === 8) {
-                  if (t1 === B.TiffFormat_2) {
+                t1 = image.data;
+                alpha = t1 == null ? _null : t1.get$maxChannelValue();
+                if (alpha == null)
+                  alpha = 0;
+                t1 = _this.bitsPerSample;
+                if (t1 === 8) {
+                  if (_this.sampleFormat === B.TiffFormat_2) {
                     t1 = byteData;
                     t1 = J.$index$ax(t1.buffer, t1.offset++);
                     t2 = $.$get$__uint8();
@@ -27523,8 +27940,23 @@
                     t1 = byteData;
                     a = J.$index$ax(t1.buffer, t1.offset++);
                   }
-                } else if (t2 === 16) {
-                  if (t1 === B.TiffFormat_2) {
+                  if (_this.samplesPerPixel === 5)
+                    if (_this.sampleFormat === B.TiffFormat_2) {
+                      t1 = byteData;
+                      t1 = J.$index$ax(t1.buffer, t1.offset++);
+                      t2 = $.$get$__uint8();
+                      t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+                      t2[0] = t1;
+                      t1 = $.$get$__uint8ToInt8();
+                      if (0 >= t1.length)
+                        return A.ioore(t1, 0);
+                      alpha = t1[0];
+                    } else {
+                      t1 = byteData;
+                      alpha = J.$index$ax(t1.buffer, t1.offset++);
+                    }
+                } else if (t1 === 16) {
+                  if (_this.sampleFormat === B.TiffFormat_2) {
                     t1 = byteData.readUint16$0();
                     t2 = $.$get$__uint16();
                     t2.$flags & 2 && A.throwUnsupportedOperation(t2);
@@ -27568,8 +28000,20 @@
                     a = t1[0];
                   } else
                     a = byteData.readUint16$0();
-                } else if (t2 === 32) {
-                  if (t1 === B.TiffFormat_2) {
+                  if (_this.samplesPerPixel === 5)
+                    if (_this.sampleFormat === B.TiffFormat_2) {
+                      t1 = byteData.readUint16$0();
+                      t2 = $.$get$__uint16();
+                      t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+                      t2[0] = t1;
+                      t1 = $.$get$__uint16ToInt16();
+                      if (0 >= t1.length)
+                        return A.ioore(t1, 0);
+                      alpha = t1[0];
+                    } else
+                      alpha = byteData.readUint16$0();
+                } else if (t1 === 32) {
+                  if (_this.sampleFormat === B.TiffFormat_2) {
                     t1 = byteData.readUint32$0();
                     t2 = $.$get$__uint32();
                     t2.$flags & 2 && A.throwUnsupportedOperation(t2);
@@ -27613,6 +28057,18 @@
                     a = t1[0];
                   } else
                     a = byteData.readUint32$0();
+                  if (_this.samplesPerPixel === 5)
+                    if (_this.sampleFormat === B.TiffFormat_2) {
+                      t1 = byteData.readUint32$0();
+                      t2 = $.$get$__uint32();
+                      t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+                      t2[0] = t1;
+                      t1 = $.$get$__uint32ToInt32();
+                      if (0 >= t1.length)
+                        return A.ioore(t1, 0);
+                      alpha = t1[0];
+                    } else
+                      alpha = byteData.readUint32$0();
                 } else {
                   r = 0;
                   g = 0;
@@ -27620,14 +28076,11 @@
                   a = 0;
                 }
                 if (_this.photometricType === B.TiffPhotometricType_5) {
-                  rgba = A.cmykToRgb(r, g, b, a);
-                  r = rgba[0];
-                  g = rgba[1];
-                  b = rgba[2];
-                  t1 = image.data;
-                  a = t1 == null ? _null : t1.get$maxChannelValue();
-                  if (a == null)
-                    a = 0;
+                  A.cmykToRgb(r, g, b, a, rgb);
+                  r = rgb[0];
+                  g = rgb[1];
+                  b = rgb[2];
+                  a = alpha;
                 }
                 if (px < _this.width && py < _this.height) {
                   t1 = image.data;
@@ -27635,7 +28088,6 @@
                     t1.setPixelRgba$6(px, py, r, g, b, a);
                 }
               }
-            }
           }
       } else
         throw A.wrapException(A.ImageException$("Unsupported bitsPerSample: " + t1));
@@ -27710,9 +28162,9 @@
         } catch (exception) {
         }
       } else if (t3 === 8)
-        byteData = A.InputBuffer$(B.C__ZLibDecoder.decodeBuffer$2$verify(A.InputStream$(type$.List_int._as(p.toList$2(0, 0, byteCount)), 1, _null, 0), false), false, _null, 0);
+        byteData = A.InputBuffer$(B.C_ZLibDecoder.decodeBytes$1(p.toList$2(0, 0, byteCount)), false, _null, 0);
       else if (t3 === 32946)
-        byteData = A.InputBuffer$(B.C__ZLibDecoder.decodeBuffer$2$verify(A.InputStream$(type$.List_int._as(p.toList$2(0, 0, byteCount)), 1, _null, 0), false), false, _null, 0);
+        byteData = A.InputBuffer$(B.C_ZLibDecoder.decodeBytes$1(p.toList$2(0, 0, byteCount)), false, _null, 0);
       else if (t3 === 1)
         byteData = p;
       else
@@ -28638,7 +29090,7 @@
       return true;
     },
     _reconstructRow$0() {
-      var yDst, uDst, vDst, mbX, t2, block, j, t3, topYuv, coeffs, bits, topRight, topRight32, t4, p, n, dst, c1, t5, c2, yOut, uOut, _this = this, _null = null, _s4_ = "_dsp",
+      var yDst, uDst, vDst, mbX, t2, block, j, t3, topYuv, coeffs, bits, topRight, topRight32, t4, p, n, dst, c1, t5, t6, c2, yOut, uOut, _this = this, _null = null, _s4_ = "_dsp",
         mbY = _this._mbY,
         t1 = _this.__VP8__yuvBlock_A;
       t1 === $ && A.throwLateFieldNI("_yuvBlock");
@@ -28744,7 +29196,7 @@
             B.List_XE5[t3].call$1(dst);
             bits.toString;
             t3 = n * 16;
-            _this._doTransform$3(bits, new A.InputBuffer(coeffs, t3, 384, t3, false), dst);
+            _this._doTransform$3(bits, new A.InputBuffer(coeffs, t3, Math.min(384, 384), t3, false), dst);
           }
         } else {
           t2 = A.VP8__checkMode(mbX, mbY, block.imodes[0]);
@@ -28757,7 +29209,7 @@
               dst = A.InputBuffer$from(yDst, _null, B.List_u6J[n]);
               bits.toString;
               t2 = n * 16;
-              _this._doTransform$3(bits, new A.InputBuffer(coeffs, t2, 384, t2, false), dst);
+              _this._doTransform$3(bits, new A.InputBuffer(coeffs, t2, Math.min(384, 384), t2, false), dst);
             }
         }
         t2 = block.__VP8MBData_nonZeroUV_A;
@@ -28768,23 +29220,24 @@
           return A.ioore(B.List_LDA, t3);
         B.List_LDA[t3].call$1(uDst);
         B.List_LDA[t3].call$1(vDst);
-        c1 = new A.InputBuffer(coeffs, 256, 384, 256, false);
+        t3 = Math.min(384, 384);
+        c1 = new A.InputBuffer(coeffs, 256, t3, 256, false);
         if ((t2 & 255) !== 0) {
-          t3 = _this.__VP8__dsp_A;
+          t4 = _this.__VP8__dsp_A;
           if ((t2 & 170) !== 0) {
-            t3 === $ && A.throwLateFieldNI(_s4_);
-            t3.transformOne$2(c1, uDst);
-            t3.transformOne$2(A.InputBuffer$from(c1, _null, 16), A.InputBuffer$from(uDst, _null, 4));
-            t4 = A.InputBuffer$from(c1, _null, 32);
-            t5 = A.InputBuffer$from(uDst, _null, 128);
-            t3.transformOne$2(t4, t5);
-            t3.transformOne$2(A.InputBuffer$from(t4, _null, 16), A.InputBuffer$from(t5, _null, 4));
+            t4 === $ && A.throwLateFieldNI(_s4_);
+            t4.transformOne$2(c1, uDst);
+            t4.transformOne$2(A.InputBuffer$from(c1, _null, 16), A.InputBuffer$from(uDst, _null, 4));
+            t5 = A.InputBuffer$from(c1, _null, 32);
+            t6 = A.InputBuffer$from(uDst, _null, 128);
+            t4.transformOne$2(t5, t6);
+            t4.transformOne$2(A.InputBuffer$from(t5, _null, 16), A.InputBuffer$from(t6, _null, 4));
           } else {
-            t3 === $ && A.throwLateFieldNI(_s4_);
-            t3.transformDCUV$2(c1, uDst);
+            t4 === $ && A.throwLateFieldNI(_s4_);
+            t4.transformDCUV$2(c1, uDst);
           }
         }
-        c2 = new A.InputBuffer(coeffs, 320, 384, 320, false);
+        c2 = new A.InputBuffer(coeffs, 320, t3, 320, false);
         t2 = t2 >>> 8;
         if ((t2 & 255) !== 0) {
           t3 = _this.__VP8__dsp_A;
@@ -30376,8 +30829,6 @@
           break;
         case 2:
           break;
-        default:
-          throw A.wrapException(A.ImageException$("Invalid WebP transform type: " + type));
       }
       return true;
     },
@@ -31836,7 +32287,7 @@
       return true;
     },
     _webp_decoder$_getInfo$2(input, webp) {
-      var t1, t2, tag, size, diskSize, t3, p, t4, t5, c, bytes, remainder;
+      var t1, t2, tag, size, diskSize, t3, p, t4, t5, t6, c, bytes, remainder;
       for (t1 = input.end, t2 = input.start; input.offset < t1;) {
         tag = input.readString$1(4);
         size = input.readUint32$0();
@@ -31862,8 +32313,10 @@
             webp.toString;
             t3 = input.buffer;
             t4 = input.bigEndian;
-            t5 = J.get$length$asx(t3);
-            t3 = new A.InputBuffer(t3, 0, t5, 0, t4);
+            t5 = J.getInterceptor$asx(t3);
+            t6 = t5.get$length(t3);
+            t5 = t5.get$length(t3);
+            t3 = new A.InputBuffer(t3, 0, Math.min(t6, t5), 0, t4);
             webp._webp_info$_alphaData = t3;
             t3.offset = input.offset;
             input.offset += diskSize;
@@ -32295,15 +32748,11 @@
     clear$0(_) {
       return this.clear$1(0, null);
     },
-    convert$2$alpha$numChannels(alpha, numChannels) {
-      var alpha0, t1, t2, t3, t4, firstFrame, _i, frame, t5, t6, t7, t8, t9, t10, newImage, firstFrame0, pal, f, usedColors, op, c, numColors, np, h, _this = this, _null = null,
-        format = _this.get$format();
-      if (numChannels == null)
-        numChannels = _this.get$numChannels();
-      alpha0 = B.Map_vw3Ow.$index(0, format);
-      alpha = alpha0;
-      if (format.index < 3)
-        _this.get$format();
+    convert$1$numChannels(numChannels) {
+      var t1, t2, t3, t4, firstFrame, _i, frame, t5, t6, t7, t8, t9, t10, newImage, firstFrame0, pal, f, usedColors, op, c, numColors, np, h, _this = this, _null = null,
+        format = _this.get$format(),
+        alpha = B.Map_vw3Ow.$index(0, format);
+      alpha = alpha;
       t1 = false;
       if (format === _this.get$format())
         if (numChannels === _this.get$numChannels()) {
@@ -32384,9 +32833,6 @@
       }
       firstFrame.toString;
       return firstFrame;
-    },
-    convert$1$numChannels(numChannels) {
-      return this.convert$2$alpha$numChannels(null, numChannels);
     },
     addTextData$1(data) {
       var t1, t2, t3, t4;
@@ -35735,7 +36181,7 @@
   A.PixelFloat64.prototype = {
     clone$0() {
       var _this = this;
-      return new A.PixelFloat64(_this._pixel_float64$_x, _this._pixel_float64$_y, _this._pixel_float64$_index, _this.image);
+      return new A.PixelFloat64(_this._x, _this._y, _this._pixel_float64$_index, _this.image);
     },
     get$length(_) {
       return this.image.numChannels;
@@ -35750,15 +36196,15 @@
       return B.Format_11;
     },
     get$x() {
-      return this._pixel_float64$_x;
+      return this._x;
     },
     get$y() {
-      return this._pixel_float64$_y;
+      return this._y;
     },
     setPosition$2(x, y) {
       var t1, t2, _this = this;
-      _this._pixel_float64$_x = x;
-      _this._pixel_float64$_y = y;
+      _this._x = x;
+      _this._y = y;
       t1 = _this.image;
       t2 = t1.numChannels;
       _this._pixel_float64$_index = y * t1.width * t2 + x * t2;
@@ -35769,9 +36215,9 @@
     moveNext$0() {
       var t2, _this = this,
         t1 = _this.image;
-      if (++_this._pixel_float64$_x === t1.width) {
-        _this._pixel_float64$_x = 0;
-        if (++_this._pixel_float64$_y === t1.height)
+      if (++_this._x === t1.width) {
+        _this._x = 0;
+        if (++_this._y === t1.height)
           return false;
       }
       t2 = _this._pixel_float64$_index + t1.numChannels;
@@ -38695,7 +39141,7 @@
   A.PixelUint8.prototype = {
     clone$0() {
       var _this = this;
-      return new A.PixelUint8(_this._x, _this._y, _this._pixel_uint8$_index, _this.image);
+      return new A.PixelUint8(_this._pixel_uint8$_x, _this._pixel_uint8$_y, _this._pixel_uint8$_index, _this.image);
     },
     get$length(_) {
       var t1 = this.image,
@@ -38713,15 +39159,15 @@
       return B.Format_3;
     },
     get$x() {
-      return this._x;
+      return this._pixel_uint8$_x;
     },
     get$y() {
-      return this._y;
+      return this._pixel_uint8$_y;
     },
     setPosition$2(x, y) {
       var t1, t2, _this = this;
-      _this._x = x;
-      _this._y = y;
+      _this._pixel_uint8$_x = x;
+      _this._pixel_uint8$_y = y;
       t1 = _this.image;
       t2 = t1.numChannels;
       _this._pixel_uint8$_index = y * t1.width * t2 + x * t2;
@@ -38732,9 +39178,9 @@
     moveNext$0() {
       var t2, _this = this,
         t1 = _this.image;
-      if (++_this._x === t1.width) {
-        _this._x = 0;
-        if (++_this._y === t1.height)
+      if (++_this._pixel_uint8$_x === t1.width) {
+        _this._pixel_uint8$_x = 0;
+        if (++_this._pixel_uint8$_y === t1.height)
           return false;
       }
       t2 = _this._pixel_uint8$_index;
@@ -41085,14 +41531,14 @@
       _inherit = hunkHelpers.inherit,
       _inheritMany = hunkHelpers.inheritMany;
     _inherit(A.Object, null);
-    _inheritMany(A.Object, [A.JS_CONST, J.Interceptor, A.SafeToStringHook, J.ArrayIterator, A.Iterable, A.CastIterator, A.MapBase, A.Closure, A.Error, A.ListBase, A.SentinelValue, A.ListIterator, A.MappedIterator, A.WhereIterator, A.SkipIterator, A.EmptyIterator, A.FixedLengthListMixin, A.UnmodifiableListMixin, A.Symbol, A.ConstantMap, A.TypeErrorDecoder, A.NullThrownFromJavaScriptException, A.ExceptionAndStackTrace, A._StackTrace, A.LinkedHashMapCell, A.LinkedHashMapKeyIterator, A.LinkedHashMapValueIterator, A.LinkedHashMapEntryIterator, A.JSSyntaxRegExp, A._MatchImplementation, A._Cell, A._UnmodifiableNativeByteBufferView, A.Rti, A._FunctionParameters, A._Type, A._TimerImpl, A._AsyncAwaitCompleter, A._SyncStarIterator, A.AsyncError, A._Completer, A._FutureListener, A._Future, A._AsyncCallbackEntry, A._StreamIterator, A._Zone, A._HashMapKeyIterator, A.SetBase, A._LinkedHashSetCell, A._LinkedHashSetIterator, A.Converter, A.Codec, A._Base64Encoder, A._Base64Decoder, A._JsonStringifier, A._JsonPrettyPrintMixin, A._Utf8Decoder, A._BigIntImpl, A.DateTime, A.Duration, A._Enum, A.OutOfMemoryError, A.StackOverflowError, A._Exception, A.FormatException, A.IntegerDivisionByZeroException, A.MapEntry, A.Null, A._StringStackTrace, A.StringBuffer, A.NullRejectionException, A.InputStreamBase, A.OutputStreamBase, A.ZLibDecoderBase, A.HuffmanTable, A.Inflate, A.ZLibDecoder, A.CancelationToken, A.ChannelIterator, A.IfdContainer, A._ExifEntry, A.ExifTag, A.IfdDirectory, A.IfdValue, A.BmpFileHeader, A.BmpInfo, A.Decoder, A.DecodeInfo, A.Encoder, A.ExrAttribute, A.ExrCompressor, A.ExrChannel, A.ExrHufDec, A.ExrImage, A.ExrPart, A._PizChannelData, A.GifColorMap, A.GifImageDesc, A.GifInfo, A.IcoInfo, A.IcoInfoImage, A.ComponentData, A.HuffmanNode, A.JpegAdobe, A.JpegComponent, A.JpegData, A._JpegHuffman, A.JpegFrame, A.JpegJfif, A.JpegScan, A.PngFrame, A.PngInfo, A.PsdChannel, A.PsdImage, A.PvrColorRgbCore, A.Pvr2Info, A.Pvr3Info, A.PvrAppleInfo, A.PvrPacket, A.TgaInfo, A.TiffBitReader, A.TiffEntry, A.TiffFaxDecoder, A.TiffImage, A.TiffInfo, A.LzwDecoder, A.VP8, A.VP8BitReader, A.VP8Filter, A.VP8FrameHeader, A.VP8PictureHeader, A.VP8SegmentHeader, A.VP8BandProbas, A.VP8Proba, A.VP8FilterHeader, A.VP8FInfo, A.VP8MB, A.VP8QuantMatrix, A.VP8MBData, A.VP8TopSamples, A.VP8L, A.VP8LBitReader, A.VP8LColorCache, A.VP8LTransform, A.WebPAlpha, A.WebPFrame, A.HuffmanTree, A.HTreeGroup, A.WebPInfo, A.IccProfile, A.Palette, A.PixelRangeIterator, A.ImageException, A.InputBuffer, A.OutputBuffer, A.Rational, A.ImageResizeService, A.MarshalingContext, A.LogEvent, A.LogFilter, A.LogOutput, A.LogPrinter, A.Logger, A.OutputEvent, A._WebWorkerChannel, A.WorkerRunner, A.Converter0, A.LazyInPlaceMap, A.SerializationContext, A.SquadronException, A.CancelationTokenReference]);
+    _inheritMany(A.Object, [A.JS_CONST, J.Interceptor, A.SafeToStringHook, J.ArrayIterator, A.Iterable, A.CastIterator, A.MapBase, A.Closure, A.Error, A.ListBase, A.SentinelValue, A.ListIterator, A.MappedIterator, A.WhereIterator, A.SkipIterator, A.EmptyIterator, A.FixedLengthListMixin, A.UnmodifiableListMixin, A.Symbol, A.ConstantMap, A.TypeErrorDecoder, A.NullThrownFromJavaScriptException, A.ExceptionAndStackTrace, A._StackTrace, A.LinkedHashMapCell, A.LinkedHashMapKeyIterator, A.LinkedHashMapValueIterator, A.LinkedHashMapEntryIterator, A.JSSyntaxRegExp, A._MatchImplementation, A._Cell, A._UnmodifiableNativeByteBufferView, A.Rti, A._FunctionParameters, A._Type, A._TimerImpl, A._AsyncAwaitCompleter, A._SyncStarIterator, A.AsyncError, A._Completer, A._FutureListener, A._Future, A._AsyncCallbackEntry, A._StreamIterator, A._Zone, A._HashMapKeyIterator, A.SetBase, A._LinkedHashSetCell, A._LinkedHashSetIterator, A.Converter, A.Codec, A._Base64Encoder, A._Base64Decoder, A._JsonStringifier, A._JsonPrettyPrintMixin, A._Utf8Decoder, A._BigIntImpl, A.DateTime, A.Duration, A._Enum, A.OutOfMemoryError, A.StackOverflowError, A._Exception, A.FormatException, A.IntegerDivisionByZeroException, A.MapEntry, A.Null, A._StringStackTrace, A.StringBuffer, A.NullRejectionException, A.HuffmanTable, A.ZLibDecoderBase, A.Inflate, A.ZLibDecoder, A.InputStream, A.OutputStream, A.CancelationToken, A.ChannelIterator, A.IfdContainer, A._ExifEntry, A.ExifTag, A.IfdDirectory, A.IfdValue, A.BmpFileHeader, A.BmpInfo, A.Decoder, A.DecodeInfo, A.Encoder, A.ExrAttribute, A.ExrCompressor, A.ExrChannel, A.ExrHufDec, A.ExrImage, A.ExrPart, A._PizChannelData, A.GifColorMap, A.GifImageDesc, A.GifInfo, A.IcoInfo, A.IcoInfoImage, A.ComponentData, A.HuffmanNode, A.JpegAdobe, A.JpegComponent, A.JpegData, A._JpegHuffman, A.JpegFrame, A.JpegJfif, A.JpegScan, A.PngFrame, A.PngInfo, A.PsdEffect, A.PsdLayerData, A.PsdBlendingRanges, A.PsdChannel, A.PsdImage, A.PsdImageResource, A.PsdLayer, A.PvrColorRgbCore, A.Pvr2Info, A.Pvr3Info, A.PvrAppleInfo, A.PvrPacket, A.TgaInfo, A.TiffBitReader, A.TiffEntry, A.TiffFaxDecoder, A.TiffImage, A.TiffInfo, A.LzwDecoder, A.VP8, A.VP8BitReader, A.VP8Filter, A.VP8FrameHeader, A.VP8PictureHeader, A.VP8SegmentHeader, A.VP8BandProbas, A.VP8Proba, A.VP8FilterHeader, A.VP8FInfo, A.VP8MB, A.VP8QuantMatrix, A.VP8MBData, A.VP8TopSamples, A.VP8L, A.VP8LBitReader, A.VP8LColorCache, A.VP8LTransform, A.WebPAlpha, A.WebPFrame, A.HuffmanTree, A.HTreeGroup, A.WebPInfo, A.IccProfile, A.Palette, A.PixelRangeIterator, A.ImageException, A.InputBuffer, A.OutputBuffer, A.Rational, A.ImageResizeService, A.MarshalingContext, A.LogEvent, A.LogFilter, A.LogOutput, A.LogPrinter, A.Logger, A.OutputEvent, A._WebWorkerChannel, A.WorkerRunner, A.Converter0, A.LazyInPlaceMap, A.SerializationContext, A.SquadronException, A.CancelationTokenReference]);
     _inheritMany(J.Interceptor, [J.JSBool, J.JSNull, J.JavaScriptObject, J.JavaScriptBigInt, J.JavaScriptSymbol, J.JSNumber, J.JSString]);
     _inheritMany(J.JavaScriptObject, [J.LegacyJavaScriptObject, J.JSArray, A.NativeByteBuffer, A.NativeTypedData]);
     _inheritMany(J.LegacyJavaScriptObject, [J.PlainJavaScriptObject, J.UnknownJavaScriptObject, J.JavaScriptFunction]);
     _inherit(J.JSArraySafeToStringHook, A.SafeToStringHook);
     _inherit(J.JSUnmodifiableArray, J.JSArray);
     _inheritMany(J.JSNumber, [J.JSInt, J.JSNumNotInt]);
-    _inheritMany(A.Iterable, [A._CastIterableBase, A.EfficientLengthIterable, A.MappedIterable, A.WhereIterable, A.SkipIterable, A._SyncStarIterable, A.ColorFloat16, A.ColorFloat32, A.ColorFloat64, A.ColorInt16, A.ColorInt32, A.ColorInt8, A.ColorUint1, A.ColorUint16, A.ColorUint2, A.ColorUint32, A.ColorUint4, A.ColorUint8, A.Image, A.ImageData, A.PixelFloat16, A.PixelFloat32, A.PixelFloat64, A.PixelInt16, A.PixelInt32, A.PixelInt8, A.PixelUint1, A.PixelUint16, A.PixelUint2, A.PixelUint32, A.PixelUint4, A.PixelUint8, A.PixelUndefined]);
+    _inheritMany(A.Iterable, [A._CastIterableBase, A.EfficientLengthIterable, A.MappedIterable, A.WhereIterable, A.SkipIterable, A._SyncStarIterable, A.ColorFloat16, A.ColorFloat32, A.ColorFloat64, A.ColorInt16, A.ColorInt32, A.ColorInt8, A.ColorUint1, A.ColorUint16, A.ColorUint2, A.ColorUint32, A.ColorUint4, A.ColorUint8, A.ConstColorUint8, A.Image, A.ImageData, A.PixelFloat16, A.PixelFloat32, A.PixelFloat64, A.PixelInt16, A.PixelInt32, A.PixelInt8, A.PixelUint1, A.PixelUint16, A.PixelUint2, A.PixelUint32, A.PixelUint4, A.PixelUint8, A.PixelUndefined]);
     _inheritMany(A._CastIterableBase, [A.CastIterable, A.__CastListBase__CastIterableBase_ListMixin]);
     _inherit(A._EfficientLengthCastIterable, A.CastIterable);
     _inherit(A._CastListBase, A.__CastListBase__CastIterableBase_ListMixin);
@@ -41136,12 +41582,12 @@
     _inheritMany(A.Encoding, [A.Latin1Codec, A.Utf8Codec]);
     _inherit(A.Latin1Decoder, A._UnicodeSubsetDecoder);
     _inheritMany(A.ArgumentError, [A.RangeError, A.IndexError]);
-    _inherit(A.ArchiveException, A.FormatException);
-    _inherit(A.InputStream, A.InputStreamBase);
-    _inherit(A.OutputStream, A.OutputStreamBase);
     _inherit(A._ZLibDecoder, A.ZLibDecoderBase);
-    _inheritMany(A._Enum, [A.Channel, A.Format, A.BlendMode, A.IfdValueType, A.BmpCompression, A.ExrChannelType, A.ExrChannelName, A.ExrCompressorType, A.IcoType, A.JpegChroma, A.PngDisposeMode, A.PngBlendMode, A.PngFilterType, A.PnmFormat, A.PsdColorMode, A.TgaImageType, A.TiffFormat, A.TiffPhotometricType, A.TiffImageType, A.VP8LImageTransformType, A.WebPFormat, A.IccProfileCompression, A.FrameType, A.Interpolation, A.FlipDirection, A.Level]);
+    _inheritMany(A._Enum, [A.ByteOrder, A.Channel, A.Format, A.BlendMode, A.IfdValueType, A.BmpCompression, A.ExrChannelType, A.ExrChannelName, A.ExrCompressorType, A.IcoType, A.JpegChroma, A.PngDisposeMode, A.PngBlendMode, A.PngFilterType, A.PnmFormat, A.PsdColorMode, A.TgaImageType, A.TiffFormat, A.TiffPhotometricType, A.TiffImageType, A.VP8LImageTransformType, A.WebPFormat, A.IccProfileCompression, A.FrameType, A.Interpolation, A.FlipDirection, A.Level]);
+    _inherit(A.InputMemoryStream, A.InputStream);
+    _inherit(A.OutputMemoryStream, A.OutputStream);
     _inheritMany(A.ColorUint8, [A.ColorRgb8, A.ColorRgba8]);
+    _inherit(A.ConstColorRgb8, A.ConstColorUint8);
     _inherit(A.ExifData, A.IfdContainer);
     _inheritMany(A.IfdValue, [A.IfdByteValue, A.IfdValueAscii, A.IfdValueShort, A.IfdValueLong, A.IfdValueRational, A.IfdValueSByte, A.IfdValueSShort, A.IfdValueSLong, A.IfdValueSRational, A.IfdValueSingle, A.IfdValueDouble, A.IfdValueUndefined]);
     _inheritMany(A.Decoder, [A.BmpDecoder, A.ExrDecoder, A.GifDecoder, A.IcoDecoder, A.JpegDecoder, A.PngDecoder, A.PnmDecoder, A.PsdDecoder, A.PvrDecoder, A.TgaDecoder, A.TiffDecoder, A.WebPDecoder]);
@@ -41156,6 +41602,8 @@
     _inherit(A.InternalPngFrame, A.PngFrame);
     _inherit(A.InternalPngInfo, A.PngInfo);
     _inherit(A.PnmInfo, A.DecodeInfo);
+    _inheritMany(A.PsdEffect, [A.PsdBevelEffect, A.PsdDropShadowEffect, A.PsdInnerGlowEffect, A.PsdInnerShadowEffect, A.PsdOuterGlowEffect, A.PsdSolidFillEffect]);
+    _inheritMany(A.PsdLayerData, [A.PsdLayerAdditionalData, A.PsdLayerSectionDivider]);
     _inheritMany(A.PvrColorRgbCore, [A.PvrColorRgb, A.PvrColorRgba]);
     _inherit(A.InternalVP8L, A.VP8L);
     _inherit(A.InternalWebPFrame, A.WebPFrame);
@@ -41190,7 +41638,7 @@
     leafTags: null,
     arrayRti: Symbol("$ti")
   };
-  A._Universe_addRules(init.typeUniverse, JSON.parse('{"JavaScriptFunction":"LegacyJavaScriptObject","PlainJavaScriptObject":"LegacyJavaScriptObject","UnknownJavaScriptObject":"LegacyJavaScriptObject","NativeArrayBuffer":"NativeByteBuffer","JSArray":{"List":["1"],"EfficientLengthIterable":["1"],"JSObject":[],"Iterable":["1"],"JSIndexable":["1"]},"JSBool":{"bool":[],"TrustedGetRuntimeType":[]},"JSNull":{"Null":[],"TrustedGetRuntimeType":[]},"JavaScriptObject":{"JSObject":[]},"LegacyJavaScriptObject":{"JSObject":[]},"JSArraySafeToStringHook":{"SafeToStringHook":[]},"JSUnmodifiableArray":{"JSArray":["1"],"List":["1"],"EfficientLengthIterable":["1"],"JSObject":[],"Iterable":["1"],"JSIndexable":["1"]},"ArrayIterator":{"Iterator":["1"]},"JSNumber":{"double":[],"num":[]},"JSInt":{"double":[],"int":[],"num":[],"TrustedGetRuntimeType":[]},"JSNumNotInt":{"double":[],"num":[],"TrustedGetRuntimeType":[]},"JSString":{"String":[],"Pattern":[],"JSIndexable":["@"],"TrustedGetRuntimeType":[]},"_CastIterableBase":{"Iterable":["2"]},"CastIterator":{"Iterator":["2"]},"CastIterable":{"_CastIterableBase":["1","2"],"Iterable":["2"],"Iterable.E":"2"},"_EfficientLengthCastIterable":{"CastIterable":["1","2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"_CastListBase":{"ListBase":["2"],"List":["2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"]},"CastList":{"_CastListBase":["1","2"],"ListBase":["2"],"List":["2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"ListBase.E":"2","Iterable.E":"2"},"CastMap":{"MapBase":["3","4"],"Map":["3","4"],"MapBase.K":"3","MapBase.V":"4"},"LateError":{"Error":[]},"CodeUnits":{"ListBase":["int"],"UnmodifiableListMixin":["int"],"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"ListBase.E":"int","UnmodifiableListMixin.E":"int"},"EfficientLengthIterable":{"Iterable":["1"]},"ListIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"SubListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1","ListIterable.E":"1"},"ListIterator":{"Iterator":["1"]},"MappedIterable":{"Iterable":["2"],"Iterable.E":"2"},"EfficientLengthMappedIterable":{"MappedIterable":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"MappedIterator":{"Iterator":["2"]},"MappedListIterable":{"ListIterable":["2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2","ListIterable.E":"2"},"WhereIterable":{"Iterable":["1"],"Iterable.E":"1"},"WhereIterator":{"Iterator":["1"]},"SkipIterable":{"Iterable":["1"],"Iterable.E":"1"},"EfficientLengthSkipIterable":{"SkipIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"SkipIterator":{"Iterator":["1"]},"EmptyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"EmptyIterator":{"Iterator":["1"]},"UnmodifiableListBase":{"ListBase":["1"],"UnmodifiableListMixin":["1"],"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"ReversedListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1","ListIterable.E":"1"},"ConstantMap":{"Map":["1","2"]},"GeneralConstantMap":{"ConstantMap":["1","2"],"Map":["1","2"]},"Instantiation":{"Closure":[],"Function":[]},"Instantiation1":{"Closure":[],"Function":[]},"Instantiation2":{"Closure":[],"Function":[]},"NullError":{"TypeError":[],"Error":[]},"JsNoSuchMethodError":{"Error":[]},"UnknownJsTypeError":{"Error":[]},"_StackTrace":{"StackTrace":[]},"Closure":{"Function":[]},"Closure0Args":{"Closure":[],"Function":[]},"Closure2Args":{"Closure":[],"Function":[]},"TearOffClosure":{"Closure":[],"Function":[]},"StaticClosure":{"Closure":[],"Function":[]},"BoundClosure":{"Closure":[],"Function":[]},"RuntimeError":{"Error":[]},"JsLinkedHashMap":{"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"LinkedHashMapKeysIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"LinkedHashMapKeyIterator":{"Iterator":["1"]},"LinkedHashMapValuesIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"LinkedHashMapValueIterator":{"Iterator":["1"]},"LinkedHashMapEntriesIterable":{"EfficientLengthIterable":["MapEntry<1,2>"],"Iterable":["MapEntry<1,2>"],"Iterable.E":"MapEntry<1,2>"},"LinkedHashMapEntryIterator":{"Iterator":["MapEntry<1,2>"]},"JsConstantLinkedHashMap":{"JsLinkedHashMap":["1","2"],"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"JSSyntaxRegExp":{"RegExp":[],"Pattern":[]},"NativeByteBuffer":{"JSObject":[],"ByteBuffer":[],"TrustedGetRuntimeType":[]},"NativeTypedData":{"JSObject":[],"TypedData":[]},"_UnmodifiableNativeByteBufferView":{"ByteBuffer":[]},"NativeByteData":{"NativeTypedData":[],"ByteData":[],"JSObject":[],"TypedData":[],"TrustedGetRuntimeType":[]},"NativeTypedArray":{"NativeTypedData":[],"JavaScriptIndexingBehavior":["1"],"JSObject":[],"TypedData":[],"JSIndexable":["1"]},"NativeTypedArrayOfDouble":{"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"JSIndexable":["double"],"Iterable":["double"],"FixedLengthListMixin":["double"]},"NativeTypedArrayOfInt":{"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"]},"NativeFloat32List":{"NativeTypedArrayOfDouble":[],"Float32List":[],"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"JSIndexable":["double"],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double"},"NativeFloat64List":{"NativeTypedArrayOfDouble":[],"Float64List":[],"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"JSIndexable":["double"],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double"},"NativeInt16List":{"NativeTypedArrayOfInt":[],"Int16List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeInt32List":{"NativeTypedArrayOfInt":[],"Int32List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeInt8List":{"NativeTypedArrayOfInt":[],"Int8List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint16List":{"NativeTypedArrayOfInt":[],"Uint16List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint32List":{"NativeTypedArrayOfInt":[],"Uint32List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint8ClampedList":{"NativeTypedArrayOfInt":[],"Uint8ClampedList":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint8List":{"NativeTypedArrayOfInt":[],"Uint8List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"_Error":{"Error":[]},"_TypeError":{"TypeError":[],"Error":[]},"_AsyncAwaitCompleter":{"Completer":["1"]},"_SyncStarIterator":{"Iterator":["1"]},"_SyncStarIterable":{"Iterable":["1"],"Iterable.E":"1"},"AsyncError":{"Error":[]},"_Completer":{"Completer":["1"]},"_AsyncCompleter":{"_Completer":["1"],"Completer":["1"]},"_Future":{"Future":["1"]},"_Zone":{"Zone":[]},"_RootZone":{"_Zone":[],"Zone":[]},"_HashMap":{"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_IdentityHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_CustomHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_HashMapKeyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"_HashMapKeyIterator":{"Iterator":["1"]},"_LinkedHashSet":{"_SetBase":["1"],"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_LinkedHashSetIterator":{"Iterator":["1"]},"ListBase":{"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"MapBase":{"Map":["1","2"]},"SetBase":{"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_SetBase":{"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"Base64Codec":{"Codec":["List<int>","String"],"Codec.S":"List<int>"},"Encoding":{"Codec":["String","List<int>"]},"JsonUnsupportedObjectError":{"Error":[]},"JsonCyclicError":{"Error":[]},"JsonCodec":{"Codec":["Object?","String"],"Codec.S":"Object?"},"Latin1Codec":{"Codec":["String","List<int>"],"Codec.S":"String"},"Utf8Codec":{"Codec":["String","List<int>"],"Codec.S":"String"},"double":{"num":[]},"int":{"num":[]},"List":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"String":{"Pattern":[]},"_BigIntImpl":{"BigInt":[]},"AssertionError":{"Error":[]},"TypeError":{"Error":[]},"ArgumentError":{"Error":[]},"RangeError":{"Error":[]},"IndexError":{"Error":[]},"UnsupportedError":{"Error":[]},"UnimplementedError":{"Error":[]},"StateError":{"Error":[]},"ConcurrentModificationError":{"Error":[]},"OutOfMemoryError":{"Error":[]},"StackOverflowError":{"Error":[]},"IntegerDivisionByZeroException":{"Error":[]},"_StringStackTrace":{"StackTrace":[]},"StringBuffer":{"StringSink":[]},"InputStream":{"InputStreamBase":[]},"ChannelIterator":{"Iterator":["num"]},"ColorFloat16":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorFloat32":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorFloat64":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorInt16":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorInt32":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorInt8":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorUint1":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorUint16":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorUint2":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorUint32":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorUint4":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorUint8":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorRgb8":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorRgba8":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ExifData":{"IfdContainer":[]},"IfdByteValue":{"IfdValue":[]},"IfdValueAscii":{"IfdValue":[]},"IfdValueShort":{"IfdValue":[]},"IfdValueLong":{"IfdValue":[]},"IfdValueRational":{"IfdValue":[]},"IfdValueSByte":{"IfdValue":[]},"IfdValueSShort":{"IfdValue":[]},"IfdValueSLong":{"IfdValue":[]},"IfdValueSRational":{"IfdValue":[]},"IfdValueSingle":{"IfdValue":[]},"IfdValueDouble":{"IfdValue":[]},"IfdValueUndefined":{"IfdValue":[]},"BmpInfo":{"DecodeInfo":[]},"InternalExrB44Compressor":{"ExrCompressor":[]},"InternalExrCompressor":{"ExrCompressor":[]},"ExrImage":{"DecodeInfo":[]},"InternalExrPart":{"ExrPart":[]},"InternalExrPizCompressor":{"ExrCompressor":[]},"InternalExrPxr24Compressor":{"ExrCompressor":[]},"InternalExrRleCompressor":{"ExrCompressor":[]},"InternalExrZipCompressor":{"ExrCompressor":[]},"InternalGifImageDesc":{"GifImageDesc":[]},"GifInfo":{"DecodeInfo":[]},"IcoInfo":{"DecodeInfo":[]},"IcoBmpInfo":{"BmpInfo":[],"DecodeInfo":[]},"HuffmanParent":{"HuffmanNode":[]},"HuffmanValue":{"HuffmanNode":[]},"InternalPngFrame":{"PngFrame":[]},"PngInfo":{"DecodeInfo":[]},"InternalPngInfo":{"DecodeInfo":[]},"PnmInfo":{"DecodeInfo":[]},"PsdImage":{"DecodeInfo":[]},"Pvr2Info":{"DecodeInfo":[]},"Pvr3Info":{"DecodeInfo":[]},"PvrAppleInfo":{"DecodeInfo":[]},"TgaInfo":{"DecodeInfo":[]},"TiffInfo":{"DecodeInfo":[]},"InternalWebPFrame":{"WebPFrame":[]},"WebPInfo":{"DecodeInfo":[]},"InternalWebPInfo":{"WebPInfo":[],"DecodeInfo":[]},"Image":{"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageData":{"Iterable":["Pixel"]},"ImageDataFloat16":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataFloat32":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataFloat64":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataInt16":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataInt32":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataInt8":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataUint1":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataUint16":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataUint2":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataUint32":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataUint4":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataUint8":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"PaletteFloat16":{"Palette":[]},"PaletteFloat32":{"Palette":[]},"PaletteFloat64":{"Palette":[]},"PaletteInt16":{"Palette":[]},"PaletteInt32":{"Palette":[]},"PaletteInt8":{"Palette":[]},"PaletteUint16":{"Palette":[]},"PaletteUint32":{"Palette":[]},"PaletteUint8":{"Palette":[]},"PixelFloat16":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelFloat32":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelFloat64":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelInt16":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelInt32":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelInt8":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelRangeIterator":{"Iterator":["Pixel"]},"PixelUint1":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelUint16":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelUint2":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelUint32":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelUint4":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelUint8":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelUndefined":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"_$ImageResizeService$WorkerService":{"WorkerService":[]},"_WebWorkerChannel":{"WorkerChannel":[]},"InternalLogger":{"Logger":[]},"_NoLogOutput":{"LogOutput":[]},"_DummyPrinter":{"LogPrinter":[]},"_LogAllFilter":{"LogFilter":[]},"CastConverter":{"Converter0":[]},"ContextAwareConverter":{"Converter0":[]},"LazyInPlaceMap":{"Map":["1","2"]},"SquadronCanceledException":{"SquadronException":[],"CanceledException":[]},"SquadronCanceledExceptions":{"SquadronCanceledException":[],"SquadronException":[],"CanceledException":[]},"SquadronError":{"SquadronException":[]},"SquadronTimeoutException":{"SquadronCanceledException":[],"SquadronException":[],"CanceledException":[]},"WorkerException":{"SquadronException":[]},"CancelationTokenReference":{"SquadronCancelationToken":[],"CancelationToken":[]},"SquadronCancelationToken":{"CancelationToken":[]},"ByteData":{"TypedData":[]},"Int8List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint8List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint8ClampedList":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Int16List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint16List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Int32List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint32List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Float32List":{"List":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"]},"Float64List":{"List":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"]},"Pixel":{"Color":[],"Iterator":["Pixel"],"Iterable":["num"]}}'));
+  A._Universe_addRules(init.typeUniverse, JSON.parse('{"JavaScriptFunction":"LegacyJavaScriptObject","PlainJavaScriptObject":"LegacyJavaScriptObject","UnknownJavaScriptObject":"LegacyJavaScriptObject","NativeArrayBuffer":"NativeByteBuffer","JSArray":{"List":["1"],"EfficientLengthIterable":["1"],"JSObject":[],"Iterable":["1"],"JSIndexable":["1"]},"JSBool":{"bool":[],"TrustedGetRuntimeType":[]},"JSNull":{"Null":[],"TrustedGetRuntimeType":[]},"JavaScriptObject":{"JSObject":[]},"LegacyJavaScriptObject":{"JSObject":[]},"JSArraySafeToStringHook":{"SafeToStringHook":[]},"JSUnmodifiableArray":{"JSArray":["1"],"List":["1"],"EfficientLengthIterable":["1"],"JSObject":[],"Iterable":["1"],"JSIndexable":["1"]},"ArrayIterator":{"Iterator":["1"]},"JSNumber":{"double":[],"num":[]},"JSInt":{"double":[],"int":[],"num":[],"TrustedGetRuntimeType":[]},"JSNumNotInt":{"double":[],"num":[],"TrustedGetRuntimeType":[]},"JSString":{"String":[],"Pattern":[],"JSIndexable":["@"],"TrustedGetRuntimeType":[]},"_CastIterableBase":{"Iterable":["2"]},"CastIterator":{"Iterator":["2"]},"CastIterable":{"_CastIterableBase":["1","2"],"Iterable":["2"],"Iterable.E":"2"},"_EfficientLengthCastIterable":{"CastIterable":["1","2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"_CastListBase":{"ListBase":["2"],"List":["2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"]},"CastList":{"_CastListBase":["1","2"],"ListBase":["2"],"List":["2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"ListBase.E":"2","Iterable.E":"2"},"CastMap":{"MapBase":["3","4"],"Map":["3","4"],"MapBase.K":"3","MapBase.V":"4"},"LateError":{"Error":[]},"CodeUnits":{"ListBase":["int"],"UnmodifiableListMixin":["int"],"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"ListBase.E":"int","UnmodifiableListMixin.E":"int"},"EfficientLengthIterable":{"Iterable":["1"]},"ListIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"SubListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1","ListIterable.E":"1"},"ListIterator":{"Iterator":["1"]},"MappedIterable":{"Iterable":["2"],"Iterable.E":"2"},"EfficientLengthMappedIterable":{"MappedIterable":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"MappedIterator":{"Iterator":["2"]},"MappedListIterable":{"ListIterable":["2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2","ListIterable.E":"2"},"WhereIterable":{"Iterable":["1"],"Iterable.E":"1"},"WhereIterator":{"Iterator":["1"]},"SkipIterable":{"Iterable":["1"],"Iterable.E":"1"},"EfficientLengthSkipIterable":{"SkipIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"SkipIterator":{"Iterator":["1"]},"EmptyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"EmptyIterator":{"Iterator":["1"]},"UnmodifiableListBase":{"ListBase":["1"],"UnmodifiableListMixin":["1"],"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"ReversedListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1","ListIterable.E":"1"},"ConstantMap":{"Map":["1","2"]},"GeneralConstantMap":{"ConstantMap":["1","2"],"Map":["1","2"]},"Instantiation":{"Closure":[],"Function":[]},"Instantiation1":{"Closure":[],"Function":[]},"Instantiation2":{"Closure":[],"Function":[]},"NullError":{"TypeError":[],"Error":[]},"JsNoSuchMethodError":{"Error":[]},"UnknownJsTypeError":{"Error":[]},"_StackTrace":{"StackTrace":[]},"Closure":{"Function":[]},"Closure0Args":{"Closure":[],"Function":[]},"Closure2Args":{"Closure":[],"Function":[]},"TearOffClosure":{"Closure":[],"Function":[]},"StaticClosure":{"Closure":[],"Function":[]},"BoundClosure":{"Closure":[],"Function":[]},"RuntimeError":{"Error":[]},"JsLinkedHashMap":{"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"LinkedHashMapKeysIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"LinkedHashMapKeyIterator":{"Iterator":["1"]},"LinkedHashMapValuesIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"LinkedHashMapValueIterator":{"Iterator":["1"]},"LinkedHashMapEntriesIterable":{"EfficientLengthIterable":["MapEntry<1,2>"],"Iterable":["MapEntry<1,2>"],"Iterable.E":"MapEntry<1,2>"},"LinkedHashMapEntryIterator":{"Iterator":["MapEntry<1,2>"]},"JsConstantLinkedHashMap":{"JsLinkedHashMap":["1","2"],"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"JSSyntaxRegExp":{"RegExp":[],"Pattern":[]},"NativeByteBuffer":{"JSObject":[],"ByteBuffer":[],"TrustedGetRuntimeType":[]},"NativeTypedData":{"JSObject":[],"TypedData":[]},"_UnmodifiableNativeByteBufferView":{"ByteBuffer":[]},"NativeByteData":{"NativeTypedData":[],"ByteData":[],"JSObject":[],"TypedData":[],"TrustedGetRuntimeType":[]},"NativeTypedArray":{"NativeTypedData":[],"JavaScriptIndexingBehavior":["1"],"JSObject":[],"TypedData":[],"JSIndexable":["1"]},"NativeTypedArrayOfDouble":{"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"JSIndexable":["double"],"Iterable":["double"],"FixedLengthListMixin":["double"]},"NativeTypedArrayOfInt":{"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"]},"NativeFloat32List":{"NativeTypedArrayOfDouble":[],"Float32List":[],"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"JSIndexable":["double"],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double"},"NativeFloat64List":{"NativeTypedArrayOfDouble":[],"Float64List":[],"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"JSIndexable":["double"],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double"},"NativeInt16List":{"NativeTypedArrayOfInt":[],"Int16List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeInt32List":{"NativeTypedArrayOfInt":[],"Int32List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeInt8List":{"NativeTypedArrayOfInt":[],"Int8List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint16List":{"NativeTypedArrayOfInt":[],"Uint16List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint32List":{"NativeTypedArrayOfInt":[],"Uint32List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint8ClampedList":{"NativeTypedArrayOfInt":[],"Uint8ClampedList":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint8List":{"NativeTypedArrayOfInt":[],"Uint8List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"NativeTypedData":[],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"_Error":{"Error":[]},"_TypeError":{"TypeError":[],"Error":[]},"_AsyncAwaitCompleter":{"Completer":["1"]},"_SyncStarIterator":{"Iterator":["1"]},"_SyncStarIterable":{"Iterable":["1"],"Iterable.E":"1"},"AsyncError":{"Error":[]},"_Completer":{"Completer":["1"]},"_AsyncCompleter":{"_Completer":["1"],"Completer":["1"]},"_Future":{"Future":["1"]},"_Zone":{"Zone":[]},"_RootZone":{"_Zone":[],"Zone":[]},"_HashMap":{"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_IdentityHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_CustomHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_HashMapKeyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"_HashMapKeyIterator":{"Iterator":["1"]},"_LinkedHashSet":{"_SetBase":["1"],"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_LinkedHashSetIterator":{"Iterator":["1"]},"ListBase":{"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"MapBase":{"Map":["1","2"]},"SetBase":{"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_SetBase":{"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"Base64Codec":{"Codec":["List<int>","String"],"Codec.S":"List<int>"},"Encoding":{"Codec":["String","List<int>"]},"JsonUnsupportedObjectError":{"Error":[]},"JsonCyclicError":{"Error":[]},"JsonCodec":{"Codec":["Object?","String"],"Codec.S":"Object?"},"Latin1Codec":{"Codec":["String","List<int>"],"Codec.S":"String"},"Utf8Codec":{"Codec":["String","List<int>"],"Codec.S":"String"},"double":{"num":[]},"int":{"num":[]},"List":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"String":{"Pattern":[]},"_BigIntImpl":{"BigInt":[]},"AssertionError":{"Error":[]},"TypeError":{"Error":[]},"ArgumentError":{"Error":[]},"RangeError":{"Error":[]},"IndexError":{"Error":[]},"UnsupportedError":{"Error":[]},"UnimplementedError":{"Error":[]},"StateError":{"Error":[]},"ConcurrentModificationError":{"Error":[]},"OutOfMemoryError":{"Error":[]},"StackOverflowError":{"Error":[]},"IntegerDivisionByZeroException":{"Error":[]},"_StringStackTrace":{"StackTrace":[]},"StringBuffer":{"StringSink":[]},"InputMemoryStream":{"InputStream":[]},"OutputMemoryStream":{"OutputStream":[]},"ChannelIterator":{"Iterator":["num"]},"ColorFloat16":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorFloat32":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorFloat64":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorInt16":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorInt32":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorInt8":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorUint1":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorUint16":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorUint2":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorUint32":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorUint4":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorUint8":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorRgb8":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ColorRgba8":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ConstColorUint8":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ConstColorRgb8":{"Color":[],"Iterable":["num"],"Iterable.E":"num"},"ExifData":{"IfdContainer":[]},"IfdByteValue":{"IfdValue":[]},"IfdValueAscii":{"IfdValue":[]},"IfdValueShort":{"IfdValue":[]},"IfdValueLong":{"IfdValue":[]},"IfdValueRational":{"IfdValue":[]},"IfdValueSByte":{"IfdValue":[]},"IfdValueSShort":{"IfdValue":[]},"IfdValueSLong":{"IfdValue":[]},"IfdValueSRational":{"IfdValue":[]},"IfdValueSingle":{"IfdValue":[]},"IfdValueDouble":{"IfdValue":[]},"IfdValueUndefined":{"IfdValue":[]},"BmpInfo":{"DecodeInfo":[]},"InternalExrB44Compressor":{"ExrCompressor":[]},"InternalExrCompressor":{"ExrCompressor":[]},"ExrImage":{"DecodeInfo":[]},"InternalExrPart":{"ExrPart":[]},"InternalExrPizCompressor":{"ExrCompressor":[]},"InternalExrPxr24Compressor":{"ExrCompressor":[]},"InternalExrRleCompressor":{"ExrCompressor":[]},"InternalExrZipCompressor":{"ExrCompressor":[]},"InternalGifImageDesc":{"GifImageDesc":[]},"GifInfo":{"DecodeInfo":[]},"IcoInfo":{"DecodeInfo":[]},"IcoBmpInfo":{"BmpInfo":[],"DecodeInfo":[]},"HuffmanParent":{"HuffmanNode":[]},"HuffmanValue":{"HuffmanNode":[]},"InternalPngFrame":{"PngFrame":[]},"PngInfo":{"DecodeInfo":[]},"InternalPngInfo":{"DecodeInfo":[]},"PnmInfo":{"DecodeInfo":[]},"PsdBevelEffect":{"PsdEffect":[]},"PsdDropShadowEffect":{"PsdEffect":[]},"PsdInnerGlowEffect":{"PsdEffect":[]},"PsdInnerShadowEffect":{"PsdEffect":[]},"PsdOuterGlowEffect":{"PsdEffect":[]},"PsdSolidFillEffect":{"PsdEffect":[]},"PsdLayerAdditionalData":{"PsdLayerData":[]},"PsdLayerSectionDivider":{"PsdLayerData":[]},"PsdImage":{"DecodeInfo":[]},"Pvr2Info":{"DecodeInfo":[]},"Pvr3Info":{"DecodeInfo":[]},"PvrAppleInfo":{"DecodeInfo":[]},"TgaInfo":{"DecodeInfo":[]},"TiffInfo":{"DecodeInfo":[]},"InternalWebPFrame":{"WebPFrame":[]},"WebPInfo":{"DecodeInfo":[]},"InternalWebPInfo":{"WebPInfo":[],"DecodeInfo":[]},"Image":{"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageData":{"Iterable":["Pixel"]},"ImageDataFloat16":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataFloat32":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataFloat64":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataInt16":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataInt32":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataInt8":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataUint1":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataUint16":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataUint2":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataUint32":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataUint4":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"ImageDataUint8":{"ImageData":[],"Iterable":["Pixel"],"Iterable.E":"Pixel"},"PaletteFloat16":{"Palette":[]},"PaletteFloat32":{"Palette":[]},"PaletteFloat64":{"Palette":[]},"PaletteInt16":{"Palette":[]},"PaletteInt32":{"Palette":[]},"PaletteInt8":{"Palette":[]},"PaletteUint16":{"Palette":[]},"PaletteUint32":{"Palette":[]},"PaletteUint8":{"Palette":[]},"PixelFloat16":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelFloat32":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelFloat64":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelInt16":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelInt32":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelInt8":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelRangeIterator":{"Iterator":["Pixel"]},"PixelUint1":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelUint16":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelUint2":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelUint32":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelUint4":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelUint8":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"PixelUndefined":{"Pixel":[],"Color":[],"Iterable":["num"],"Iterator":["Pixel"],"Iterable.E":"num"},"_$ImageResizeService$WorkerService":{"WorkerService":[]},"_WebWorkerChannel":{"WorkerChannel":[]},"InternalLogger":{"Logger":[]},"_NoLogOutput":{"LogOutput":[]},"_DummyPrinter":{"LogPrinter":[]},"_LogAllFilter":{"LogFilter":[]},"CastConverter":{"Converter0":[]},"ContextAwareConverter":{"Converter0":[]},"LazyInPlaceMap":{"Map":["1","2"]},"SquadronCanceledException":{"SquadronException":[],"CanceledException":[]},"SquadronCanceledExceptions":{"SquadronCanceledException":[],"SquadronException":[],"CanceledException":[]},"SquadronError":{"SquadronException":[]},"SquadronTimeoutException":{"SquadronCanceledException":[],"SquadronException":[],"CanceledException":[]},"WorkerException":{"SquadronException":[]},"CancelationTokenReference":{"SquadronCancelationToken":[],"CancelationToken":[]},"SquadronCancelationToken":{"CancelationToken":[]},"ByteData":{"TypedData":[]},"Int8List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint8List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint8ClampedList":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Int16List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint16List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Int32List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint32List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Float32List":{"List":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"]},"Float64List":{"List":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"]},"Pixel":{"Color":[],"Iterator":["Pixel"],"Iterable":["num"]}}'));
   A._Universe_addErasedTypes(init.typeUniverse, JSON.parse('{"UnmodifiableListBase":1,"__CastListBase__CastIterableBase_ListMixin":2,"NativeTypedArray":1,"Converter":2,"PvrColorRgbCore":1}'));
   var string$ = {
     Error_: "Error handler must accept one Object or one Object and a StackTrace as arguments, and return a value of the returned future's type"
@@ -41240,6 +41688,8 @@
       JSArray_List_int: findType("JSArray<List<int>>"),
       JSArray_PngFrame: findType("JSArray<PngFrame>"),
       JSArray_PsdChannel: findType("JSArray<PsdChannel>"),
+      JSArray_PsdEffect: findType("JSArray<PsdEffect>"),
+      JSArray_PsdLayer: findType("JSArray<PsdLayer>"),
       JSArray_String: findType("JSArray<String>"),
       JSArray_TiffImage: findType("JSArray<TiffImage>"),
       JSArray_Uint8List: findType("JSArray<Uint8List>"),
@@ -41268,6 +41718,7 @@
       List_List_List_int: findType("List<List<List<int>>>"),
       List_List_VP8FInfo: findType("List<List<VP8FInfo>>"),
       List_PsdChannel: findType("List<PsdChannel>"),
+      List_PsdLayer: findType("List<PsdLayer>"),
       List_VP8BandProbas: findType("List<VP8BandProbas>"),
       List_VP8FInfo: findType("List<VP8FInfo>"),
       List_VP8MB: findType("List<VP8MB>"),
@@ -41307,6 +41758,8 @@
       Pixel: findType("Pixel"),
       PsdChannel: findType("PsdChannel"),
       PsdImageResource: findType("PsdImageResource"),
+      PsdLayerAdditionalData: findType("PsdLayerAdditionalData"),
+      PsdLayerData: findType("PsdLayerData"),
       Pvr2Info: findType("Pvr2Info"),
       Pvr3Info: findType("Pvr3Info"),
       Rational: findType("Rational"),
@@ -41411,6 +41864,8 @@
     B.BmpCompression_0 = new A.BmpCompression(0, "none");
     B.BmpCompression_3 = new A.BmpCompression(3, "bitfields");
     B.BmpCompression_6 = new A.BmpCompression(6, "alphaBitfields");
+    B.ByteOrder_0 = new A.ByteOrder(0, "littleEndian");
+    B.ByteOrder_1 = new A.ByteOrder(1, "bigEndian");
     B.C_Base64Encoder = new A.Base64Encoder();
     B.C_Base64Codec = new A.Base64Codec();
     B.C_Base64Decoder = new A.Base64Decoder();
@@ -41551,6 +42006,7 @@
     B.C__RootZone = new A._RootZone();
     B.C__ZLibDecoder = new A._ZLibDecoder();
     B.Channel_4 = new A.Channel(4, "luminance");
+    B.ConstColorRgb8_4294967295 = new A.ConstColorRgb8(4294967295);
     B.ExrChannelName_0 = new A.ExrChannelName(0, "red");
     B.ExrChannelName_1 = new A.ExrChannelName(1, "green");
     B.ExrChannelName_2 = new A.ExrChannelName(2, "blue");
@@ -42344,11 +42800,11 @@
   Function.prototype.call$2$1 = function(a) {
     return this(a);
   };
-  Function.prototype.call$5 = function(a, b, c, d, e) {
-    return this(a, b, c, d, e);
-  };
   Function.prototype.call$6 = function(a, b, c, d, e, f) {
     return this(a, b, c, d, e, f);
+  };
+  Function.prototype.call$5 = function(a, b, c, d, e) {
+    return this(a, b, c, d, e);
   };
   convertAllToFastObject(holders);
   convertToFastObject($);

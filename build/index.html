@@ -42,8 +42,11 @@
   <!-- ★ NEW: preload the tzf that stalls initialization -->
 
   <!-- after -->
-  <link rel="preload" href="https://cdn.knowtowin.com/appdata/latest.tzf"
-        as="fetch" crossorigin="use-credentials">
+  <!-- change preload to anonymous (or just delete this line entirely) -->
+  <link rel="preload"
+        href="https://cdn.knowtowin.com/appdata/latest.tzf"
+        as="fetch"
+        crossorigin="anonymous">
 
   <!-- Preload your JS worker artifacts (disabled by you) -->
   <!--
@@ -106,14 +109,14 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "2168388114";
+    const serviceWorkerVersion = "886596641";
   </script>
 
   <!-- ★ NEW: warm the tzf into the HTTP cache (mirrors typical fetch options) -->
   <script>
     (function warmTZF(){
       const url = 'https://cdn.knowtowin.com/appdata/latest.tzf';
-      fetch(url, { mode: 'cors', credentials: 'include', cache: 'force-cache' }).catch(()=>{});
+      fetch(url, { mode: 'cors', credentials: 'omit', cache: 'force-cache' }).catch(()=>{});
     })();
   </script>
   <!-- Strip version-y query params immediately to keep deep links clean -->
