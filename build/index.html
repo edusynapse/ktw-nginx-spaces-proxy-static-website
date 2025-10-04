@@ -21,6 +21,16 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+
+  <!-- Preconnects (cuts handshake time) -->
+  <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
+  <link rel="dns-prefetch" href="//checkout.razorpay.com">
+  <link rel="preconnect" href="https://dapi.knowtowin.com" crossorigin>
+  <link rel="dns-prefetch" href="//dapi.knowtowin.com">
+  <!-- ★ NEW: preconnect for the CDN hosting latest.tzf -->
+  <link rel="preconnect" href="https://cdn.knowtowin.com" crossorigin>
+  <link rel="dns-prefetch" href="//cdn.knowtowin.com">
+
   <!-- Preload your WASM worker artifacts -->
   <link rel="preload" href="workers/cache_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/decompress_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
@@ -28,6 +38,13 @@
   <link rel="preload" href="workers/session_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/timeduri_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/usb_auth_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
+
+  <!-- ★ NEW: preload the tzf that stalls initialization -->
+  <link rel="preload"
+        href="https://cdn.knowtowin.com/appdata/latest.tzf"
+        as="fetch"
+        crossorigin>
+
   <!-- Preload your JS worker artifacts (disabled by you) -->
   <!--
   <link rel="preload" href="workers/cache_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
@@ -38,11 +55,6 @@
   <link rel="preload" href="workers/usb_auth_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   -->
   <link rel="preload" href="/assets/assets/theme/default/svg/background.webp" as="image">
-  <!-- Optional: shave a little handshake time -->
-  <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
-  <link rel="dns-prefetch" href="//checkout.razorpay.com">
-  <link rel="preconnect" href="https://dapi.knowtowin.com" crossorigin>
-  <link rel="dns-prefetch" href="//dapi.knowtowin.com">
 
   <style>
     /* Center the loading indicator */
@@ -94,7 +106,19 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "863071272";
+    const serviceWorkerVersion = "1112959519";
+  </script>
+
+  <!-- ★ NEW: warm the tzf into the HTTP cache (mirrors typical fetch options) -->
+  <script>
+    (function warmTZF(){
+      const url = 'https://cdn.knowtowin.com/appdata/latest.tzf';
+      try {
+        // anonymous CORS; keep it cacheable if CDN allows
+        fetch(url, { mode: 'cors', credentials: 'omit', cache: 'force-cache' })
+          .catch(()=>{ /* ignore */ });
+      } catch (_) {}
+    })();
   </script>
 
   <!-- Strip version-y query params immediately to keep deep links clean -->

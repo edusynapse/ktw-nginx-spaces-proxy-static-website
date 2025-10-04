@@ -59,7 +59,8 @@ _flutter.buildConfig = {"engineRevision":"c29809135135e262a912cf583b2c90deb9ded6
   let fake = 8;
   setProgress(fake, 'Downloading engine…');
   const tick = setInterval(() => {
-    if (fake < 55) {
+    // ★ lowered fake ceiling so REAL downloads visibly start at 40%
+    if (fake < 38) {
       fake += 1;
       setProgress(fake);
     }
@@ -78,7 +79,7 @@ _flutter.buildConfig = {"engineRevision":"c29809135135e262a912cf583b2c90deb9ded6
 
   window.addEventListener('flutter-first-frame', removeLoader, { once: true });
 
-  // --- ADDED: Progress aggregator (main wasm + worker wasm) -------------------
+  // --- Progress aggregator (main wasm + worker wasm) --------------------------
   const __ktwAgg = {
     items: new Map(),   // id -> { loaded, total, done }
     update(id, loaded, total, done) {
@@ -99,20 +100,27 @@ _flutter.buildConfig = {"engineRevision":"c29809135135e262a912cf583b2c90deb9ded6
         if (!v.done) allDone = false;
       }
 
+      // ★ Map download span to 40%..69% so real downloads start at 40%
+      const BASE = 40;
+      const MAX = 69;
+      const RANGE = MAX - BASE; // 29
+
       let pct, label;
       if (allTotalsKnown && sumTotal > 0) {
-        pct = Math.min(62, Math.floor((sumLoaded / sumTotal) * 62));
+        const frac = Math.min(1, sumLoaded / sumTotal);
+        pct = BASE + Math.floor(frac * RANGE);
         label = `Downloading engine… ${(sumLoaded/1048576).toFixed(1)} / ${(sumTotal/1048576).toFixed(1)} MB`;
       } else {
-        pct = Math.min(62, 10 + Math.floor(Math.log2(sumLoaded + 1)));
+        // unknown total: grow slowly from 40 up to ~60
+        const approx = Math.min(RANGE - 10, Math.floor(Math.log2(sumLoaded + 1)));
+        pct = BASE + approx;
         label = `Downloading engine… ${(sumLoaded/1048576).toFixed(1)} MB`;
       }
 
-      if (typeof setProgress === 'function') setProgress(pct, label);
-      else if (typeof setText === 'function') setText(label);
+      setProgress(pct, label);
 
-      if (allDone && typeof setProgress === 'function') {
-        setProgress(62, 'Download complete');
+      if (allDone) {
+        setProgress(MAX, 'Download complete');
       }
     }
   };
@@ -179,7 +187,7 @@ _flutter.buildConfig = {"engineRevision":"c29809135135e262a912cf583b2c90deb9ded6
     };
   })();
 
-  // --- ADDED: Worker wrapper to capture workers' .wasm progress ---------------
+  // --- Worker wrapper to capture workers' .wasm progress ----------------------
   (function installWorkerWasmProgressBridge() {
     if (!('Worker' in window)) return;
     const NativeWorker = window.Worker;
@@ -286,11 +294,12 @@ _flutter.buildConfig = {"engineRevision":"c29809135135e262a912cf583b2c90deb9ded6
   _flutter.loader.load({
     onEntrypointLoaded: async function (engineInitializer) {
       clearInterval(tick);
-      if (typeof setProgress === 'function') setProgress(70, 'Initializing engine…');
+      // ★ keep the "init" step starting right after download completes (70%)
+      setProgress(70, 'Initializing engine…');
 
       const appRunner = await engineInitializer.initializeEngine();
 
-      if (typeof setProgress === 'function') setProgress(85, 'Starting app…');
+      setProgress(85, 'Starting app…');
       await appRunner.runApp();
 
       // In case the first-frame event was missed for any reason, fall back.
