@@ -40,10 +40,10 @@
   <link rel="preload" href="workers/usb_auth_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
 
   <!-- ★ NEW: preload the tzf that stalls initialization -->
-  <link rel="preload"
-        href="https://cdn.knowtowin.com/appdata/latest.tzf"
-        as="fetch"
-        crossorigin>
+
+  <!-- after -->
+  <link rel="preload" href="https://cdn.knowtowin.com/appdata/latest.tzf"
+        as="fetch" crossorigin="use-credentials">
 
   <!-- Preload your JS worker artifacts (disabled by you) -->
   <!--
@@ -106,21 +106,16 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "1112959519";
+    const serviceWorkerVersion = "2168388114";
   </script>
 
   <!-- ★ NEW: warm the tzf into the HTTP cache (mirrors typical fetch options) -->
   <script>
     (function warmTZF(){
       const url = 'https://cdn.knowtowin.com/appdata/latest.tzf';
-      try {
-        // anonymous CORS; keep it cacheable if CDN allows
-        fetch(url, { mode: 'cors', credentials: 'omit', cache: 'force-cache' })
-          .catch(()=>{ /* ignore */ });
-      } catch (_) {}
+      fetch(url, { mode: 'cors', credentials: 'include', cache: 'force-cache' }).catch(()=>{});
     })();
   </script>
-
   <!-- Strip version-y query params immediately to keep deep links clean -->
   <script>
     (function stripVersionParams() {
@@ -218,8 +213,6 @@
   <script type="application/javascript"
           src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
           defer></script>
-  <!-- Late SW + deferred Razorpay handled at end -->
-  <!-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script> -->
 </head>
 <body>
 <!-- Loading Indicator -->
