@@ -35,10 +35,10 @@ http {
   map "$uri?$canon_qs_prod" $redir_url_prod { default $uri?$canon_qs_prod; }
   map "$uri?$canon_qs_dev"  $redir_url_dev  { default $uri?$canon_qs_dev; }
 
-  # ───────── Wildcard CSP to stop blocking external calls (DEV GOD MODE) ─────────
-  # Open policy to unblock fonts, Firebase, CDNs, Razorpay, etc.
+  # ───────── Reusable CSP (Flutter WASM + Turnstile + Google + Razorpay + your CDN) ─────────
+  # Added: media-src allows blob: (for audio) and connect-src includes wasm:
   map $server_name $CSP {
-    default "default-src * data: blob:; base-uri 'self'; object-src 'none'; frame-ancestors *; img-src * data: blob:; font-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob:; frame-src *; connect-src * data: blob: ws: wss:; worker-src * blob: data:; child-src * blob: data:; media-src *; manifest-src *; form-action *";
+    default "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: https://challenges.cloudflare.com https://www.gstatic.com https://accounts.google.com https://apis.google.com https://checkout.razorpay.com; frame-src 'self' https://challenges.cloudflare.com https://accounts.google.com https://checkout.razorpay.com; connect-src 'self' blob: data: wasm: https://dapi.knowtowin.com https://cdn.knowtowin.com https://www.gstatic.com https://fonts.gstatic.com https://accounts.google.com https://apis.google.com https://checkout.razorpay.com; worker-src 'self' blob:; media-src 'self' blob: data: https:";
   }
 
   ########################################################################
@@ -61,7 +61,7 @@ http {
     # Force fresh + canonical version for the entrypoint bundle
     location = /main.dart.mjs {
       # If version is missing or mismatched, redirect to canonical ?version=<server>
-      if ($need_vredir_prod) { return 302 $uri?$canon_qs_prod; }
+      if ($need_vredir_prod) { return 302 $uri?$canon_qs_prod; }   # use _dev in DEV block
 
       # Never cache the “entrypoint” so clients/CDNs re-fetch and follow the redirect
       add_header Cache-Control "no-store, must-revalidate" always;
@@ -137,7 +137,7 @@ http {
     # Force fresh + canonical version for the entrypoint bundle
     location = /main.dart.mjs {
       # If version is missing or mismatched, redirect to canonical ?version=<server>
-      if ($need_vredir_dev) { return 302 $uri?$canon_qs_dev; }
+      if ($need_vredir_prod) { return 302 $uri?$canon_qs_prod; }   # use _dev in DEV block
 
       # Never cache the “entrypoint” so clients/CDNs re-fetch and follow the redirect
       add_header Cache-Control "no-store, must-revalidate" always;
@@ -214,7 +214,7 @@ http {
     }
 
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($need_vredir_prod) { return 302 $redir_url_prod; }
+      if ($need_vredir_dev) { return 302 $uri?$canon_qs_dev; }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
       try_files $uri =404;
