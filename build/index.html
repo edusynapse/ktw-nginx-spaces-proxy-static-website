@@ -30,6 +30,10 @@
   <!-- ★ NEW: preconnect for the CDN hosting latest.tzf -->
   <link rel="preconnect" href="https://cdn.knowtowin.com" crossorigin>
   <link rel="dns-prefetch" href="//cdn.knowtowin.com">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//www.gstatic.com">
+  <link rel="preconnect" href="https://firebaseinstallations.googleapis.com" crossorigin>
+  <link rel="dns-prefetch" href="//firebaseinstallations.googleapis.com">
 
   <!-- Preload your WASM worker artifacts -->
   <link rel="preload" href="workers/cache_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
@@ -109,7 +113,7 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "886596641";
+    const serviceWorkerVersion = "2553866480";
   </script>
 
   <!-- ★ NEW: warm the tzf into the HTTP cache (mirrors typical fetch options) -->
