@@ -189968,11 +189968,8 @@ var $async$LN=A.i(function(c,d){if(c===1)return A.j(d,r)
 while(true)switch(s){case 0:if(p.fr){s=1
 break}o=p.c
 o.toString
-o=t.n.a(A.v(o).c.h(0,A.M(t._)))
-o.toString
+t.n.a(A.v(o).c.h(0,A.M(t._))).toString
 p.k(new A.bIG(p,a))
-o.F.$1(B.am)
-o.a2.$0()
 s=$.di().a&&A.cb()?3:4
 break
 case 3:o=p.fy
