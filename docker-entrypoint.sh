@@ -14,8 +14,9 @@ extract_ver() {
 }
 
 # Add ?version=<ver> to asset/worker/image URLs in index.html (BusyBox-safe, idempotent)
-# - Only touches /workers, /assets, /icons
-# - Skips if a '?' or '#' already exists
+# - Handles both /workers/... and workers/... (optional leading slash)
+# - Only touches /?/workers, /?/assets, /?/icons
+# - Skips if a '?' or '#' already exists in the URL
 versionize_index() {
   ver="$1"; file="$2"
   [ -f "$file" ] || { log "skip versionize (missing): $file"; return 0; }
@@ -23,36 +24,31 @@ versionize_index() {
   log "Versionizing assets in $file with ?version=${ver}"
 
   # --- <link rel="preload" href="..."> -------------------------
-  # Split into 3 rules to avoid alternation quirks on BusyBox sed.
-
-  # /workers/...
+  # workers (absolute or relative)
   sed -r -i \
-    's|(rel="preload"[^>]*href=")(/workers/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
+    's|(rel="preload"[^>]*href=")(/?workers/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
     "$file"
-
-  # /assets/...
+  # assets
   sed -r -i \
-    's|(rel="preload"[^>]*href=")(/assets/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
+    's|(rel="preload"[^>]*href=")(/?assets/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
     "$file"
-
-  # /icons/...
+  # icons
   sed -r -i \
-    's|(rel="preload"[^>]*href=")(/icons/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
+    's|(rel="preload"[^>]*href=")(/?icons/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
     "$file"
 
   # --- <img src="..."> -----------------------------------------
   sed -r -i \
-    's|(src=")(/assets/[^"?#+]+)(")|\1\2?version='"$ver"'\3|g' \
+    's|(src=")(/?assets/[^"?#+]+)(")|\1\2?version='"$ver"'\3|g' \
     "$file"
   sed -r -i \
-    's|(src=")(/icons/[^"?#+]+)(")|\1\2?version='"$ver"'\3|g' \
+    's|(src=")(/?icons/[^"?#+]+)(")|\1\2?version='"$ver"'\3|g' \
     "$file"
 
   # --- inline CSS: background-image: url(...) -------------------
-  # Handles url(/assets/...), url("/assets/..."), url('/assets/...')
-  # We keep the original quote (if any) via \2 and \4.
+  # Handles url(/assets/...), url(assets/...), with/without quotes.
   sed -r -i \
-    's|(background-image:[^;]*url\()(["'\'']?)(/assets/[^"'\'')#?+]+)(["'\'']?\))|\1\2\3?version='"$ver"'\4|g' \
+    's|(background-image:[^;]*url\()(["'\'']?)(/?assets/[^"'\'')#?+]+)(["'\'']?\))|\1\2\3?version='"$ver"'\4|g' \
     "$file"
 }
 
