@@ -4,6 +4,9 @@ FROM nginx:alpine-slim
 ARG APP_VERSION=dev
 ENV APP_VERSION=${APP_VERSION}
 
+# Ensure envsubst is available for template rendering
+RUN apk add --no-cache gettext
+
 # Copy our templated nginx config + entrypoint
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
 COPY docker-entrypoint.sh /docker-entrypoint.sh

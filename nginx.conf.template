@@ -54,7 +54,10 @@ http {
     # Force fresh + canonical version for the entrypoint bundle
     location = /main.dart.mjs {
       # If version is missing or mismatched, redirect to canonical ?version=<server>
-      if ($need_vredir_prod) { return 302 $uri?$canon_qs_prod; }   # use _dev in DEV block
+      if ($need_vredir_prod) {
+        add_header Cache-Control "private, no-store" always;
+        return 302 $uri?$canon_qs_prod;
+      }
 
       # Never cache the “entrypoint” so clients/CDNs re-fetch and follow the redirect
       add_header Cache-Control "no-store, must-revalidate" always;
@@ -82,12 +85,16 @@ http {
 
     # Font Awesome name-encoded redirects FIRST
     location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
+      add_header Cache-Control "private, no-store" always;
       return 302 /Font%20Awesome%207%20$1.otf?$canon_qs_prod;
     }
 
     # Static assets → enforce canonical ?version then cache forever
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($need_vredir_prod) { return 302 $redir_url_prod; }
+      if ($need_vredir_prod) {
+        add_header Cache-Control "private, no-store" always;
+        return 302 $redir_url_prod;
+      }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
       try_files $uri =404;
@@ -129,7 +136,10 @@ http {
     # Force fresh + canonical version for the entrypoint bundle
     location = /main.dart.mjs {
       # If version is missing or mismatched, redirect to canonical ?version=<server>
-      if ($need_vredir_dev) { return 302 $uri?$canon_qs_dev; }   # use _dev in DEV block
+      if ($need_vredir_dev) {
+        add_header Cache-Control "private, no-store" always;
+        return 302 $uri?$canon_qs_dev;
+      }
 
       # Never cache the “entrypoint” so clients/CDNs re-fetch and follow the redirect
       add_header Cache-Control "no-store, must-revalidate" always;
@@ -152,11 +162,15 @@ http {
     # location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; alias /usr/share/nginx/devhtml/__app_version; }
 
     location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
+      add_header Cache-Control "private, no-store" always;
       return 302 /Font%20Awesome%207%20$1.otf?$canon_qs_dev;
     }
 
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($need_vredir_dev) { return 302 $redir_url_dev; }
+      if ($need_vredir_dev) {
+        add_header Cache-Control "private, no-store" always;
+        return 302 $redir_url_dev;
+      }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
       try_files $uri =404;
@@ -200,11 +214,15 @@ http {
     location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION_PROD"; }
 
     location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
+      add_header Cache-Control "private, no-store" always;
       return 302 /Font%20Awesome%207%20$1.otf?$canon_qs_prod;
     }
 
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($need_vredir_prod) { return 302 $uri?$canon_qs_prod; }
+      if ($need_vredir_prod) {
+        add_header Cache-Control "private, no-store" always;
+        return 302 $uri?$canon_qs_prod;
+      }
       add_header Cache-Control "public, max-age=31536000, immutable" always;
       expires 1y;
       try_files $uri =404;
