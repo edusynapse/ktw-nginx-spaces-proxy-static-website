@@ -13,30 +13,46 @@ extract_ver() {
   echo "$ver"
 }
 
-# Add ?version=<ver> to asset/worker/image URLs in index.html (idempotent)
-# - Only touches paths under /workers, /assets, /icons
-# - Skips any URL that already has a '?' (so we don't double-append)
-# - Patches <link rel=preload href="...">, inline CSS background-image, and <img src="...">
+# Add ?version=<ver> to asset/worker/image URLs in index.html (BusyBox-safe, idempotent)
+# - Only touches /workers, /assets, /icons
+# - Skips if a '?' or '#' already exists
 versionize_index() {
   ver="$1"; file="$2"
   [ -f "$file" ] || { log "skip versionize (missing): $file"; return 0; }
 
   log "Versionizing assets in $file with ?version=${ver}"
 
-  # A) <link rel="preload" href="/(workers|assets|icons)/...">
-  # Only if href has no existing ? or # segment
+  # --- <link rel="preload" href="..."> -------------------------
+  # Split into 3 rules to avoid alternation quirks on BusyBox sed.
+
+  # /workers/...
   sed -r -i \
-    "s|(rel=\"preload\"[^>]*href=\")(/(workers|assets|icons)/[^\"?#]+)([\"#])|\\1\\2?version=${ver}\\4|g" \
+    's|(rel="preload"[^>]*href=")(/workers/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
     "$file"
 
-  # B) Inline body background-image: url(/assets/...)
+  # /assets/...
   sed -r -i \
-    "s|(background-image:[^;]*url\\()([\"']?)/(assets/[^\"')?#]+)([\"']?\\))|\\1\\2\\3?version=${ver}\\4|g" \
+    's|(rel="preload"[^>]*href=")(/assets/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
     "$file"
 
-  # C) <img src="/(assets|icons)/...">
+  # /icons/...
   sed -r -i \
-    "s|(src=\")(/(assets|icons)/[^\"?#]+)(\")|\\1\\2?version=${ver}\\4|g" \
+    's|(rel="preload"[^>]*href=")(/icons/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
+    "$file"
+
+  # --- <img src="..."> -----------------------------------------
+  sed -r -i \
+    's|(src=")(/assets/[^"?#+]+)(")|\1\2?version='"$ver"'\3|g' \
+    "$file"
+  sed -r -i \
+    's|(src=")(/icons/[^"?#+]+)(")|\1\2?version='"$ver"'\3|g' \
+    "$file"
+
+  # --- inline CSS: background-image: url(...) -------------------
+  # Handles url(/assets/...), url("/assets/..."), url('/assets/...')
+  # We keep the original quote (if any) via \2 and \4.
+  sed -r -i \
+    's|(background-image:[^;]*url\()(["'\'']?)(/assets/[^"'\'')#?+]+)(["'\'']?\))|\1\2\3?version='"$ver"'\4|g' \
     "$file"
 }
 
