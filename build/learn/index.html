@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Know To Win — The Education Game | Learn How It Works</title>
+    <meta name="description" content="Know To Win is a learning game with AI-crafted quizzes across school and professional topics. Play on the web, climb levels, earn credits, and redeem prizes. Android and iOS apps listed below; links are disabled until public release." />
+    <link rel="canonical" href="https://knowtowin.com/learn/" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Know To Win — The Education Game" />
+    <meta property="og:description" content="Play AI-made quizzes, earn credits, climb levels weekly, and redeem prizes. Web now; Android & iOS app buttons shown but disabled until public release." />
+    <meta property="og:url" content="https://knowtowin.com/learn/" />
+    <meta property="og:image" content="https://cdn.knowtowin.com/og/knowtowin-banner.png" />
+    <meta property="og:site_name" content="Know To Win" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Know To Win — The Education Game" />
+    <meta name="twitter:description" content="AI-crafted quizzes across levels 1–17. Earn credits and prizes. Web now; Android & iOS buttons disabled until release." />
+    <meta name="twitter:image" content="https://cdn.knowtowin.com/og/knowtowin-banner.png" />
+
+    <meta name="theme-color" content="#0ea5e9" />
+
+    <!-- Foundation (CSS only) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.5/dist/css/foundation.min.css" crossorigin="anonymous">
+    <!-- Font Awesome Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
+
+    <style>
+        :root { --brand:#0ea5e9; --ink:#0b1320; --muted:#5b6472; --card:#ffffff; --bg:#f7fbff; --ok:#10b981; --warn:#f59e0b; }
+        html, body { background:var(--bg); color:var(--ink); }
+        .topbar { background:#fff; border-bottom:1px solid #e5eef7; position:sticky; top:0; z-index:40; }
+        .brand-badge { display:inline-flex; align-items:center; gap:.5rem; font-weight:700; font-size:1.125rem; color:var(--ink); text-decoration:none; }
+        .brand-badge i { color:var(--brand); }
+        .cta-btn { background:var(--brand); border-radius:999px; padding:.6rem 1.1rem; color:#fff; font-weight:600; }
+        .cta-btn:hover { background:#0591d6; color:#fff; }
+        .hero {
+          background: radial-gradient(1200px 400px at 70% -20%, #dff3ff 0%, rgba(223,243,255,0) 60%) ,
+                      linear-gradient(180deg,#ffffff 0%,#f5faff 100%);
+          padding:3rem 0 2rem;
+        }
+        .hero h1 { font-size:clamp(1.8rem,2.5vw,2.6rem); margin-bottom:.6rem; }
+        .hero p.lead { font-size:clamp(1rem,1.8vw,1.2rem); color:var(--muted); }
+        .pill { display:inline-flex; align-items:center; gap:.5rem; background:#eaf6ff; color:#075985; border:1px solid #cfeeff; padding:.35rem .7rem; border-radius:999px; font-weight:600; font-size:.9rem; }
+        .cardish { background:var(--card); border:1px solid #e8eef5; border-radius:18px; padding:1.25rem; height:100%; box-shadow:0 10px 24px rgba(14,165,233,0.06); }
+        .cardish h3 { font-size:1.25rem; margin-top:.25rem; }
+        .cardish p { color:var(--muted); }
+        .icon-circle { width:44px; height:44px; border-radius:999px; display:grid; place-items:center; background:#ebf7ff; color:#0277bd; }
+        .section { padding:2.25rem 0; }
+        .muted { color:var(--muted); }
+        .list-caret { list-style:none; padding-left:0; margin:0; }
+        .list-caret li { margin:.45rem 0; }
+        .list-caret li i { color:var(--brand); margin-right:.5rem; }
+        .table-min { width:100%; border-collapse:collapse; }
+        .table-min th, .table-min td { border-bottom:1px solid #e9eef5; padding:.6rem .5rem; }
+        .badge-note { font-size:.78rem; padding:.25rem .55rem; border-radius:999px; background:#fff7ed; color:#7a3e00; border:1px solid #ffedd5; font-weight:700; }
+        .badge-soon { font-size:.78rem; padding:.25rem .55rem; border-radius:999px; background:#eef2ff; color:#3730a3; border:1px solid #e0e7ff; font-weight:700; }
+        .footer { border-top:1px solid #e6eef6; color:var(--muted); }
+        .breadcrumbs { font-size:.9rem; }
+        .breadcrumbs a { color:var(--muted); }
+        .tilt { transform:rotate(-2deg); }
+        /* disabled anchors */
+        a[aria-disabled="true"] { pointer-events:none; opacity:.6; }
+        /* small code badge look */
+        .kbd { font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace; background:#0b132003; border:1px solid #0b13200f; padding:.12rem .4rem; border-radius:6px; }
+    </style>
+
+    <!-- JSON-LD: WebApplication/Game + FAQ -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": ["WebApplication","Game"],
+                    "name": "Know To Win",
+                    "url": "https://knowtowin.com/",
+                    "applicationCategory": "GameApplication",
+                    "operatingSystem": "Web, Android, iOS",
+                    "description": "Know To Win is a learning game with AI-crafted quizzes. Spend credits to enter, answer correctly to win credits, climb levels weekly, and redeem prizes.",
+                    "image": "https://cdn.knowtowin.com/og/knowtowin-banner.png",
+                    "publisher": { "@type": "Organization", "name": "Know To Win" },
+                    "inLanguage": "en",
+                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+                },
+                {
+                    "@type": "FAQPage",
+                    "mainEntity": [
+                        {
+                            "@type": "Question",
+                            "name": "How does the game work?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Sign up, pick a topic and level, spend credits to enter, and answer questions. Correct answers earn credits and help you climb weekly rankings."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Which credits can I use and which ones redeem prizes?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "You can enter with Earned, Donated, Referral, or Purchased credits. Winnings are added to Earned Credits, which are redeemable during prize checkout windows."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Is Firefox supported on web?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "The web app runs in WASM mode and is supported on Chrome. Firefox is not supported at the moment."
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    </script>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+    <div class="grid-container">
+        <div class="grid-x align-middle align-justify" style="padding:.75rem 0;">
+            <div class="cell shrink">
+                <a href="/" class="brand-badge">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>Know To Win</span>
+                </a>
+            </div>
+            <div class="cell shrink">
+                <a class="cta-btn" href="/" aria-label="Play the game on web">
+                    <i class="fa-solid fa-play"></i>&nbsp; Play on Web
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hero -->
+<header class="hero">
+    <div class="grid-container">
+        <nav aria-label="Breadcrumb" class="breadcrumbs">
+            <ul class="breadcrumbs">
+                <li><a href="/">Home</a></li>
+                <li><span class="show-for-sr">Current: </span>Learn</li>
+            </ul>
+        </nav>
+
+        <div class="grid-x grid-margin-x align-middle">
+            <div class="cell small-12 medium-7">
+                <span class="pill"><i class="fa-solid fa-lightbulb"></i> The Education Game</span>
+                <h1>Play Quizzes. Learn Faster. <span class="tilt">Win Prizes.</span></h1>
+                <p class="lead">
+                    “Know To Win” turns learning into play. Pick topics you love, enter with credits,
+                    answer right to win more, climb through levels, and redeem real rewards.
+                </p>
+                <div class="grid-x grid-margin-x">
+                    <div class="cell shrink">
+                        <a class="button primary" href="/" aria-label="Start playing now">
+                            <i class="fa-solid fa-rocket"></i> Start Playing
+                        </a>
+                    </div>
+                    <div class="cell shrink">
+              <span class="badge-note" title="Links are intentionally disabled until public release">
+                <i class="fa-solid fa-circle-exclamation"></i> Store links disabled (Coming soon)
+              </span>
+                    </div>
+                </div>
+            </div>
+            <div class="cell small-12 medium-5">
+                <div class="cardish">
+                    <div class="grid-x small-up-2">
+                        <div class="cell">
+                            <div class="icon-circle"><i class="fa-solid fa-brain"></i></div>
+                            <h3>AI-made Quizzes</h3>
+                            <p class="muted">Fresh, varied questions across school & pro topics.</p>
+                        </div>
+                        <div class="cell">
+                            <div class="icon-circle"><i class="fa-solid fa-layer-group"></i></div>
+                            <h3>Levels 1–17</h3>
+                            <p class="muted">From beginner to expert—build skill week by week.</p>
+                        </div>
+                        <div class="cell">
+                            <div class="icon-circle"><i class="fa-solid fa-coins"></i></div>
+                            <h3>Use Credits</h3>
+                            <p class="muted">Enter quizzes, win back more credits as you improve.</p>
+                        </div>
+                        <div class="cell">
+                            <div class="icon-circle"><i class="fa-solid fa-gift"></i></div>
+                            <h3>Redeem Rewards</h3>
+                            <p class="muted">Earned Credits unlock prizes during checkout windows.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /grid -->
+    </div>
+</header>
+
+<!-- Where you can play -->
+<section class="section">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12 medium-4">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-globe"></i></div>
+                    <h3>Play in Your Browser</h3>
+                    <p class="muted">Open <strong>knowtowin.com</strong> in Chrome and start playing instantly.</p>
+                    <a class="button hollow primary" href="/" aria-label="Open web version">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i> Launch Web Game
+                    </a>
+                </div>
+            </div>
+            <div class="cell small-12 medium-4">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-brands fa-android"></i></div>
+                    <h3>Android App</h3>
+                    <p class="muted">The Android app will be published on the Play Store. Button is disabled until public release.</p>
+                    <a class="button secondary expanded" href="#" aria-disabled="true" title="Coming soon">
+                        <i class="fa-brands fa-google-play"></i> Get it on Google Play
+                    </a>
+                    <div class="small text-center muted" style="margin-top:.4rem;"><span class="badge-soon"><i class="fa-solid fa-clock"></i> Coming soon</span></div>
+                </div>
+            </div>
+            <div class="cell small-12 medium-4">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-brands fa-apple"></i></div>
+                    <h3>iOS App</h3>
+                    <p class="muted">The iOS app will be available on the App Store. Button is disabled until public release.</p>
+                    <a class="button secondary expanded" href="#" aria-disabled="true" title="Coming soon">
+                        <i class="fa-brands fa-apple"></i> Download on the App Store
+                    </a>
+                    <div class="small text-center muted" style="margin-top:.4rem;"><span class="badge-soon"><i class="fa-solid fa-clock"></i> Coming soon</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How it works -->
+<section class="section">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12">
+                <h2><i class="fa-solid fa-gamepad"></i> How the Game Works</h2>
+            </div>
+            <div class="cell small-12 medium-6 large-3">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-user-plus"></i></div>
+                    <h3>1) Sign up</h3>
+                    <p class="muted">Create your account, pick a topic and a level that suits you. It takes under a minute.</p>
+                </div>
+            </div>
+            <div class="cell small-12 medium-6 large-3">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-ticket"></i></div>
+                    <h3>2) Enter with Credits</h3>
+                    <p class="muted">Use any credit type (Earned, Donated, Referral, Purchased) to enter a quiz—simple and flexible.</p>
+                </div>
+            </div>
+            <div class="cell small-12 medium-6 large-3">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-check-double"></i></div>
+                    <h3>3) Answer & Win</h3>
+                    <p class="muted">Correct answers win credits back—often more than you spent—so practice really pays.</p>
+                </div>
+            </div>
+            <div class="cell small-12 medium-6 large-3">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-chart-line"></i></div>
+                    <h3>4) Improve Weekly</h3>
+                    <p class="muted">Climb levels across your Category → Subject → Level triplets and aim for the weekly improvers list.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Credits & Prizes -->
+<section class="section">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12 medium-6">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-wallet"></i></div>
+                    <h3>All About Credits</h3>
+                    <ul class="list-caret">
+                        <li><i class="fa-solid fa-caret-right"></i> Four kinds: <strong>Earned</strong>, <strong>Donated</strong>, <strong>Referral</strong>, <strong>Purchased</strong>.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Use <em>any</em> type to enter quizzes.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Winnings are added to <strong>Earned Credits</strong> only.</li>
+                    </ul>
+                    <p class="muted">Earned Credits are the ones you redeem for prizes during scheduled checkout windows.</p>
+                </div>
+            </div>
+            <div class="cell small-12 medium-6">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-gifts"></i></div>
+                    <h3>Winning Prizes</h3>
+                    <ul class="list-caret">
+                        <li><i class="fa-solid fa-caret-right"></i> Digital gift cards or physical items.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Add to cart anytime; checkout during weekly windows.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Eligibility needs enough Earned Credits and a top improver rank.</li>
+                    </ul>
+                    <p class="muted">Collect, improve, and redeem—steady progress is rewarded.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Levels & Topics -->
+<section class="section">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12">
+                <h2><i class="fa-solid fa-layer-group"></i> Levels & Topics</h2>
+            </div>
+            <div class="cell small-12 large-7">
+                <div class="cardish">
+                    <p class="muted">
+                        Each quiz is organized as <strong>Category → Subject → Level</strong>. Levels run <strong>1–17</strong>:
+                        <em>1–12</em> school, <em>13–16</em> college, <em>17</em> professional.
+                    </p>
+                    <ul class="list-caret">
+                        <li><i class="fa-solid fa-caret-right"></i> Maths → Calculus</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Physics → Optics</li>
+                        <li><i class="fa-solid fa-caret-right"></i> AI → Chatbots</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Biology → Genetics</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Coding → Python</li>
+                    </ul>
+                    <p class="muted">Start where you’re comfortable and level up each week.</p>
+                </div>
+            </div>
+            <div class="cell small-12 large-5">
+                <div class="cardish">
+                    <h3><i class="fa-solid fa-trophy"></i> Becoming a Winner</h3>
+                    <p class="muted">Your weekly improvement adds up across triplets. Starting level should be 2+ (0–1 don’t count if inactive in last 30 days).</p>
+                    <table class="table-min">
+                        <thead>
+                        <tr>
+                            <th>Triplet</th><th>Start</th><th>Now</th><th>+Δ</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td>Physics — Optics</td><td>2</td><td>4</td><td>+2</td></tr>
+                        <tr><td>Maths — Calculus</td><td>3</td><td>4</td><td>+1</td></tr>
+                        <tr><td>AI — Chatbots</td><td>4</td><td>5</td><td>+1</td></tr>
+                        <tr><td>Biology — Genetics</td><td>2</td><td>3</td><td>+1</td></tr>
+                        <tr><td>Coding — Python</td><td>5</td><td>6</td><td>+1</td></tr>
+                        </tbody>
+                        <tfoot>
+                        <tr><th colspan="3" style="text-align:right">Total</th><th>+6</th></tr>
+                        </tfoot>
+                    </table>
+                    <p class="muted">Top improvers + enough Earned Credits = prize eligibility.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- App Details & Policies -->
+<section class="section">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12">
+                <h2><i class="fa-solid fa-mobile-screen-button"></i> About the App</h2>
+            </div>
+
+            <!-- Low-end Android configuration -->
+            <div class="cell small-12 medium-6">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-gauge-low"></i></div>
+                    <h3>Runs Smooth on Low-End Android</h3>
+                    <p class="muted">
+                        Turn on the lightweight mode to play comfortably on entry-level phones.
+                        It dials down animations, limits effects, and trims background activity so the app stays responsive.
+                    </p>
+                    <ul class="list-caret">
+                        <li><i class="fa-solid fa-caret-right"></i> Suppress non-essential animations and heavy transitions.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Prefer static visuals and reduced motion where possible.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Optimized for low memory and CPU spikes.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Theming -->
+            <div class="cell small-12 medium-6">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-palette"></i></div>
+                    <h3>Themes for Every Player</h3>
+                    <p class="muted">Switch looks without changing your flow. Choose what feels right for your eyes and mood.</p>
+                    <ul class="list-caret">
+                        <li><i class="fa-solid fa-caret-right"></i> <strong>Default</strong> — clean and bright for everyday use.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> <strong>Dark</strong> — low-glare, night-friendly colors.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> <strong>Kids</strong> — colorful, playful visuals for young learners.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- WASM/Browser support -->
+            <div class="cell small-12 medium-6">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-chrome"></i></div>
+                    <h3>WebAssembly on Chrome</h3>
+                    <p class="muted">
+                        The web version runs in <span class="kbd">WASM</span> mode on Chrome for near-native speed.
+                        Firefox is not supported right now.
+                    </p>
+                    <ul class="list-caret">
+                        <li><i class="fa-solid fa-caret-right"></i> Best experience on the latest Chrome.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Enable hardware acceleration for smoother play.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> If a page looks stuck, try clearing cached workers.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Desktop roadmap -->
+            <div class="cell small-12 medium-6">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-desktop"></i></div>
+                    <h3>In the Pipeline: Desktop</h3>
+                    <p class="muted">We’re building desktop apps to make study sessions even more comfortable.</p>
+                    <div class="grid-x grid-margin-x">
+                        <div class="cell small-6">
+                            <a class="button secondary expanded" href="#" aria-disabled="true" title="Coming soon">
+                                <i class="fa-brands fa-linux"></i> Linux (Soon)
+                            </a>
+                        </div>
+                        <div class="cell small-6">
+                            <a class="button secondary expanded" href="#" aria-disabled="true" title="Coming soon">
+                                <i class="fa-brands fa-windows"></i> Windows (Soon)
+                            </a>
+                        </div>
+                    </div>
+                    <div class="small text-center muted" style="margin-top:.4rem;">
+                        <span class="badge-soon"><i class="fa-solid fa-clock"></i> Coming soon</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security -->
+            <div class="cell small-12 medium-6">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3>Data Protection</h3>
+                    <p class="muted">
+                        Sensitive user data is encrypted in storage and protected in transit. We follow least-privilege access for systems that need it.
+                    </p>
+                    <ul class="list-caret">
+                        <li><i class="fa-solid fa-caret-right"></i> Encrypted at rest for sensitive fields.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Transport security for all network calls.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Device-level safety checks where available.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Parental consent -->
+            <div class="cell small-12 medium-6">
+                <div class="cardish">
+                    <div class="icon-circle"><i class="fa-solid fa-children"></i></div>
+                    <h3>Under-13 Parental Consent</h3>
+                    <p class="muted">
+                        Players under 13 will need verified parental consent. Verification is required to collect prizes, purchase credits, and complete certain account actions.
+                    </p>
+                    <ul class="list-caret">
+                        <li><i class="fa-solid fa-caret-right"></i> Parent/guardian approval before verification steps.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Verification checks apply when redeeming prizes.</li>
+                        <li><i class="fa-solid fa-caret-right"></i> Extra safeguards for billing-related features.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Friendly FAQ -->
+<section class="section">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x">
+            <div class="cell small-12">
+                <h2><i class="fa-solid fa-circle-question"></i> Quick Answers</h2>
+            </div>
+            <div class="cell small-12 medium-6">
+                <div class="cardish">
+                    <h3><i class="fa-solid fa-person-chalkboard"></i> Who is it for?</h3>
+                    <p class="muted">Kids, teens, and adults who like a challenge—and want a simple, fun way to learn.</p>
+                </div>
+            </div>
+            <div class="cell small-12 medium-6">
+                <div class="cardish">
+                    <h3><i class="fa-solid fa-stopwatch"></i> How long is a game?</h3>
+                    <p class="muted">Short, focused quiz runs you can finish in a few minutes—perfect for study bursts.</p>
+                </div>
+            </div>
+            <div class="cell small-12 medium-6">
+                <div class="cardish">
+                    <h3><i class="fa-solid fa-layer-group"></i> What topics are covered?</h3>
+                    <p class="muted">From Maths and Physics to Biology, Coding, and AI—pick what you love and grow weekly.</p>
+                </div>
+            </div>
+            <div class="cell small-12 medium-6">
+                <div class="cardish">
+                    <h3><i class="fa-solid fa-lock"></i> Is it safe?</h3>
+                    <p class="muted">Yes. Sensitive data is encrypted, and under-13 accounts require parental consent for verification actions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section" style="padding-top:0;">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x align-middle">
+            <div class="cell small-12 medium-8">
+                <h2><i class="fa-solid fa-rocket"></i> Ready to play?</h2>
+                <p class="muted">Start in your browser today. App store buttons remain disabled until public release.</p>
+            </div>
+            <div class="cell small-12 medium-4 text-right">
+                <a class="button large primary cta-btn" href="/" aria-label="Play Know To Win now">
+                    <i class="fa-solid fa-play"></i> Play on Web
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="grid-container">
+        <div class="grid-x grid-margin-x" style="padding:1.25rem 0;">
+            <div class="cell small-12 medium-6">
+                <strong>Know To Win</strong> — The Education Game
+                <div class="muted">© <span id="y"></span> Know To Win</div>
+            </div>
+            <div class="cell small-12 medium-6 text-right">
+                <a href="/" class="muted" aria-label="Return to home">Home</a>
+                <span class="muted"> · </span>
+                <a href="/privacy" class="muted">Privacy</a>
+                <span class="muted"> · </span>
+                <a href="/terms" class="muted">Terms</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>

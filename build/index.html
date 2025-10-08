@@ -16,11 +16,24 @@
   <meta http-equiv="Cross-Origin-Embedder-Policy" content="credentialless" />
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-  <title>know_to_win</title>
+  <title>Know To Win — Play AI Quiz Games, Learn Faster, Win Prizes</title>
   <link rel="manifest" href="manifest.json">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+
+  <!-- ★ SEO: Open Graph / Twitter (added) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Know To Win — The Education Game">
+  <meta property="og:description" content="Play AI-crafted quizzes, climb levels, earn credits, and redeem prizes. Read the full explainer at /learn/index.html.">
+  <meta property="og:url" content="https://knowtowin.com/">
+  <meta property="og:image" content="https://cdn.knowtowin.com/og/knowtowin-banner.png">
+  <meta property="og:site_name" content="Know To Win">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Know To Win — The Education Game">
+  <meta name="twitter:description" content="AI-made quizzes across levels 1–17. Learn more at /learn/index.html.">
+  <meta name="twitter:image" content="https://cdn.knowtowin.com/og/knowtowin-banner.png">
+  <!-- ★ SEO: end -->
 
   <!-- Preconnects (cuts handshake time) -->
   <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
@@ -148,9 +161,20 @@
     }
   </style>
 
+  <!-- ★ SEO: visually hidden utility (added) -->
+  <style>
+    .seo-hidden{
+      position:absolute !important;
+      width:1px;height:1px;padding:0;margin:-1px;
+      overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);
+      white-space:nowrap;border:0;
+    }
+  </style>
+  <!-- ★ SEO: end -->
+
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "12407255";
+    const serviceWorkerVersion = "977387646";
   </script>
 
   <!-- ★ NEW: warm the tzf into the HTTP cache (mirrors typical fetch options) -->
@@ -257,6 +281,49 @@
   <script type="application/javascript"
           src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
           defer></script>
+
+  <!-- ★ SEO: JSON-LD (added) -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": ["WebApplication","Game"],
+          "name": "Know To Win",
+          "url": "https://knowtowin.com/",
+          "applicationCategory": "GameApplication",
+          "operatingSystem": "Web, Android, iOS",
+          "description": "An education game with AI-crafted quizzes. Enter with credits, answer correctly to win, improve weekly across levels, and redeem prizes.",
+          "image": "https://cdn.knowtowin.com/og/knowtowin-banner.png",
+          "publisher": { "@type": "Organization", "name": "Know To Win" },
+          "inLanguage": "en",
+          "sameAs": ["https://knowtowin.com/learn/index.html"]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How does Know To Win work?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Pick a topic and level, enter with credits, answer questions to win credits back, and climb weekly levels to redeem prizes."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Where can I read more?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Visit the Learn page at https://knowtowin.com/learn/index.html for details on credits, prizes, levels, and safety."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  </script>
+  <!-- ★ SEO: end -->
 </head>
 <body>
 <!-- Loading Indicator -->
@@ -268,6 +335,27 @@
     <div class="bar" id="progress-bar"></div>
   </div>
 </div>
+
+<!-- ★ SEO: hidden explainer (added; never visible to users) -->
+<main id="seo-explainer" class="seo-hidden">
+  <h1>Know To Win — The Education Game</h1>
+  <p>Play AI-crafted quizzes across school and pro topics. Enter with credits, answer correctly to win, improve weekly across levels 1–17, and redeem prizes. Read the full explainer at <a href="/learn/index.html">/learn</a>.</p>
+  <h2>Quick Overview</h2>
+  <ul>
+    <li>Use Earned, Donated, Referral, or Purchased credits to enter; winnings add to Earned Credits.</li>
+    <li>Levels are organized as Category → Subject → Level; progress each week to rank among top improvers.</li>
+    <li>Web app runs in WebAssembly mode on Chrome (Firefox not supported currently).</li>
+    <li>Sensitive data is encrypted; under-13 players require parental consent for verification and prize redemption.</li>
+  </ul>
+</main>
+<!-- ★ SEO: end -->
+
+<!-- No-JS fallback with a link to Learn -->
+<noscript>
+  <p style="max-width:720px;margin:1rem auto;padding:0 1rem;font-family:Arial,sans-serif;">
+    JavaScript is required to play. You can read about the game at <a href="/learn/index.html">/learn</a>.
+  </p>
+</noscript>
 
 <!-- Load the Flutter bootstrap LAST (match Flutter’s template for WASM) -->
 <script src="flutter_bootstrap.js" async></script>
