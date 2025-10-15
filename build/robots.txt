@@ -1,0 +1,10 @@
+# /robots.txt — production
+User-agent: *
+Allow: /
+
+# keep utility endpoints out of the index
+Disallow: /__app_version
+Disallow: /sw-offline/
+Disallow: /sw-offline/*
+
+Sitemap: https://knowtowin.com/sitemap.xml

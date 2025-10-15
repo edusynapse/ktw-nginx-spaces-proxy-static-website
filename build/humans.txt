@@ -1,0 +1,4 @@
+/* humans.txt */
+Team: Know To Win
+Site: https://knowtowin.com/
+Notes: Levels 1–12 = school, 13–16 = college, 17 = above college.

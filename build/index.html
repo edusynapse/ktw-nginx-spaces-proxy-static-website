@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <base href="/"><!-- ✅ required for Flutter web (incl. WASM) -->
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Game and Learn">
+  <!-- ★ SEO: refined description to include levels 1–17 -->
+  <meta name="description" content="Play AI-crafted quizzes across levels 1–17 — school (1–12), college (13–16), and level 17 for above college. Earn credits, improve weekly, redeem prizes.">
   <meta name="google-signin-client_id" content="64979320907-f64nkkq2hvdmpoj9ccdgodt2p2388s7e.apps.googleusercontent.com">
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -22,16 +23,17 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <!-- ★ SEO: Open Graph / Twitter (added) -->
+  <!-- ★ SEO: Open Graph / Twitter (aligned with levels) -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Know To Win — The Education Game">
-  <meta property="og:description" content="Play AI-crafted quizzes, climb levels, earn credits, and redeem prizes. Read the full explainer at /learn/index.html.">
+  <meta property="og:description" content="Play AI-crafted quizzes across levels 1–17: school (1–12), college (13–16), and level 17 for above college. Read the full explainer at /learn/index.html.">
   <meta property="og:url" content="https://knowtowin.com/">
   <meta property="og:image" content="https://cdn.knowtowin.com/og/knowtowin-banner.png">
   <meta property="og:site_name" content="Know To Win">
+  <meta property="og:locale" content="en_IN">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Know To Win — The Education Game">
-  <meta name="twitter:description" content="AI-made quizzes across levels 1–17. Learn more at /learn/index.html.">
+  <meta name="twitter:description" content="AI-made quizzes across levels 1–17: school 1–12, college 13–16, and 17 for above college. Learn more at /learn/index.html.">
   <meta name="twitter:image" content="https://cdn.knowtowin.com/og/knowtowin-banner.png">
   <!-- ★ SEO: end -->
 
@@ -174,7 +176,7 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "3724670513";
+    const serviceWorkerVersion = "160121120";
   </script>
 
   <!-- ★ NEW: warm the tzf into the HTTP cache (mirrors typical fetch options) -->
@@ -282,7 +284,7 @@
           src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
           defer></script>
 
-  <!-- ★ SEO: JSON-LD (added) -->
+  <!-- ★ SEO: JSON-LD (extended with Level Map ItemList) -->
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -317,7 +319,40 @@
                 "@type": "Answer",
                 "text": "Visit the Learn page at https://knowtowin.com/learn/index.html for details on credits, prizes, levels, and safety."
               }
+            },
+            {
+              "@type": "Question",
+              "name": "What do levels 1–17 correspond to?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Levels 1–12 are school levels (Class 1–12). Levels 13–16 are college levels (Year 1–4). Level 17 is for users above college level (post-grad, professional, research, competitive)."
+              }
             }
+          ]
+        },
+        {
+          "@type": "ItemList",
+          "name": "Know To Win Level Map (1–17)",
+          "url": "https://knowtowin.com/",
+          "numberOfItems": 17,
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1,  "name": "Level 1",  "description": "School level 1 (Class 1)" },
+            { "@type": "ListItem", "position": 2,  "name": "Level 2",  "description": "School level 2 (Class 2)" },
+            { "@type": "ListItem", "position": 3,  "name": "Level 3",  "description": "School level 3 (Class 3)" },
+            { "@type": "ListItem", "position": 4,  "name": "Level 4",  "description": "School level 4 (Class 4)" },
+            { "@type": "ListItem", "position": 5,  "name": "Level 5",  "description": "School level 5 (Class 5)" },
+            { "@type": "ListItem", "position": 6,  "name": "Level 6",  "description": "School level 6 (Class 6)" },
+            { "@type": "ListItem", "position": 7,  "name": "Level 7",  "description": "School level 7 (Class 7)" },
+            { "@type": "ListItem", "position": 8,  "name": "Level 8",  "description": "School level 8 (Class 8)" },
+            { "@type": "ListItem", "position": 9,  "name": "Level 9",  "description": "School level 9 (Class 9)" },
+            { "@type": "ListItem", "position": 10, "name": "Level 10", "description": "School level 10 (Class 10 / board prep)" },
+            { "@type": "ListItem", "position": 11, "name": "Level 11", "description": "School level 11 (Class 11)" },
+            { "@type": "ListItem", "position": 12, "name": "Level 12", "description": "School level 12 (Class 12)" },
+            { "@type": "ListItem", "position": 13, "name": "Level 13", "description": "College level 1 (Undergrad Year 1)" },
+            { "@type": "ListItem", "position": 14, "name": "Level 14", "description": "College level 2 (Undergrad Year 2)" },
+            { "@type": "ListItem", "position": 15, "name": "Level 15", "description": "College level 3 (Undergrad Year 3)" },
+            { "@type": "ListItem", "position": 16, "name": "Level 16", "description": "College level 4 (Undergrad Year 4 / capstone)" },
+            { "@type": "ListItem", "position": 17, "name": "Level 17", "description": "Above college (post-grad, professional, research, competitive)" }
           ]
         }
       ]
@@ -336,7 +371,7 @@
   </div>
 </div>
 
-<!-- ★ SEO: hidden explainer (added; never visible to users) -->
+<!-- ★ SEO: hidden explainer (kept) + explicit Level Map list for crawlers -->
 <main id="seo-explainer" class="seo-hidden">
   <h1>Know To Win — The Education Game</h1>
   <p>Play AI-crafted quizzes across school and pro topics. Enter with credits, answer correctly to win, improve weekly across levels 1–17, and redeem prizes. Read the full explainer at <a href="/learn/index.html">/learn</a>.</p>
@@ -347,10 +382,29 @@
     <li>Web app runs in WebAssembly mode on Chrome (Firefox not supported currently).</li>
     <li>Sensitive data is encrypted; under-13 players require parental consent for verification and prize redemption.</li>
   </ul>
+  <h2>Level Map (1–17)</h2>
+  <ol>
+    <li>Level 1 — School level 1 (Class 1)</li>
+    <li>Level 2 — School level 2 (Class 2)</li>
+    <li>Level 3 — School level 3 (Class 3)</li>
+    <li>Level 4 — School level 4 (Class 4)</li>
+    <li>Level 5 — School level 5 (Class 5)</li>
+    <li>Level 6 — School level 6 (Class 6)</li>
+    <li>Level 7 — School level 7 (Class 7)</li>
+    <li>Level 8 — School level 8 (Class 8)</li>
+    <li>Level 9 — School level 9 (Class 9)</li>
+    <li>Level 10 — School level 10 (Class 10 / board prep)</li>
+    <li>Level 11 — School level 11 (Class 11)</li>
+    <li>Level 12 — School level 12 (Class 12)</li>
+    <li>Level 13 — College level 1 (Undergrad Year 1)</li>
+    <li>Level 14 — College level 2 (Undergrad Year 2)</li>
+    <li>Level 15 — College level 3 (Undergrad Year 3)</li>
+    <li>Level 16 — College level 4 (Undergrad Year 4 / capstone)</li>
+    <li>Level 17 — Above college (post-grad, professional, research, competitive)</li>
+  </ol>
 </main>
 <!-- ★ SEO: end -->
 
-<!-- No-JS fallback with a link to Learn -->
 <noscript>
   <p style="max-width:720px;margin:1rem auto;padding:0 1rem;font-family:Arial,sans-serif;">
     JavaScript is required to play. You can read about the game at <a href="/learn/index.html">/learn</a>.

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+    <url>
+        <loc>https://knowtowin.com/</loc>
+        <lastmod>2025-10-14</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://cdn.knowtowin.com/og/knowtowin-banner.png</image:loc>
+            <image:title>Know To Win — The Education Game</image:title>
+        </image:image>
+    </url>
+
+    <!-- Marketing explainer with the Level Map (1–17) -->
+    <url>
+        <loc>https://knowtowin.com/learn/</loc>
+        <lastmod>2025-10-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Public, indexable Flutter routes (argument-free) -->
+    <url>
+        <loc>https://knowtowin.com/privacy</loc>
+        <lastmod>2025-10-14</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://knowtowin.com/terms</loc>
+        <lastmod>2025-10-14</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://knowtowin.com/email_help</loc>
+        <lastmod>2025-10-14</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+</urlset>

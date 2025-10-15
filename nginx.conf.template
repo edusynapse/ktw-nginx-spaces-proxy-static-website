@@ -68,18 +68,33 @@ http {
 
 
     # App shell must not be cached
-    location = /index.html { add_header Cross-Origin-Opener-Policy same-origin-allow-popups always; add_header Cross-Origin-Embedder-Policy credentialless always; add_header Cache-Control "no-store, must-revalidate" always; add_header Pragma "no-cache" always; add_header Expires "0" always; try_files $uri =404; }
+    location = /index.html {
+      # Canonicalize only when user requested /index.html directly (internal SPA fallback keeps original $request_uri)
+      if ($request_uri = /index.html) { return 301 /; }
+
+      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+      add_header Cross-Origin-Embedder-Policy credentialless always;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      add_header Pragma "no-cache" always;
+      add_header Expires "0" always;
+      try_files $uri =404;
+    }
     location = /flutter_bootstrap.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
     location = /manifest.json { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
 
+    # SEO: serve robots & sitemaps with proper MIME and cache
+    location = /robots.txt        { default_type text/plain;       add_header Cache-Control "public, max-age=86400" always; try_files $uri =404; }
+    location = /sitemap.xml       { default_type application/xml;  add_header Cache-Control "public, max-age=3600"  always; try_files $uri =404; }
+    location = /sitemap-index.xml { default_type application/xml;  add_header Cache-Control "public, max-age=3600"  always; try_files $uri =404; }
+
     # Service workers: no-store, no redirect
-    location = /flutter_service_worker.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /sw-offline.js           { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /firebase-messaging-sw.js{ add_header Cache-Control "no-store, must-revalidate" always; add_header Service-Worker-Allowed "/" always; expires -1; try_files $uri =404; }
-    location = /sw-kill.js              { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /flutter_service_worker.js { add_header X-Robots-Tag "noindex, nofollow" always; add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /sw-offline.js            { add_header X-Robots-Tag "noindex, nofollow" always; add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /firebase-messaging-sw.js { add_header X-Robots-Tag "noindex, nofollow" always; add_header Service-Worker-Allowed "/" always; add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /sw-kill.js               { add_header X-Robots-Tag "noindex, nofollow" always; add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
 
     # /__app_version – returned from env (or swap to file alias if preferred)
-    location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION_PROD"; }
+    location = /__app_version { default_type text/plain; add_header X-Robots-Tag "noindex, nofollow" always; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION_PROD"; }
     # file-based alternative:
     # location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; alias /usr/share/nginx/html/__app_version; }
 
@@ -103,6 +118,7 @@ http {
     # One-tap hard refresh
     location = /__force_update__ {
       default_type text/plain;
+      add_header X-Robots-Tag "noindex, nofollow" always;
       add_header Clear-Site-Data "\"cache\", \"storage\"" always;
       return 200 "ok\n";
     }
@@ -127,6 +143,9 @@ http {
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
     add_header X-App-Version $APP_VERSION_DEV always;
 
+    # Prevent accidental indexing of the dev host
+    add_header X-Robots-Tag "noindex, nofollow" always;
+
     add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
     add_header Cross-Origin-Embedder-Policy credentialless always;
 
@@ -148,14 +167,27 @@ http {
       try_files $uri =404;
     }
 
-    location = /index.html { add_header Cross-Origin-Opener-Policy same-origin-allow-popups always; add_header Cross-Origin-Embedder-Policy credentialless always; add_header Cache-Control "no-store, must-revalidate" always; add_header Pragma "no-cache" always; add_header Expires "0" always; try_files $uri =404; }
+    location = /index.html {
+      if ($request_uri = /index.html) { return 301 /; }
+      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
+      add_header Cross-Origin-Embedder-Policy credentialless always;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      add_header Pragma "no-cache" always;
+      add_header Expires "0" always;
+      try_files $uri =404;
+    }
     location = /flutter_bootstrap.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
     location = /manifest.json { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
 
+    # SEO: serve robots & sitemaps with proper MIME and cache
+    location = /robots.txt        { default_type text/plain;       add_header Cache-Control "public, max-age=86400" always; try_files $uri =404; }
+    location = /sitemap.xml       { default_type application/xml;  add_header Cache-Control "public, max-age=3600"  always; try_files $uri =404; }
+    location = /sitemap-index.xml { default_type application/xml;  add_header Cache-Control "public, max-age=3600"  always; try_files $uri =404; }
+
     location = /flutter_service_worker.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /sw-offline.js           { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /firebase-messaging-sw.js{ add_header Cache-Control "no-store, must-revalidate" always; add_header Service-Worker-Allowed "/" always; expires -1; try_files $uri =404; }
-    location = /sw-kill.js              { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /sw-offline.js            { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /firebase-messaging-sw.js { add_header Service-Worker-Allowed "/" always; add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /sw-kill.js               { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
 
     location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION_DEV"; }
     # file-based alternative:
@@ -202,14 +234,25 @@ http {
     root /usr/share/nginx/html;
     index index.html;
 
-    location = /index.html { add_header Cache-Control "no-store, must-revalidate" always; add_header Pragma "no-cache" always; add_header Expires "0" always; try_files $uri =404; }
+    location = /index.html {
+      if ($request_uri = /index.html) { return 301 /; }
+      add_header Cache-Control "no-store, must-revalidate" always;
+      add_header Pragma "no-cache" always;
+      add_header Expires "0" always;
+      try_files $uri =404;
+    }
     location = /flutter_bootstrap.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
     location = /manifest.json { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
 
+    # SEO: serve robots & sitemaps with proper MIME and cache
+    location = /robots.txt        { default_type text/plain;       add_header Cache-Control "public, max-age=86400" always; try_files $uri =404; }
+    location = /sitemap.xml       { default_type application/xml;  add_header Cache-Control "public, max-age=3600"  always; try_files $uri =404; }
+    location = /sitemap-index.xml { default_type application/xml;  add_header Cache-Control "public, max-age=3600"  always; try_files $uri =404; }
+
     location = /flutter_service_worker.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /sw-offline.js           { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /firebase-messaging-sw.js{ add_header Cache-Control "no-store, must-revalidate" always; add_header Service-Worker-Allowed "/" always; expires -1; try_files $uri =404; }
-    location = /sw-kill.js              { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /sw-offline.js            { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /firebase-messaging-sw.js { add_header Service-Worker-Allowed "/" always; add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /sw-kill.js               { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
 
     location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION_PROD"; }
 
