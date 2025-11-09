@@ -269344,40 +269344,43 @@ m.push(A.d(l,e,e,e,e,e,e,A.n(e,e,i,e,e,e,e,e,e,e,e,15*B.f.ar(a0,1,1.5),e,e,B.c5,
 if((l==null?"":l).length!==0){k=B.f.ar(a0,1,1.3)
 l.toString
 B.c.D(m,A.b([new A.C(e,6*k,e,e),A.d(l,e,e,e,e,e,e,A.n(e,e,i,e,e,e,e,e,e,e,e,14*B.f.ar(a0,1,1.4),e,e,e,e,e,!0,e,e,e,e,e,e,e,e),e,e,e,e)],n))}return A.nf(A.z(m,B.T,new A.f4(s.a+"-"+p,t.kK),B.h,B.F,0,e,B.k),c,A.nX(),B.b2,B.b2,A.nY())},
-b9M(a,a0,a1){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e=this,d=null,c=J.a(a,"prizeDetailsPage"),b=c==null?d:J.a(c,"sponsorDetails")
-if(b==null)b="Sponsor Details"
+b9M(a1,a2,a3){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e=this,d="sponsorOverlay",c=null,b=J.w(a1),a=b.h(a1,d),a0=a==null?c:J.a(a,"sponsorDetails")
+if(a0==null)a0="Sponsor Details"
 s=e.as
 if(s==null)s=B.fr
-c=J.w(s)
-r=c.h(s,"name")
-r=r==null?d:J.O(r)
+a=J.w(s)
+r=a.h(s,"name")
+r=r==null?c:J.O(r)
 if(r==null){r=e.ay
-r=r==null?d:r.b
+r=r==null?c:r.b
 q=r}else q=r
 if(q==null)q=""
-r=c.h(s,"description")
-p=r==null?d:J.O(r)
+r=a.h(s,"description")
+p=r==null?c:J.O(r)
 if(p==null)p=""
-c=c.h(s,"landing_page_url")
-o=c==null?d:J.O(c)
+a=a.h(s,"landing_page_url")
+o=a==null?c:J.O(a)
 n=e.ax
 m=e.at
-c=A.a9(12)
+a=A.a9(12)
 r=A.a9(12)
-l=10*B.f.ar(a1,1,1.5)
-l=A.x(d,A.d(b,d,d,d,d,d,d,A.n(d,d,a0.y,d,d,d,d,d,d,d,d,18*B.f.ar(a1,1,1.6),d,d,B.m,d,d,!0,d,d,d,d,d,d,d,d),B.ad,d,d,d),B.e,d,d,a0.d,d,d,d,d,new A.av(l,l,l,l),d,d,1/0)
-k=B.f.ar(a1,1,1.4)
-j=B.f.ar(a1,1,1.4)
+l=10*B.f.ar(a3,1,1.5)
+l=A.x(c,A.d(a0,c,c,c,c,c,c,A.n(c,c,a2.y,c,c,c,c,c,c,c,c,18*B.f.ar(a3,1,1.6),c,c,B.m,c,c,!0,c,c,c,c,c,c,c,c),B.ad,c,c,c),B.e,c,c,a2.d,c,c,c,c,new A.av(l,l,l,l),c,c,1/0)
+k=B.f.ar(a3,1,1.4)
+j=B.f.ar(a3,1,1.4)
 i=t.p
 h=A.b([],i)
-if(n!=null&&n.length!==0)B.c.D(h,A.b([A.bC(new A.cFs(n)),new A.C(d,12*B.f.ar(a1,1,1.4),d,d)],i))
+if(n!=null&&n.length!==0)B.c.D(h,A.b([A.bC(new A.cFs(n)),new A.C(c,12*B.f.ar(a3,1,1.4),c,c)],i))
 g=m!=null&&m.length!==0
-f=a0.k2
-if(g)B.c.D(h,A.b([A.P(A.b([A.a5E(q,new A.cFt(a1).$0(),m),new A.C(10*B.f.ar(a1,1,1.4),d,d,d),A.ac(A.d(q,d,d,2,B.a2,d,d,A.n(d,d,f,d,d,d,d,d,d,d,d,16*B.f.ar(a1,1,1.5),d,d,B.m,d,d,!0,d,d,d,d,d,d,d,d),d,d,d,d),1)],i),B.j,B.h,B.d,0,d,d),new A.C(d,12*B.f.ar(a1,1,1.4),d,d)],i))
-else B.c.D(h,A.b([A.d(q,d,d,d,d,d,d,A.n(d,d,f,d,d,d,d,d,d,d,d,16*B.f.ar(a1,1,1.5),d,d,B.m,d,d,!0,d,d,d,d,d,d,d,d),d,d,d,d),new A.C(d,8*B.f.ar(a1,1,1.3),d,d)],i))
-if(p.length!==0)h.push(A.d(p,d,d,d,d,d,d,A.n(d,d,f,d,d,d,d,d,d,d,d,14*B.f.ar(a1,1,1.4),d,d,d,d,d,!0,d,d,d,d,d,d,d,d),d,d,d,d))
-if(o!=null&&o.length!==0)B.c.D(h,A.b([new A.C(d,12*B.f.ar(a1,1,1.4),d,d),new A.cI(B.Z,d,d,A.b4(A.d("Sponsor Link",d,d,d,d,d,d,A.n(d,d,f,d,d,d,d,d,d,d,d,14*B.f.ar(a1,1,1.5),d,d,B.c5,d,d,!0,d,d,d,d,d,d,d,d),d,d,d,d),new A.cFu(e,o),d,B.y),d)],i))
-return A.c0(!0,A.cG(r,A.x(d,A.z(A.b([l,new A.L(new A.av(14,16*k,14,18*j),A.z(h,B.T,d,B.h,B.F,0,d,B.k),d)],i),B.j,d,B.h,B.F,0,d,B.k),B.e,d,d,a0.c,d,d,d,d,d,d,d,d),B.bF),d,d,0,d,d,new A.bJ(c,B.G))},
+f=a2.k2
+if(g)B.c.D(h,A.b([A.P(A.b([A.a5E(q,new A.cFt(a3).$0(),m),new A.C(10*B.f.ar(a3,1,1.4),c,c,c),A.ac(A.d(q,c,c,2,B.a2,c,c,A.n(c,c,f,c,c,c,c,c,c,c,c,16*B.f.ar(a3,1,1.5),c,c,B.m,c,c,!0,c,c,c,c,c,c,c,c),c,c,c,c),1)],i),B.j,B.h,B.d,0,c,c),new A.C(c,12*B.f.ar(a3,1,1.4),c,c)],i))
+else B.c.D(h,A.b([A.d(q,c,c,c,c,c,c,A.n(c,c,f,c,c,c,c,c,c,c,c,16*B.f.ar(a3,1,1.5),c,c,B.m,c,c,!0,c,c,c,c,c,c,c,c),c,c,c,c),new A.C(c,8*B.f.ar(a3,1,1.3),c,c)],i))
+if(p.length!==0)h.push(A.d(p,c,c,c,c,c,c,A.n(c,c,f,c,c,c,c,c,c,c,c,14*B.f.ar(a3,1,1.4),c,c,c,c,c,!0,c,c,c,c,c,c,c,c),c,c,c,c))
+if(o!=null&&o.length!==0){g=B.f.ar(a3,1,1.4)
+b=b.h(a1,d)
+b=b==null?c:J.a(b,"sponsorLink")
+if(b==null)b="Sponsor Link"
+B.c.D(h,A.b([new A.C(c,12*g,c,c),new A.cI(B.Z,c,c,A.b4(A.d(b,c,c,c,c,c,c,A.n(c,c,f,c,c,c,c,c,c,c,c,14*B.f.ar(a3,1,1.5),c,c,B.c5,c,c,!0,c,c,c,c,c,c,c,c),c,c,c,c),new A.cFu(e,o),c,B.y),c)],i))}return A.c0(!0,A.cG(r,A.x(c,A.z(A.b([l,new A.L(new A.av(14,16*k,14,18*j),A.z(h,B.T,c,B.h,B.F,0,c,B.k),c)],i),B.j,c,B.h,B.F,0,c,B.k),B.e,c,c,a2.c,c,c,c,c,c,c,c,c),B.bF),c,c,0,c,c,new A.bJ(a,B.G))},
 a2q(a){return this.bih(a)},
 bih(a){var s=0,r=A.m(t.h),q,p=2,o=[],n,m,l,k,j,i,h
 var $async$a2q=A.i(function(b,c){if(b===1){o.push(c)
@@ -269526,40 +269529,39 @@ $1(a){var s=this.a
 if(!s.x)s.Gx(B.c.ga2(s.f))},
 $S:7}
 A.cFF.prototype={
-$2(a5,a6){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1=this,a2=null,a3="sponsorOverlay",a4=a1.a
-if(a4.Q)s=3
-else{r=a4.f
-if(r.length!==0){q=r[a4.r]
-r=q.e
-if((r==null?a2:r.length!==0)!==!0){r=q.d
-p=(r==null?a2:r.length!==0)===!0}else p=!1
-s=p?3:1.7777777777777777}else s=1.7777777777777777}r=A.ai(a5,a2,t.w).w
-o=B.f.ar(B.f.ar(a6.b*0.94,360,1200)-28,332,1172)
-n=r.a.b*0.58
-m=o/s
-l=o*(m>n?n/m:1)+28
-k=1+0.45*B.f.ar((l-360)/840,0,1)
-r=A.hC(a2,l)
-j=a1.b
-i=a1.c
-i=a4.Q?a4.b9M(j,i,k):a4.baP(j,i,k)
-h=4*B.f.ar(k,1,1.4)
-g=a1.d
-f=t.t_
-e=A.b([g.k2.a1(100),B.E],f)
-d=6*B.f.ar(k,1,1.4)
-c=g.y2
-b=t.p
-f=A.j1(0,A.aU(B.I,A.b([A.nn(a2,new A.aS(a2,a2,a2,a2,a2,new A.tt(B.Z,1,B.be,a2,0,A.b([B.E,B.E,c.a1(30),c.a1(200)],f),B.y3,a2),a2,B.cm),B.dK),A.nn(a2,new A.aS(a2,A.qr(B.cO,B.dp,a2,new A.uC(a1.e.gaie(),1,a2,a2),a2,B.o9),a2,a2,a2,a2,a2,B.cm),B.dK)],b),B.l,B.fD,a2))
-c=J.w(j)
-a=c.h(j,a3)
-a=a==null?a2:J.a(a,"ariaClose")
-if(a==null)a="Close overlay"
-a0=B.f.ar(k,1,1.5)
-j=c.h(j,a3)
-j=j==null?a2:J.a(j,"close")
-if(j==null)j="Close"
-return new A.bK(r,A.aU(B.I,A.b([i,A.ca(a2,A.x(a2,A.x(a2,A.aU(B.Z,A.b([f,B.l1,A.cx(!0,a2,A.CL(A.ao(a2,a2,a2,!1,B.lY,new A.cFE(a4),a2,j,B.y),new A.fA(18*a0,a2,a2,a2,a2,a2,a2,a2,a2)),!1,a2,a2,a2,!1,a2,!1,a2,a2,a2,a2,a2,a2,a2,a2,a2,a,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,a2,B.a6,a2)],b),B.l,B.H,a2),B.e,a2,a2,new A.aS(g.k3,a2,a2,a2,a2,a2,a2,B.cm),a2,a2,a2,a2,new A.av(d,d,d,d),a2,a2,a2),B.e,a2,a2,new A.aS(a2,a2,a2,a2,a2,new A.f1(B.jV,B.jW,B.be,e,a2,a2),a2,B.cm),a2,a2,a2,a2,new A.av(h,h,h,h),a2,a2,a2),a2,a2,a2,-8,-5,a2)],b),B.e,B.H,a2),a2)},
+$2(a4,a5){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0=this,a1=null,a2=a0.a,a3=3
+if(!a2.Q){s=a2.f
+if(s.length!==0){r=s[a2.r]
+s=r.e
+if((s==null?a1:s.length!==0)!==!0){s=r.d
+q=(s==null?a1:s.length!==0)===!0}else q=!1
+a3=q?3:1.7777777777777777}}s=A.ai(a4,a1,t.w).w
+p=B.f.ar(B.f.ar(a5.b*0.94,360,1200)-28,332,1172)
+o=s.a.b*0.58
+n=p/a3
+m=p*(n>o?o/n:1)+28
+l=1+0.45*B.f.ar((m-360)/840,0,1)
+s=A.hC(a1,m)
+k=a0.b
+j=a0.c
+j=a2.Q?a2.b9M(k,j,l):a2.baP(k,j,l)
+i=4*B.f.ar(l,1,1.4)
+h=a0.d
+g=t.t_
+f=A.b([h.k2.a1(100),B.E],g)
+e=6*B.f.ar(l,1,1.4)
+d=h.y2
+c=t.p
+g=A.j1(0,A.aU(B.I,A.b([A.nn(a1,new A.aS(a1,a1,a1,a1,a1,new A.tt(B.Z,1,B.be,a1,0,A.b([B.E,B.E,d.a1(30),d.a1(200)],g),B.y3,a1),a1,B.cm),B.dK),A.nn(a1,new A.aS(a1,A.qr(B.cO,B.dp,a1,new A.uC(a0.e.gaie(),1,a1,a1),a1,B.o9),a1,a1,a1,a1,a1,B.cm),B.dK)],c),B.l,B.fD,a1))
+d=J.w(k)
+b=d.h(k,"sponsorOverlay")
+b=b==null?a1:J.a(b,"ariaClose")
+if(b==null)b="Close overlay"
+a=B.f.ar(l,1,1.5)
+k=d.h(k,"common")
+k=k==null?a1:J.a(k,"close")
+if(k==null)k="Close"
+return new A.bK(s,A.aU(B.I,A.b([j,A.ca(a1,A.x(a1,A.x(a1,A.aU(B.Z,A.b([g,B.l1,A.cx(!0,a1,A.CL(A.ao(a1,a1,a1,!1,B.lY,new A.cFE(a2),a1,k,B.y),new A.fA(18*a,a1,a1,a1,a1,a1,a1,a1,a1)),!1,a1,a1,a1,!1,a1,!1,a1,a1,a1,a1,a1,a1,a1,a1,a1,b,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,a1,B.a6,a1)],c),B.l,B.H,a1),B.e,a1,a1,new A.aS(h.k3,a1,a1,a1,a1,a1,a1,B.cm),a1,a1,a1,a1,new A.av(e,e,e,e),a1,a1,a1),B.e,a1,a1,new A.aS(a1,a1,a1,a1,a1,new A.f1(B.jV,B.jW,B.be,f,a1,a1),a1,B.cm),a1,a1,a1,a1,new A.av(i,i,i,i),a1,a1,a1),a1,a1,a1,-8,-5,a1)],c),B.e,B.H,a1),a1)},
 $S:475}
 A.cFE.prototype={
 $0(){var s=this.a
