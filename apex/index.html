@@ -3,340 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Know To Win | Learn, Play, Win</title>
-  <meta name="description" content="Know To Win turns learning into play with quizzes, levels, credits, and rewards. Explore how it works, then launch the app at app.knowtowin.com.">
+  <title>Know To Win | Quiz-Based Learning Games With Credits, Levels and Rewards</title>
+  <meta name="description" content="Know To Win is a quiz-based learning platform where learners practice by playing, progress through levels, earn credits, and redeem rewards through checkout windows.">
+  <meta name="keywords" content="quiz based learning, educational game, learning app, student quiz app, practice quizzes, credits and rewards, levels and prizes">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#0e7490">
+  <meta name="color-scheme" content="light">
+  <meta name="application-name" content="Know To Win">
   <link rel="canonical" href="https://knowtowin.com/">
-  <meta name="robots" content="index,follow,max-image-preview:large">
-  <meta name="theme-color" content="#0d9488">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230e7490'/%3E%3Cpath d='M18 16h8v14l13-14h10L34.5 31.2 50 48H39.6L26 33.2V48h-8V16Z' fill='white'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/assets/css/site.css">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Know To Win | Learn, Play, Win">
-  <meta property="og:description" content="A quiz-based learning platform with levels, credits, and rewards.">
-  <meta property="og:url" content="https://knowtowin.com/">
   <meta property="og:site_name" content="Know To Win">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:title" content="Know To Win | Quiz-Based Learning Games With Credits, Levels and Rewards">
+  <meta property="og:description" content="A lightweight public homepage for a quiz-first learning platform built around practice, levels, earned credits, and redeemable rewards.">
+  <meta property="og:url" content="https://knowtowin.com/">
+  <meta property="og:image" content="https://cdn.knowtowin.com/og/knowtowin-banner.png">
+  <meta property="og:image:alt" content="Know To Win quiz-based learning platform banner">
 
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Know To Win | Learn, Play, Win">
-  <meta name="twitter:description" content="A quiz-based learning platform with levels, credits, and rewards.">
-
-  <style>
-    :root {
-      --bg: #f5f8f6;
-      --paper: #ffffff;
-      --ink: #10211b;
-      --muted: #53635d;
-      --brand: #0d9488;
-      --brand-deep: #0f766e;
-      --accent: #f59e0b;
-      --line: #dbe7e1;
-      --shadow: 0 18px 48px rgba(16, 33, 27, 0.08);
-      --radius: 22px;
-      --max: 1120px;
-    }
-
-    * { box-sizing: border-box; }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      background:
-        radial-gradient(circle at top right, rgba(13, 148, 136, 0.14), transparent 34%),
-        linear-gradient(180deg, #fcfefd 0%, var(--bg) 100%);
-      color: var(--ink);
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    a { color: inherit; }
-
-    .shell {
-      width: min(calc(100% - 32px), var(--max));
-      margin: 0 auto;
-    }
-
-    .topbar {
-      padding: 18px 0;
-    }
-
-    .topbar-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 800;
-      text-decoration: none;
-      letter-spacing: 0.02em;
-    }
-
-    .brand-mark {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--brand), var(--brand-deep));
-      color: #fff;
-      font-size: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 14px 20px;
-      border-radius: 999px;
-      text-decoration: none;
-      font-weight: 700;
-      transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
-    }
-
-    .button:hover {
-      transform: translateY(-1px);
-    }
-
-    .button-primary {
-      background: linear-gradient(135deg, var(--brand), var(--brand-deep));
-      color: #fff;
-      box-shadow: var(--shadow);
-    }
-
-    .button-secondary {
-      background: rgba(13, 148, 136, 0.08);
-      border: 1px solid rgba(13, 148, 136, 0.18);
-      color: var(--brand-deep);
-    }
-
-    .hero {
-      padding: 22px 0 28px;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 24px;
-      align-items: stretch;
-    }
-
-    .hero-copy,
-    .hero-panel,
-    .section-card,
-    .faq-item,
-    .cta-band {
-      background: rgba(255, 255, 255, 0.82);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(219, 231, 225, 0.9);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-
-    .hero-copy {
-      padding: 34px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(13, 148, 136, 0.09);
-      color: var(--brand-deep);
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    h1, h2, h3, p {
-      margin: 0;
-    }
-
-    h1 {
-      margin-top: 18px;
-      font-size: clamp(2.2rem, 5vw, 4.2rem);
-      line-height: 0.98;
-      letter-spacing: -0.04em;
-      max-width: 10ch;
-    }
-
-    .lead {
-      margin-top: 18px;
-      font-size: 1.08rem;
-      line-height: 1.7;
-      color: var(--muted);
-      max-width: 60ch;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 24px;
-    }
-
-    .hero-note {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 0.96rem;
-    }
-
-    .hero-panel {
-      padding: 26px;
-      display: grid;
-      gap: 16px;
-      align-content: start;
-    }
-
-    .metric {
-      padding: 18px;
-      border-radius: 18px;
-      background: linear-gradient(180deg, rgba(13, 148, 136, 0.08), rgba(13, 148, 136, 0.03));
-      border: 1px solid rgba(13, 148, 136, 0.12);
-    }
-
-    .metric strong {
-      display: block;
-      font-size: 1.4rem;
-      margin-bottom: 6px;
-    }
-
-    .metric span {
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    section {
-      padding: 18px 0 10px;
-    }
-
-    .section-head {
-      margin-bottom: 18px;
-      display: grid;
-      gap: 8px;
-    }
-
-    .section-head p {
-      color: var(--muted);
-      max-width: 66ch;
-      line-height: 1.65;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .section-card {
-      padding: 24px;
-    }
-
-    .section-card h3 {
-      font-size: 1.12rem;
-      margin-bottom: 10px;
-    }
-
-    .section-card p,
-    .faq-item p,
-    .list li {
-      color: var(--muted);
-      line-height: 1.65;
-    }
-
-    .list {
-      padding-left: 18px;
-      margin: 14px 0 0;
-    }
-
-    .split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-
-    .faq {
-      display: grid;
-      gap: 14px;
-    }
-
-    .faq-item {
-      padding: 20px 22px;
-    }
-
-    .faq-item h3 {
-      margin-bottom: 8px;
-      font-size: 1.04rem;
-    }
-
-    .cta-band {
-      margin: 26px 0 42px;
-      padding: 28px;
-      display: grid;
-      gap: 14px;
-      align-items: center;
-      grid-template-columns: 1.2fr auto;
-      background:
-        radial-gradient(circle at right top, rgba(245, 158, 11, 0.18), transparent 28%),
-        linear-gradient(135deg, rgba(13, 148, 136, 0.1), rgba(255, 255, 255, 0.95));
-    }
-
-    .cta-band p {
-      color: var(--muted);
-      line-height: 1.65;
-    }
-
-    .footer {
-      padding: 0 0 34px;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .footer-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      flex-wrap: wrap;
-      padding-top: 18px;
-      border-top: 1px solid var(--line);
-    }
-
-    @media (max-width: 920px) {
-      .hero-grid,
-      .grid-3,
-      .split,
-      .cta-band {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-copy,
-      .hero-panel,
-      .section-card,
-      .faq-item,
-      .cta-band {
-        padding: 22px;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .shell {
-        width: min(calc(100% - 20px), var(--max));
-      }
-
-      .topbar-inner {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      h1 {
-        max-width: none;
-      }
-    }
-  </style>
+  <meta name="twitter:title" content="Know To Win | Quiz-Based Learning Games With Credits, Levels and Rewards">
+  <meta name="twitter:description" content="Play quizzes, practice by level, earn credits, and redeem rewards through a quiz-first learning platform.">
+  <meta name="twitter:image" content="https://cdn.knowtowin.com/og/knowtowin-banner.png">
+  <meta name="twitter:image:alt" content="Know To Win quiz-based learning platform banner">
 
   <script type="application/ld+json">
     {
@@ -348,30 +40,47 @@
           "url": "https://knowtowin.com/"
         },
         {
+          "@type": "WebApplication",
+          "name": "Know To Win",
+          "url": "https://app.knowtowin.com/",
+          "applicationCategory": "GameApplication",
+          "operatingSystem": "Web",
+          "inLanguage": "en-IN",
+          "description": "Know To Win is a quiz-based learning platform where users practice through games, progress across levels, earn credits, and redeem prizes using earned credits."
+        },
+        {
           "@type": "FAQPage",
           "mainEntity": [
             {
               "@type": "Question",
-              "name": "What is Know To Win?",
+              "name": "How does Know To Win work?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Know To Win is a quiz-based learning platform where players answer questions, progress through levels, and earn credits."
+                "text": "Learners choose a topic, practice without credits or play with entry credits, answer quiz questions under time limits, and earn progress through wins, streaks, levels, and earned credits."
               }
             },
             {
               "@type": "Question",
-              "name": "Where do I launch the app?",
+              "name": "Which credits can be used to book prizes?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "The live web app runs at app.knowtowin.com."
+                "text": "Only earned credits can be used to book prizes. Referral, donated, and purchased credits can be used to enter games, but prize booking uses earned credits only."
               }
             },
             {
               "@type": "Question",
-              "name": "Who is it for?",
+              "name": "Can you practice without spending credits?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "It is designed for learners who want a more game-like way to practice subjects and stay engaged."
+                "text": "Yes. Practice mode lets users play without spending entry credits and without earning rewards, making it useful for preparation before real play."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Where is the live app?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The live web app runs at app.knowtowin.com, while knowtowin.com acts as the public homepage and discovery surface."
               }
             }
           ]
@@ -381,139 +90,349 @@
   </script>
 </head>
 <body>
-  <header class="topbar">
-    <div class="shell topbar-inner">
-      <a class="brand" href="/">
-        <span class="brand-mark">K</span>
-        <span>Know To Win</span>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="shell masthead">
+      <a class="brand" href="/" aria-label="Know To Win homepage">
+        <span class="brand-mark" aria-hidden="true">K</span>
+        <span class="brand-lockup">
+          <strong>Know To Win</strong>
+          <span>Quiz-first learning that feels like play</span>
+        </span>
       </a>
-      <a class="button button-primary" href="https://app.knowtowin.com/">Open The App</a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span class="sr-only">Toggle navigation</span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Primary" data-nav>
+        <a href="#how-it-works">How it works</a>
+        <a href="#credits">Credits</a>
+        <a href="#prizes">Prizes</a>
+        <a href="#use-cases">Use cases</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <a class="button button-primary desktop-cta" href="https://app.knowtowin.com/">Open app</a>
     </div>
   </header>
 
-  <main class="shell">
+  <main id="main">
     <section class="hero">
-      <div class="hero-grid">
+      <div class="shell hero-grid">
         <div class="hero-copy">
-          <span class="eyebrow">Learning, game mechanics, and rewards</span>
-          <h1>Learn better when the journey feels like play.</h1>
-          <p class="lead">
-            Know To Win is a quiz-first learning experience built around levels, credits, progress,
-            and repeat practice. This page is the public front door. The live app runs separately at
+          <p class="eyebrow">Learning platform • Game mechanics • Progress that stays visible</p>
+          <h1>Turn practice into momentum, not monotony.</h1>
+          <p class="hero-lead">
+            Know To Win is a quiz-based learning platform where learners practice in short game loops,
+            build streaks, move through levels, earn credits, and unlock rewards. The public homepage
+            stays lightweight here on <strong>knowtowin.com</strong>; the live app runs at
             <strong>app.knowtowin.com</strong>.
           </p>
+
           <div class="hero-actions">
-            <a class="button button-primary" href="https://app.knowtowin.com/">Launch App</a>
-            <a class="button button-secondary" href="#how-it-works">How it works</a>
+            <a class="button button-primary" href="https://app.knowtowin.com/">Launch the web app</a>
+            <a class="button button-secondary" href="#how-it-works">See the flow</a>
           </div>
-          <p class="hero-note">
-            Starting point landing page for the apex domain. Copy, sections, and SEO detail can be expanded later.
-          </p>
+
+          <ul class="hero-points" aria-label="Key product highlights">
+            <li>Practice mode lets learners improve without spending credits.</li>
+            <li>Every game carries its own learning material, hints, and a timed challenge.</li>
+            <li>Winnings flow into earned credits, which can later be used for prizes.</li>
+          </ul>
         </div>
 
-        <aside class="hero-panel">
-          <div class="metric">
-            <strong>Quiz-based learning</strong>
-            <span>Pick a topic, answer questions, improve accuracy, and build momentum over time.</span>
+        <aside class="hero-stage" aria-label="Product highlights">
+          <div class="orb orb-a"></div>
+          <div class="orb orb-b"></div>
+
+          <div class="stage-panel panel-main">
+            <span class="panel-kicker">What makes it stick</span>
+            <h2>Structured like a game, useful like a study tool.</h2>
+            <p>
+              The product combines repeat practice, immediate feedback, time pressure, and visible
+              progression so learners keep coming back instead of dropping off after one passive session.
+            </p>
           </div>
-          <div class="metric">
-            <strong>Levels and progression</strong>
-            <span>Progress through difficulty bands instead of repeating the same static worksheet flow.</span>
+
+          <div class="stage-panel panel-stat panel-one">
+            <strong>4 credit types</strong>
+            <span>Referral, donated, earned, and purchased credits can all power gameplay.</span>
           </div>
-          <div class="metric">
-            <strong>Credits and rewards</strong>
-            <span>Engagement is structured around play, repetition, and incentives instead of passive reading.</span>
+
+          <div class="stage-panel panel-stat panel-two">
+            <strong>3 tries per game</strong>
+            <span>Rewards taper by attempt, which pushes stronger first-time focus.</span>
+          </div>
+
+          <div class="stage-panel panel-stat panel-three">
+            <strong>Levels 1 to 17</strong>
+            <span>Progress spans school, college, and higher learning bands.</span>
           </div>
         </aside>
       </div>
     </section>
 
-    <section id="how-it-works">
-      <div class="section-head">
-        <h2>How it works</h2>
-        <p>
-          The structure here is adapted from the existing `/learn` content, but simplified into a clean apex landing page.
-        </p>
-      </div>
-      <div class="grid-3">
-        <article class="section-card">
-          <h3>1. Start with a topic</h3>
-          <p>Choose a subject area and enter a quiz flow that matches the current learning level.</p>
+    <section class="signal-band">
+      <div class="shell signal-grid" aria-label="Core product signals">
+        <article class="signal-card">
+          <span class="signal-label">Play and practice</span>
+          <p>Run real games with entry credits or switch to practice mode to build confidence first.</p>
         </article>
-        <article class="section-card">
-          <h3>2. Answer and improve</h3>
-          <p>Practice through repeated question cycles designed to keep progress visible and motivating.</p>
+        <article class="signal-card">
+          <span class="signal-label">Progress that persists</span>
+          <p>Running games and player state are preserved on the server, so sessions can be resumed.</p>
         </article>
-        <article class="section-card">
-          <h3>3. Progress and return</h3>
-          <p>Move through levels, keep earning credits, and come back for continued practice instead of one-off sessions.</p>
+        <article class="signal-card">
+          <span class="signal-label">Every game teaches</span>
+          <p>Learning material, hints, and more-info context sit alongside the challenge itself.</p>
+        </article>
+        <article class="signal-card">
+          <span class="signal-label">Rewards stay meaningful</span>
+          <p>Prize booking runs through earned credits, checkout windows, and clear eligibility rules.</p>
         </article>
       </div>
     </section>
 
-    <section>
-      <div class="section-head">
-        <h2>Why this model works</h2>
-        <p>
-          The core idea is simple: reduce friction, keep feedback immediate, and make practice feel active rather than heavy.
-        </p>
-      </div>
-      <div class="split">
-        <article class="section-card">
-          <h3>What learners get</h3>
-          <ul class="list">
-            <li>Short, focused quiz loops instead of long passive sessions.</li>
-            <li>Clear progress signals through levels and credits.</li>
-            <li>A repeatable routine that feels closer to a game than a worksheet.</li>
-          </ul>
-        </article>
-        <article class="section-card">
-          <h3>What this page does</h3>
-          <ul class="list">
-            <li>Acts as the SEO and share-friendly public homepage for the brand.</li>
-            <li>Explains the product before users enter the heavier app experience.</li>
-            <li>Sends actual usage traffic to the app host at <strong>app.knowtowin.com</strong>.</li>
-          </ul>
-        </article>
+    <section class="section" id="how-it-works">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">How the product flow works</p>
+          <h2>From topic selection to rewards, the loop stays understandable.</h2>
+          <p>
+            The flow pulls together the core gameplay rules, the credits model, and the prizes system
+            without forcing users into a heavy onboarding wall.
+          </p>
+        </div>
+
+        <div class="steps">
+          <article class="step-card">
+            <span class="step-no">01</span>
+            <h3>Choose a topic and level</h3>
+            <p>Game cards make scope visible through category, subject, level, entry cost, reward range, and play time.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-no">02</span>
+            <h3>Practice before playing for real</h3>
+            <p>Practice mode avoids credit spend and helps learners understand hints, answer flow, and time limits.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-no">03</span>
+            <h3>Play timed quiz rounds</h3>
+            <p>Real play uses entry credits, allows up to three tries, and rewards stronger first-attempt accuracy.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-no">04</span>
+            <h3>Build streaks and move up</h3>
+            <p>Wins raise streaks in each category-subject-level path, and enough consecutive wins unlock higher levels.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-no">05</span>
+            <h3>Convert earned credits into prizes</h3>
+            <p>Successful play feeds earned credits, which can later be used to book prize orders during checkout windows.</p>
+          </article>
+        </div>
       </div>
     </section>
 
-    <section>
-      <div class="section-head">
-        <h2>FAQ</h2>
-      </div>
-      <div class="faq">
-        <article class="faq-item">
-          <h3>Is this the app itself?</h3>
-          <p>No. This is the public website on the apex domain. The live web app is hosted separately at <strong>app.knowtowin.com</strong>.</p>
-        </article>
-        <article class="faq-item">
-          <h3>Why split the site and the app?</h3>
-          <p>The public homepage can stay lightweight, indexable, and easy to share, while the application can keep its own routing, caching, and runtime behavior.</p>
-        </article>
-        <article class="faq-item">
-          <h3>Can this page grow later?</h3>
-          <p>Yes. This is a starting point. More sections, screenshots, school-specific messaging, legal pages, and analytics can be added without touching the app bundle.</p>
-        </article>
+    <section class="section section-alt" id="credits">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">Credits system</p>
+          <h2>Credits make gameplay flexible, but earned credits carry the deepest value.</h2>
+          <p>
+            Any credit type can fund a game entry. Prize booking stays stricter: only earned credits can
+            be turned into prize orders.
+          </p>
+        </div>
+
+        <div class="credit-grid">
+          <article class="credit-card">
+            <h3>Referral credits</h3>
+            <p>Acquired through invite links and follow-on friend activity. Useful for getting new users into the loop quickly.</p>
+          </article>
+          <article class="credit-card">
+            <h3>Donated credits</h3>
+            <p>Gifted by others and directed straight into playability, with expiry pressure encouraging faster reuse.</p>
+          </article>
+          <article class="credit-card credit-card-featured">
+            <h3>Earned credits</h3>
+            <p>Generated by wins, kept without the same expiry pressure, and used for prize booking. This is the platform’s core reward currency.</p>
+          </article>
+          <article class="credit-card">
+            <h3>Purchased credits</h3>
+            <p>Bought through supported payment flows to keep momentum going when users want a faster top-up path.</p>
+          </article>
+        </div>
+
+        <div class="split-band">
+          <article class="info-panel">
+            <h3>What happens on a win?</h3>
+            <p>
+              Reward credits are added to the earned credits pool, which means successful play strengthens
+              both future gameplay capacity and future prize eligibility.
+            </p>
+          </article>
+          <article class="info-panel">
+            <h3>What happens on a loss?</h3>
+            <p>
+              The entry fee is not simply wiped out. A percentage can be refunded to the same credit type,
+              which softens the downside and keeps replay viable.
+            </p>
+          </article>
+        </div>
       </div>
     </section>
 
-    <section class="cta-band">
-      <div>
-        <h2>Ready to use the app?</h2>
-        <p>Keep the brand on <strong>knowtowin.com</strong>, and send actual sign-in and gameplay traffic to the app host.</p>
+    <section class="section" id="prizes">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">Prizes and orders</p>
+          <h2>Rewards are not just decorative. They convert into a clear order flow.</h2>
+          <p>
+            The prize model supports both digital and physical rewards, while keeping booking gated by
+            profile completeness, address validity, verification, and checkout timing.
+          </p>
+        </div>
+
+        <div class="prize-layout">
+          <article class="feature-block">
+            <h3>Digital and physical prizes</h3>
+            <p>Users can work toward fast-delivered digital rewards or physical items that go through shipment and tracking.</p>
+          </article>
+          <article class="feature-block">
+            <h3>Earned credits only</h3>
+            <p>Prize orders are funded through earned credits only, which keeps the reward economy tied to actual performance.</p>
+          </article>
+          <article class="feature-block">
+            <h3>Checkout windows</h3>
+            <p>Cart items convert into orders during defined windows, with tag rules and eligibility checks deciding what can be booked.</p>
+          </article>
+          <article class="feature-block">
+            <h3>Refund-aware system</h3>
+            <p>Out-of-stock items, approved returns, or failed fulfillment can send earned credits back instead of trapping value.</p>
+          </article>
+        </div>
+
+        <div class="timeline-band">
+          <h3>Booking flow at a glance</h3>
+          <ol>
+            <li>Win games and build earned credits.</li>
+            <li>Complete profile, address, and verification requirements.</li>
+            <li>Add prizes to cart and wait for the relevant checkout window.</li>
+            <li>Convert eligible cart items into orders and track status afterward.</li>
+          </ol>
+        </div>
       </div>
-      <div>
-        <a class="button button-primary" href="https://app.knowtowin.com/">Go to app.knowtowin.com</a>
+    </section>
+
+    <section class="section section-alt" id="use-cases">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">Use cases beyond a single audience</p>
+          <h2>Designed for learners first, but flexible enough for organised programs.</h2>
+          <p>
+            The help material describes the product as useful across family-led learning, structured training,
+            community education efforts, and performance-based evaluation programs.
+          </p>
+        </div>
+
+        <div class="use-case-grid">
+          <article class="use-case-card">
+            <h3>Students and parents</h3>
+            <p>Create smaller competitive groups, set improvement goals, and make repeated practice feel more social and visible.</p>
+          </article>
+          <article class="use-case-card">
+            <h3>Schools, coaching, and training teams</h3>
+            <p>Turn learning material into repeatable quiz loops that keep performance measurable without feeling like static revision.</p>
+          </article>
+          <article class="use-case-card">
+            <h3>Community and development programs</h3>
+            <p>Use lightweight game flows to improve awareness, literacy, scheme comprehension, or local training participation.</p>
+          </article>
+          <article class="use-case-card">
+            <h3>Performance-linked evaluation</h3>
+            <p>Apply levels, progress, and consistency as signals for scholarships, support programs, or other structured opportunities.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">FAQ</p>
+          <h2>Questions people usually need answered before they enter the app.</h2>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary>Can users practice without spending credits?</summary>
+            <p>Yes. Practice mode allows repeat play without using entry credits and without generating rewards, which makes it useful for warm-up and revision.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Which credits can book prizes?</summary>
+            <p>Only earned credits can book prize orders. Referral, donated, and purchased credits can still be used to enter games.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What if a learner loses a game?</summary>
+            <p>A loss does not always mean the whole entry fee is lost. Part of the fee can be refunded back to the same credit type, depending on the rules for that credit source.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How are prizes actually claimed?</summary>
+            <p>Users add eligible items to cart, satisfy profile, address, and verification conditions, and then book during checkout windows using earned credits.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Does the app preserve an active game session?</summary>
+            <p>Yes. The gameplay state is stored on the server so a running game can be resumed if the session is interrupted.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Which browser should web users prefer?</summary>
+            <p>The web app is designed for Chrome-based usage today. This public page is lightweight, but the live app experience should be opened in a supported browser.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta-section">
+      <div class="shell">
+        <div class="cta-card">
+          <div>
+            <p class="section-kicker">Ready to move from the overview to the product?</p>
+            <h2>Use the lightweight homepage for discovery, then send action traffic to the app.</h2>
+            <p>
+              This apex site is tuned to explain the product cleanly. Sign-in, gameplay, credits activity,
+              and the full application flow live on the app host.
+            </p>
+          </div>
+          <div class="cta-actions">
+            <a class="button button-primary" href="https://app.knowtowin.com/">Go to app.knowtowin.com</a>
+            <a class="button button-secondary" href="#credits">Review how credits work</a>
+          </div>
+        </div>
       </div>
     </section>
   </main>
 
-  <footer class="shell footer">
-    <div class="footer-row">
-      <span>Know To Win</span>
-      <span><a href="https://app.knowtowin.com/">App</a></span>
+  <footer class="site-footer">
+    <div class="shell footer-grid">
+      <div>
+        <strong>Know To Win</strong>
+        <p>Quiz-based learning with levels, credits, practice loops, and rewards.</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="/">Home</a>
+        <a href="https://app.knowtowin.com/">App</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <p class="footer-note">Public homepage for discovery and SEO. Live app experience on <strong>app.knowtowin.com</strong>.</p>
     </div>
   </footer>
+
+  <script src="/assets/js/site.js" defer></script>
 </body>
 </html>
