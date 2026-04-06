@@ -4,24 +4,50 @@
   <meta charset="UTF-8">
   <base href="/"><!-- ✅ required for Flutter web (incl. WASM) -->
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Game and Learn">
+  <meta name="description" content="Launch the Know To Win web app. For the public overview, legal pages, and product details, visit knowtowin.com.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://app.knowtowin.com/">
   <meta name="google-signin-client_id" content="64979320907-f64nkkq2hvdmpoj9ccdgodt2p2388s7e.apps.googleusercontent.com">
-
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="know_to_win">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
   <!-- Cross-origin isolation (align with server/Nginx) -->
   <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
   <meta http-equiv="Cross-Origin-Embedder-Policy" content="credentialless" />
-
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>know_to_win</title>
+  <title>Know To Win App</title>
   <link rel="manifest" href="manifest.json">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <!-- ★ SEO: Open Graph / Twitter (aligned with levels) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Know To Win App">
+  <meta property="og:description" content="Launch the Know To Win web app. Learn how it works at https://knowtowin.com/learn/.">
+  <meta property="og:url" content="https://app.knowtowin.com/">
+  <meta property="og:image" content="https://cdn.knowtowin.com/og/knowtowin-banner.png">
+  <meta property="og:site_name" content="Know To Win">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Know To Win App">
+  <meta name="twitter:description" content="Launch the Know To Win web app. Learn how it works at https://knowtowin.com/learn/.">
+  <meta name="twitter:image" content="https://cdn.knowtowin.com/og/knowtowin-banner.png">
+  <!-- ★ SEO: end -->
+
+  <!-- Preconnects (cuts handshake time) -->
+  <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
+  <link rel="dns-prefetch" href="//checkout.razorpay.com">
+  <!-- ★ NEW: preconnect for the CDN hosting latest.tzf -->
+  <link rel="preconnect" href="https://cdn.knowtowin.com" crossorigin>
+  <link rel="dns-prefetch" href="//cdn.knowtowin.com">
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//www.gstatic.com">
+  <link rel="preconnect" href="https://firebaseinstallations.googleapis.com" crossorigin>
+  <link rel="dns-prefetch" href="//firebaseinstallations.googleapis.com">
 
   <!-- Preload your WASM worker artifacts -->
   <link rel="preload" href="workers/cache_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
@@ -31,19 +57,63 @@
   <link rel="preload" href="workers/timeduri_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
   <link rel="preload" href="workers/usb_auth_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
 
-  <!-- Preload your JS worker artifacts -->
+  <!-- ★ NEW: preload the tzf that stalls initialization -->
+
+  <!-- after -->
+  <!-- change preload to anonymous (or just delete this line entirely) -->
+  <link rel="preload"
+        href="https://cdn.knowtowin.com/appdata/latest.tzf"
+        as="fetch"
+        crossorigin="anonymous">
+
+  <!-- Preload your JS worker artifacts (disabled by you) -->
+  <!--
   <link rel="preload" href="workers/cache_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/decompress_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/language_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/session_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/timeduri_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
   <link rel="preload" href="workers/usb_auth_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
+  -->
+  <link rel="preload" href="/assets/assets/theme/default/svg/background.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/children/svg/background.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/dark/svg/background.webp" as="image">
+  <link rel="preload" href="/assets/assets/session_shared.webp" as="image">
+  <link rel="preload" href="/assets/assets/session_personal.webp" as="image">
+  <link rel="preload" href="/assets/assets/session_safe.webp" as="image">
+  <link rel="preload" href="/assets/assets/sleeping.webp" as="image">
+  <link rel="preload" href="/assets/assets/awake.webp" as="image">
+  <link rel="preload" href="/assets/assets/ship.webp" as="image">
+  <link rel="preload" href="/assets/assets/turnstile_error.webp" as="image">
+  <link rel="preload" href="/icons/loader.gif" as="image">
+  <link rel="preload" href="/assets/assets/language.webp" as="image">
+  <link rel="preload" href="/assets/assets/logo.png" as="image">
 
-  <!-- Optional: shave a little handshake time -->
-  <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
-  <link rel="dns-prefetch" href="//checkout.razorpay.com">
-  <link rel="preconnect" href="https://dapi.knowtowin.com" crossorigin>
-  <link rel="dns-prefetch" href="//dapi.knowtowin.com">
+  <link rel="preload" href="/assets/assets/theme/default/svg/pageBackgroundTile.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/children/svg/pageBackgroundTile.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/dark/svg/pageBackgroundTile.webp" as="image">
+
+  <link rel="preload" href="/assets/assets/theme/default/svg/cardBackgroundTile.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/children/svg/cardBackgroundTile.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/dark/svg/cardBackgroundTile.webp" as="image">
+
+  <link rel="preload" href="/assets/assets/theme/default/svg/filterSectionBackgroundTile.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/children/svg/filterSectionBackgroundTile.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/dark/svg/filterSectionBackgroundTile.webp" as="image">
+
+  <link rel="preload" href="/assets/assets/theme/default/svg/popupBackgroundImageTile.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/children/svg/popupBackgroundImageTile.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/dark/svg/popupBackgroundImageTile.webp" as="image">
+
+
+  <link rel="preload" href="/assets/assets/theme/default/svg/forgot.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/children/svg/forgot.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/dark/svg/forgot.webp" as="image">
+
+  <link rel="preload" href="/assets/assets/theme/default/svg/appbarBackground.png" as="image">
+  <link rel="preload" href="/assets/assets/theme/children/svg/appbarBackground.png" as="image">
+  <link rel="preload" href="/assets/assets/theme/dark/svg/appbarBackground.png" as="image">
+
 
   <style>
     /* Center the loading indicator */
@@ -53,15 +123,21 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #ffffff;
+      background-color: transparent;
       z-index: 9999;
       flex-direction: column;
       padding: 16px;
       gap: 12px;
     }
+    html { height: 100%; }
     body {
-      background-image: url(/assets/assets/theme/default/svg/pageBackgroundTile.webp);
-      background-repeat: repeat;
+      min-height: 100vh;
+      height: 100%;
+      margin: 0;
+      background-image: url(/assets/assets/theme/default/svg/background.webp);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
     }
     #loading-text {
       margin-top: 8px;
@@ -82,42 +158,220 @@
     #progress .bar {
       width: 0%;
       height: 100%;
-      background: #3b82f6; /* matches Tailwind's blue-500 */
+      background: #3b82f6; /* Tailwind blue-500 */
       transition: width .2s ease;
     }
+      /* NEW: soft, centered shadows for loader image + bar */
+  #loading > img {
+    /* Follows the circular alpha of your GIF */
+    filter: drop-shadow(0 0 10px rgba(0,0,0,.35));
+  }
+
+#progress { box-shadow: 0 0 10px 2px rgba(0,0,0,.2), inset 0 1px 2px rgba(0,0,0,.05); }
+
   </style>
+
+  <!-- ★ SEO: visually hidden utility (added) -->
+  <style>
+    .seo-hidden{
+      position:absolute !important;
+      width:1px;height:1px;padding:0;margin:-1px;
+      overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);
+      white-space:nowrap;border:0;
+    }
+  </style>
+  <!-- ★ SEO: end -->
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "4277920042";
+    const serviceWorkerVersion = "3949903248";
   </script>
 
-  <!-- InAppWebView web glue (fine to keep here) -->
+  <!-- ★ NEW: warm the tzf into the HTTP cache (mirrors typical fetch options) -->
+  <script>
+    (function warmTZF(){
+      const url = 'https://cdn.knowtowin.com/appdata/latest.tzf';
+      fetch(url, { mode: 'cors', credentials: 'omit', cache: 'force-cache' }).catch(()=>{});
+    })();
+  </script>
+  <!-- Strip version-y query params immediately to keep deep links clean -->
+  <script>
+    (function stripVersionParams() {
+      try {
+        const u = new URL(window.location.href);
+        const before = u.toString();
+        let changed = false;
+        for (const key of ['v','version','__h']) {  // ← also strip one-time cache buster
+          if (u.searchParams.has(key)) { u.searchParams.delete(key); changed = true; }
+        }
+        if (changed) {
+          const qs = u.searchParams.toString();
+          const clean = u.origin + u.pathname + (qs ? '?' + qs : '') + u.hash;
+          window.history.replaceState(null, '', clean);
+          console.log('[ver-clean] stripped query param(s):', before, '→', clean);
+        }
+      } catch (e) {
+        console.warn('[ver-clean] failed:', e);
+      }
+    })();
+  </script>
+
+  <!-- Version check against server; bust HTML cache once with ?__h=<serverVer> if mismatch -->
+  <script>
+    (async () => {
+      try {
+        const res = await fetch('/__app_version', { cache: 'no-store' });
+        const serverVer = (await res.text()).trim();
+        const storedVer = localStorage.getItem('app_version');
+        const swv = (typeof serviceWorkerVersion !== 'undefined' && serviceWorkerVersion != null)
+          ? String(serviceWorkerVersion)
+          : null;
+        console.log('[ver-check] server=', serverVer, 'stored=', storedVer, 'htmlSWV=', swv);
+
+        const mismatch = (storedVer && storedVer !== serverVer) || (swv && swv !== serverVer);
+
+        if (mismatch) {
+          console.log('[ver-refresh] New version detected. Clearing SW + caches, reloading with cache-buster…');
+
+          if ('serviceWorker' in navigator) {
+            try {
+              const regs = await navigator.serviceWorker.getRegistrations();
+              await Promise.allSettled(regs.map(r => r.unregister()));
+            } catch (e) {
+              console.warn('[ver-refresh] SW unregister failed:', e);
+            }
+          }
+          if (window.caches) {
+            try {
+              const keys = await caches.keys();
+              await Promise.allSettled(keys.map(k => caches.delete(k)));
+            } catch (e) {
+              console.warn('[ver-refresh] cache clear failed:', e);
+            }
+          }
+
+          localStorage.setItem('app_version', serverVer);
+
+          // Reload ONCE with a cache-busting param for HTML; preserve other params and the hash.
+          try {
+            const u = new URL(window.location.href);
+            u.searchParams.set('__h', serverVer);
+            const bust = u.origin + u.pathname + '?' + u.searchParams.toString() + u.hash;
+            console.log('[ver-refresh] redirect →', bust);
+            window.location.replace(bust);
+            return;
+          } catch {
+            window.location.reload();
+            return;
+          }
+        }
+
+        // First run or already on latest → store for next compare.
+        localStorage.setItem('app_version', serverVer);
+      } catch (e) {
+        console.warn('[ver-check] Version check failed; proceeding without SW reset', e);
+      }
+    })();
+  </script>
+  <!-- Your helper SW in its own scope; OK with WASM -->
+  <!--  <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', async () => {
+          try {
+            // Use a dedicated scope so it doesn't conflict with Flutter's SW
+            const reg = await navigator.serviceWorker.register('/sw-offline.js', { scope: '/sw-offline/' });
+            console.log('[offline-sw] registered:', reg.scope);
+          } catch (e) {
+            console.warn('[offline-sw] registration failed:', e);
+          }
+        });
+      }
+    </script>-->
+  <!-- InAppWebView web glue -->
   <script type="application/javascript"
           src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
           defer></script>
 
-  <!-- Your helper SW in its own scope; OK with WASM -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', async () => {
-        try {
-          // Use a dedicated scope so it doesn't conflict with Flutter's SW
-          const reg = await navigator.serviceWorker.register('/sw-offline.js', { scope: '/sw-offline/' });
-          console.log('[offline-sw] registered:', reg.scope);
-        } catch (e) {
-          console.warn('[offline-sw] registration failed:', e);
+  <!-- ★ SEO: JSON-LD (extended with Level Map ItemList) -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": ["WebApplication","Game"],
+          "name": "Know To Win",
+          "url": "https://app.knowtowin.com/",
+          "applicationCategory": "GameApplication",
+          "operatingSystem": "Web, Android, iOS",
+          "description": "The Know To Win web app for AI-crafted quizzes, weekly progress, credits, and prize redemption.",
+          "image": "https://cdn.knowtowin.com/og/knowtowin-banner.png",
+          "publisher": { "@type": "Organization", "name": "Know To Win" },
+          "inLanguage": "en",
+          "sameAs": ["https://knowtowin.com/learn/"]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How does Know To Win work?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Pick a topic and level, enter with credits, answer questions to win credits back, and climb weekly levels to redeem prizes."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Where can I read more?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Visit the Learn page at https://knowtowin.com/learn/ for details on credits, prizes, levels, and safety."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What do levels 1–17 correspond to?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Levels 1–12 are school levels (Class 1–12). Levels 13–16 are college levels (Year 1–4). Level 17 is for users above college level (post-grad, professional, research, competitive)."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "ItemList",
+          "name": "Know To Win Level Map (1–17)",
+          "url": "https://app.knowtowin.com/",
+          "numberOfItems": 17,
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1,  "name": "Level 1",  "description": "School level 1 (Class 1)" },
+            { "@type": "ListItem", "position": 2,  "name": "Level 2",  "description": "School level 2 (Class 2)" },
+            { "@type": "ListItem", "position": 3,  "name": "Level 3",  "description": "School level 3 (Class 3)" },
+            { "@type": "ListItem", "position": 4,  "name": "Level 4",  "description": "School level 4 (Class 4)" },
+            { "@type": "ListItem", "position": 5,  "name": "Level 5",  "description": "School level 5 (Class 5)" },
+            { "@type": "ListItem", "position": 6,  "name": "Level 6",  "description": "School level 6 (Class 6)" },
+            { "@type": "ListItem", "position": 7,  "name": "Level 7",  "description": "School level 7 (Class 7)" },
+            { "@type": "ListItem", "position": 8,  "name": "Level 8",  "description": "School level 8 (Class 8)" },
+            { "@type": "ListItem", "position": 9,  "name": "Level 9",  "description": "School level 9 (Class 9)" },
+            { "@type": "ListItem", "position": 10, "name": "Level 10", "description": "School level 10 (Class 10 / board prep)" },
+            { "@type": "ListItem", "position": 11, "name": "Level 11", "description": "School level 11 (Class 11)" },
+            { "@type": "ListItem", "position": 12, "name": "Level 12", "description": "School level 12 (Class 12)" },
+            { "@type": "ListItem", "position": 13, "name": "Level 13", "description": "College level 1 (Undergrad Year 1)" },
+            { "@type": "ListItem", "position": 14, "name": "Level 14", "description": "College level 2 (Undergrad Year 2)" },
+            { "@type": "ListItem", "position": 15, "name": "Level 15", "description": "College level 3 (Undergrad Year 3)" },
+            { "@type": "ListItem", "position": 16, "name": "Level 16", "description": "College level 4 (Undergrad Year 4 / capstone)" },
+            { "@type": "ListItem", "position": 17, "name": "Level 17", "description": "Above college (post-grad, professional, research, competitive)" }
+          ]
         }
-      });
+      ]
     }
   </script>
-
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <!-- ★ SEO: end -->
 </head>
 <body>
 <!-- Loading Indicator -->
 <div id="loading" role="status" aria-live="polite" aria-label="Loading application">
-  <img src="icons/loader.gif" alt="Loading..." width="200" />
+  <img src="icons/loader.gif" alt="Loading..." width="100" height="100" />
   <div id="loading-text">Warming up…</div>
   <div id="progress" aria-label="Loading progress" role="progressbar"
        aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -125,7 +379,116 @@
   </div>
 </div>
 
+<!-- ★ SEO: hidden explainer (kept) + explicit Level Map list for crawlers -->
+<main id="seo-explainer" class="seo-hidden">
+  <h1>Know To Win — The Education Game</h1>
+  <p>Launch the Know To Win web app to play AI-crafted quizzes across school and pro topics. Read the full explainer at <a href="https://knowtowin.com/learn/">knowtowin.com/learn/</a>.</p>
+  <h2>Quick Overview</h2>
+  <ul>
+    <li>Use Earned, Donated, Referral, or Purchased credits to enter; winnings add to Earned Credits.</li>
+    <li>Levels are organized as Category → Subject → Level; progress each week to rank among top improvers.</li>
+    <li>Web app runs in WebAssembly mode on Chrome (Firefox not supported currently).</li>
+    <li>Sensitive data is encrypted; under-13 players require parental consent for verification and prize redemption.</li>
+  </ul>
+  <h2>Level Map (1–17)</h2>
+  <ol>
+    <li>Level 1 — School level 1 (Class 1)</li>
+    <li>Level 2 — School level 2 (Class 2)</li>
+    <li>Level 3 — School level 3 (Class 3)</li>
+    <li>Level 4 — School level 4 (Class 4)</li>
+    <li>Level 5 — School level 5 (Class 5)</li>
+    <li>Level 6 — School level 6 (Class 6)</li>
+    <li>Level 7 — School level 7 (Class 7)</li>
+    <li>Level 8 — School level 8 (Class 8)</li>
+    <li>Level 9 — School level 9 (Class 9)</li>
+    <li>Level 10 — School level 10 (Class 10 / board prep)</li>
+    <li>Level 11 — School level 11 (Class 11)</li>
+    <li>Level 12 — School level 12 (Class 12)</li>
+    <li>Level 13 — College level 1 (Undergrad Year 1)</li>
+    <li>Level 14 — College level 2 (Undergrad Year 2)</li>
+    <li>Level 15 — College level 3 (Undergrad Year 3)</li>
+    <li>Level 16 — College level 4 (Undergrad Year 4 / capstone)</li>
+    <li>Level 17 — Above college (post-grad, professional, research, competitive)</li>
+  </ol>
+</main>
+<!-- ★ SEO: end -->
+
+<noscript>
+  <p style="max-width:720px;margin:1rem auto;padding:0 1rem;font-family:Arial,sans-serif;">
+    JavaScript is required to use the web app. You can read about the game at <a href="https://knowtowin.com/learn/">knowtowin.com/learn/</a>.
+  </p>
+</noscript>
+
 <!-- Load the Flutter bootstrap LAST (match Flutter’s template for WASM) -->
 <script src="flutter_bootstrap.js" async></script>
+
+<!-- Late-register offline helper SW after wasm (or first-frame) -->
+<script>
+  (function () {
+    if (!('serviceWorker' in navigator)) return;
+
+    async function isOfflineSWAlreadyActive() {
+      try {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        return regs.some(r => r.scope.endsWith('/sw-offline/'));
+      } catch { return false; }
+    }
+
+    async function registerOfflineSW() {
+      if (registerOfflineSW._did) return;
+      if (await isOfflineSWAlreadyActive()) {
+        registerOfflineSW._did = true;
+        console.log('[offline-sw] already active; skipping late register');
+        return;
+      }
+      registerOfflineSW._did = true;
+
+      navigator.serviceWorker
+        .register('/sw-offline.js', { scope: '/sw-offline/' })
+        .then(reg => console.log('[offline-sw] registered late:', reg.scope))
+        .catch(err => console.warn('[offline-sw] registration failed:', err));
+    }
+
+    // Trigger after wasm finishes (from bootstrap progress events)
+    window.addEventListener('ktw-wasm-progress', (e) => {
+      if (e && e.detail && e.detail.done) {
+        setTimeout(registerOfflineSW, 0);
+      }
+    });
+
+    // Fallback: after first Flutter frame
+    window.addEventListener('flutter-first-frame', () => {
+      if (!registerOfflineSW._did) setTimeout(registerOfflineSW, 0);
+    }, { once: true });
+
+    // Safety net: much later after load
+    window.addEventListener('load', () => {
+      setTimeout(() => { if (!registerOfflineSW._did) registerOfflineSW(); }, 8000);
+    }, { once: true });
+  })();
+</script>
+
+<!-- Defer Razorpay until after first frame / idle -->
+<script>
+  (function () {
+    function addRazorpay() {
+      if (window.Razorpay) return;
+      var s = document.createElement('script');
+      s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      s.async = true;
+      s.defer = true;
+      s.crossOrigin = 'anonymous';
+      document.head.appendChild(s);
+    }
+
+    window.addEventListener('flutter-first-frame', function () {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(addRazorpay, { timeout: 2000 });
+      } else {
+        setTimeout(addRazorpay, 0);
+      }
+    }, { once: true });
+  })();
+</script>
 </body>
 </html>

@@ -68,8 +68,5 @@
   "globalTapThrottleIntervalMs": 800,
   "globalTapThrottleMode": "throttle",
 
-  "forgotFunnyImage": "forgot.webp",
-  "sessionSafeImage" : "session_safe.webp",
-  "sessionPersonalImage" : "session_personal.webp",
-  "sessionSharedImage" : "session_shared.webp"
+  "forgotFunnyImage": "forgot.webp"
 }

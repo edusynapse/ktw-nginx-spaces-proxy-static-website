@@ -4,8 +4,9 @@
   <meta charset="UTF-8">
   <base href="/"><!-- ✅ required for Flutter web (incl. WASM) -->
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <!-- ★ SEO: refined description to include levels 1–17 -->
-  <meta name="description" content="Play AI-crafted quizzes across levels 1–17 — school (1–12), college (13–16), and level 17 for above college. Earn credits, improve weekly, redeem prizes.">
+  <meta name="description" content="Launch the Know To Win web app. For the public overview, legal pages, and product details, visit knowtowin.com.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://app.knowtowin.com/">
   <meta name="google-signin-client_id" content="64979320907-f64nkkq2hvdmpoj9ccdgodt2p2388s7e.apps.googleusercontent.com">
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -17,7 +18,7 @@
   <meta http-equiv="Cross-Origin-Embedder-Policy" content="credentialless" />
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-  <title>Know To Win — Play AI Quiz Games, Learn Faster, Win Prizes</title>
+  <title>Know To Win App</title>
   <link rel="manifest" href="manifest.json">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
@@ -25,23 +26,21 @@
 
   <!-- ★ SEO: Open Graph / Twitter (aligned with levels) -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Know To Win — The Education Game">
-  <meta property="og:description" content="Play AI-crafted quizzes across levels 1–17: school (1–12), college (13–16), and level 17 for above college. Read the full explainer at /learn/index.html.">
-  <meta property="og:url" content="https://knowtowin.com/">
+  <meta property="og:title" content="Know To Win App">
+  <meta property="og:description" content="Launch the Know To Win web app. Learn how it works at https://knowtowin.com/learn/.">
+  <meta property="og:url" content="https://app.knowtowin.com/">
   <meta property="og:image" content="https://cdn.knowtowin.com/og/knowtowin-banner.png">
   <meta property="og:site_name" content="Know To Win">
   <meta property="og:locale" content="en_IN">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Know To Win — The Education Game">
-  <meta name="twitter:description" content="AI-made quizzes across levels 1–17: school 1–12, college 13–16, and 17 for above college. Learn more at /learn/index.html.">
+  <meta name="twitter:title" content="Know To Win App">
+  <meta name="twitter:description" content="Launch the Know To Win web app. Learn how it works at https://knowtowin.com/learn/.">
   <meta name="twitter:image" content="https://cdn.knowtowin.com/og/knowtowin-banner.png">
   <!-- ★ SEO: end -->
 
   <!-- Preconnects (cuts handshake time) -->
   <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
   <link rel="dns-prefetch" href="//checkout.razorpay.com">
-  <link rel="preconnect" href="https://dapi.knowtowin.com" crossorigin>
-  <link rel="dns-prefetch" href="//dapi.knowtowin.com">
   <!-- ★ NEW: preconnect for the CDN hosting latest.tzf -->
   <link rel="preconnect" href="https://cdn.knowtowin.com" crossorigin>
   <link rel="dns-prefetch" href="//cdn.knowtowin.com">
@@ -83,6 +82,7 @@
   <link rel="preload" href="/assets/assets/session_personal.webp" as="image">
   <link rel="preload" href="/assets/assets/session_safe.webp" as="image">
   <link rel="preload" href="/assets/assets/sleeping.webp" as="image">
+  <link rel="preload" href="/assets/assets/awake.webp" as="image">
   <link rel="preload" href="/assets/assets/ship.webp" as="image">
   <link rel="preload" href="/assets/assets/turnstile_error.webp" as="image">
   <link rel="preload" href="/icons/loader.gif" as="image">
@@ -184,7 +184,7 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "646966990";
+    const serviceWorkerVersion = "934004100";
   </script>
 
   <!-- ★ NEW: warm the tzf into the HTTP cache (mirrors typical fetch options) -->
@@ -300,14 +300,14 @@
         {
           "@type": ["WebApplication","Game"],
           "name": "Know To Win",
-          "url": "https://knowtowin.com/",
+          "url": "https://app.knowtowin.com/",
           "applicationCategory": "GameApplication",
           "operatingSystem": "Web, Android, iOS",
-          "description": "An education game with AI-crafted quizzes. Enter with credits, answer correctly to win, improve weekly across levels, and redeem prizes.",
+          "description": "The Know To Win web app for AI-crafted quizzes, weekly progress, credits, and prize redemption.",
           "image": "https://cdn.knowtowin.com/og/knowtowin-banner.png",
           "publisher": { "@type": "Organization", "name": "Know To Win" },
           "inLanguage": "en",
-          "sameAs": ["https://knowtowin.com/learn/index.html"]
+          "sameAs": ["https://knowtowin.com/learn/"]
         },
         {
           "@type": "FAQPage",
@@ -325,7 +325,7 @@
               "name": "Where can I read more?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Visit the Learn page at https://knowtowin.com/learn/index.html for details on credits, prizes, levels, and safety."
+                "text": "Visit the Learn page at https://knowtowin.com/learn/ for details on credits, prizes, levels, and safety."
               }
             },
             {
@@ -341,7 +341,7 @@
         {
           "@type": "ItemList",
           "name": "Know To Win Level Map (1–17)",
-          "url": "https://knowtowin.com/",
+          "url": "https://app.knowtowin.com/",
           "numberOfItems": 17,
           "itemListElement": [
             { "@type": "ListItem", "position": 1,  "name": "Level 1",  "description": "School level 1 (Class 1)" },
@@ -382,7 +382,7 @@
 <!-- ★ SEO: hidden explainer (kept) + explicit Level Map list for crawlers -->
 <main id="seo-explainer" class="seo-hidden">
   <h1>Know To Win — The Education Game</h1>
-  <p>Play AI-crafted quizzes across school and pro topics. Enter with credits, answer correctly to win, improve weekly across levels 1–17, and redeem prizes. Read the full explainer at <a href="/learn/index.html">/learn</a>.</p>
+  <p>Launch the Know To Win web app to play AI-crafted quizzes across school and pro topics. Read the full explainer at <a href="https://knowtowin.com/learn/">knowtowin.com/learn/</a>.</p>
   <h2>Quick Overview</h2>
   <ul>
     <li>Use Earned, Donated, Referral, or Purchased credits to enter; winnings add to Earned Credits.</li>
@@ -415,7 +415,7 @@
 
 <noscript>
   <p style="max-width:720px;margin:1rem auto;padding:0 1rem;font-family:Arial,sans-serif;">
-    JavaScript is required to play. You can read about the game at <a href="/learn/index.html">/learn</a>.
+    JavaScript is required to use the web app. You can read about the game at <a href="https://knowtowin.com/learn/">knowtowin.com/learn/</a>.
   </p>
 </noscript>
 
