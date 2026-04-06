@@ -68,6 +68,25 @@ http {
       try_files $uri =404;
     }
 
+    location = /support {
+      add_header Cache-Control "public, max-age=600, must-revalidate" always;
+      try_files /support.html =404;
+    }
+
+    location = /support/ {
+      return 301 /support;
+    }
+
+    location = /support.html {
+      add_header Cache-Control "public, max-age=600, must-revalidate" always;
+      try_files $uri =404;
+    }
+
+    location ~ ^/(index|support)_[A-Z][A-Z]\.html$ {
+      add_header Cache-Control "public, max-age=600, must-revalidate" always;
+      try_files $uri =404;
+    }
+
     location = /robots.txt {
       add_header Cache-Control "public, max-age=3600" always;
       try_files $uri =404;

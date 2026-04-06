@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-page-key="index" data-lang-code="EN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -11,6 +11,8 @@
   <meta name="color-scheme" content="light">
   <meta name="application-name" content="Know To Win">
   <link rel="canonical" href="https://knowtowin.com/">
+  <link rel="alternate" hreflang="en" href="https://knowtowin.com/">
+  <link rel="alternate" hreflang="x-default" href="https://knowtowin.com/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230c6b74'/%3E%3Cpath d='M18 16h8v14l13-14h10L34.5 31.2 50 48H39.6L26 33.2V48h-8V16Z' fill='white'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -96,7 +98,7 @@
 
   <header class="site-header">
     <div class="shell masthead">
-      <a class="brand" href="/" aria-label="Know To Win homepage">
+      <a class="brand" href="/" aria-label="Know To Win homepage" data-page-link="index">
         <span class="brand-mark" aria-hidden="true">K</span>
         <span class="brand-copy">
           <strong>Know To Win</strong>
@@ -116,8 +118,17 @@
         <a href="#how-it-plays">How it plays</a>
         <a href="#credits-rewards">Credits & rewards</a>
         <a href="#who-its-for">Who it's for</a>
+        <a href="/support" data-page-link="support">Support</a>
         <a href="#faq">FAQ</a>
       </nav>
+
+      <div class="language-switcher" data-language-switcher hidden>
+        <button class="language-toggle" type="button" aria-expanded="false" aria-haspopup="true" data-language-toggle>
+          <span class="language-toggle-meta">Language</span>
+          <span class="language-toggle-value" data-current-language>English</span>
+        </button>
+        <div class="language-menu" aria-label="Language menu" data-language-menu></div>
+      </div>
 
       <a class="button button-primary desktop-cta" href="https://app.knowtowin.com/">Play on the web</a>
     </div>
@@ -431,8 +442,11 @@
         <p>Quiz-based learning with short game rounds, hints, levels, earned credits, and rewards.</p>
       </div>
       <nav class="footer-links" aria-label="Footer">
-        <a href="/">Home</a>
+        <a href="/" data-page-link="index">Home</a>
+        <a href="/support" data-page-link="support">Support</a>
         <a href="#faq">FAQ</a>
+        <a href="https://cdn.knowtowin.com/terms/privacy_policy_EN.html" data-legal-link="privacy" target="_blank" rel="noopener">Privacy</a>
+        <a href="https://cdn.knowtowin.com/terms/terms_and_conditions_EN.html" data-legal-link="terms" target="_blank" rel="noopener">Terms</a>
         <a href="https://app.knowtowin.com/">App</a>
       </nav>
       <p class="footer-note">Play on the web at <strong>app.knowtowin.com</strong>.</p>
