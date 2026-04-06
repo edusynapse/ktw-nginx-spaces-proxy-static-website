@@ -29,7 +29,8 @@
   ],
   "pages": {
     "index": {
-      "EN": "/"
+      "EN": "/",
+      "HI": "/index_HI.html"
     },
     "support": {
       "EN": "/support"
