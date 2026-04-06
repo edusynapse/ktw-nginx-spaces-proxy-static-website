@@ -1,0 +1,333 @@
+# Plan 66 Nginx Container — Defect Report
+
+> **Scope**: deep-dive into actual committed files vs the plan.
+> Source plan: [dev_plans/plan_66_frontend_edge_container_cutover.md](file:///home/surajitray/StudioProjects/ktw-nginx-spaces-proxy-static-website/dev_plans/plan_66_frontend_edge_container_cutover.md)
+>
+> This is a **defect/gap report only**. The source plan is not modified.
+
+---
+
+## Summary Table
+
+| # | File | Severity | Defect |
+|---|------|----------|--------|
+| D1 | `nginx.conf.template:43` | 🔴 Critical | PROD `server_name` is still `knowtowin.com` — the central task of the plan, unchanged |
+| D2 | `nginx.conf.template:41–133` | 🔴 Critical | PROD server block has **no** global `X-Robots-Tag: noindex, nofollow` — robots leak through every non-SW response |
+| D3 | [build/robots.txt](file:///home/surajitray/StudioProjects/ktw-nginx-spaces-proxy-static-website/build/robots.txt) | 🔴 Critical | `Allow: /` and `Sitemap: https://knowtowin.com/sitemap.xml` — apex crawl claim is **live in the committed bundle** |
+| D4 | [build/sitemap.xml](file:///home/surajitray/StudioProjects/ktw-nginx-spaces-proxy-static-website/build/sitemap.xml) | 🔴 Critical | Lists `https://knowtowin.com/` URLs — apex sitemap is committed and served on what will become the app host |
+| D5 | `build/index.html:43–44` | 🔴 Critical | Preconnect/prefetch points to `https://dapi.knowtowin.com` (dev API) — production bundle is wired to the **wrong API host** |
+| D6 | `nginx.conf.template:102–105` | 🟠 High | Font Awesome redirect target for percent-encoded filenames is wrong — creates a redirect loop for `%2520`-encoded requests |
+| D7 | `devbuild/` | 🟠 High | `devbuild/` has **no [robots.txt](file:///home/surajitray/IdeaProjects/know_to_win/web/robots.txt)** — `devapp.knowtowin.com` could expose the SPA fallback to crawlers without a crawl gate |
+| D8 | [nginx.conf.template](file:///home/surajitray/StudioProjects/ktw-nginx-spaces-proxy-static-website/nginx.conf.template) | 🟠 High | No `location ^~ /.well-known/` block anywhere — the plan's Workstream 6 is entirely absent from the config |
+| D9 | `nginx.conf.template:224–282` | 🟡 Medium | Localhost block is missing `Strict-Transport-Security` — minor but plan says "keep versioning path intact"; this block also lacks `X-Robots-Tag` |
+| D10 | `docker-entrypoint.sh:92` | 🟡 Medium | `envsubst` substitutes only `$APP_VERSION_PROD` and `$APP_VERSION_DEV` — if the `server_name` is changed to use a variable (recommended), it won't be substituted |
+| D11 | [build/index.html](file:///home/surajitray/StudioProjects/ktw-nginx-spaces-proxy-static-website/build/index.html) | 🟡 Medium | `og:url`, JSON-LD `url`, and `ItemList url` all still point to `https://knowtowin.com/` — committed into the prod bundle |
+| D12 | `nginx.conf.template:86–88` | 🟡 Medium | PROD block explicitly serves [robots.txt](file:///home/surajitray/IdeaProjects/know_to_win/web/robots.txt) and [sitemap.xml](file:///home/surajitray/IdeaProjects/know_to_win/web/sitemap.xml) from the bundle with `Cache-Control: public` — contradicts plan requirement to suppress/override crawl files on the app host |
+| D13 | `nginx.conf.template:183–185` | 🟡 Medium | DEV block similarly serves bundle's [robots.txt](file:///home/surajitray/IdeaProjects/know_to_win/web/robots.txt)/[sitemap.xml](file:///home/surajitray/IdeaProjects/know_to_win/web/sitemap.xml) publicly — should serve a `Disallow: /` robots on the devapp host |
+| D14 | `Dockerfile:21–22` | 🟢 Low | `RUN ls` visibility check uses `||` without `set -e` protection — a missing fonts dir silently passes the build rather than aborting |
+| D15 | Plan §7 | 🟢 Low | The plan's `rsync` commands use the **same Flutter `build/web/` source** for both prod and devbuild copies — this is warned about in the plan text but there is no guard (script, Makefile target, or CI check) that enforces "prod first, then devbuild" |
+
+---
+
+## Detailed Defects
+
+### D1 — PROD `server_name` is still `knowtowin.com` (🔴 Critical)
+
+**File**: `nginx.conf.template:43`
+
+```nginx
+server {
+  listen 8080;
+  server_name knowtowin.com;   ← must become app.knowtowin.com
+```
+
+This is the **primary task** of Workstream 1. The config has not been changed. Deploying the container as-is means the prod virtual host will answer for `knowtowin.com`, not `app.knowtowin.com`. Any request with `Host: app.knowtowin.com` would fall through to the DEV or localhost block, serving the wrong bundle.
+
+**Fix**: Change `server_name knowtowin.com;` → `server_name app.knowtowin.com;`
+
+During the transition window, the plan recommends temporarily including both:
+```nginx
+server_name app.knowtowin.com knowtowin.com;
+```
+Remove `knowtowin.com` once the apex is detached from this container.
+
+---
+
+### D2 — No global `X-Robots-Tag: noindex` on the PROD block (🔴 Critical)
+
+**File**: `nginx.conf.template:41–133`
+
+The DEV block (line 147) correctly has:
+```nginx
+add_header X-Robots-Tag "noindex, nofollow" always;
+```
+
+The PROD block has **no such server-level directive**. The individual service-worker and utility locations have `X-Robots-Tag`, but any response served by the SPA fallback `location /`, `location = /index.html`, or the static-asset block carries **no `X-Robots-Tag`**.
+
+The plan (Workstream 2) explicitly requires adding `X-Robots-Tag: noindex, nofollow` to the production app host. This was not done. Google will freely crawl `app.knowtowin.com` as if it were indexable.
+
+**Fix**: Add to the PROD `server {}` block near line 46:
+```nginx
+add_header X-Robots-Tag "noindex, nofollow" always;
+```
+
+---
+
+### D3 — `build/robots.txt` claims apex crawl ownership (🔴 Critical)
+
+**File**: `build/robots.txt` (committed, served on what becomes `app.knowtowin.com`)
+
+```
+User-agent: *
+Allow: /
+Sitemap: https://knowtowin.com/sitemap.xml
+```
+
+This file:
+1. Allows full crawl — contradicts the `noindex` intent for the app host
+2. Points the Sitemap back to `knowtowin.com` — the app host is advertising the **apex sitemap** to crawlers
+
+The plan (Workstream 2) says to override bundle crawl files or replace them. This has not been done. Until the bundle is regenerated or the Nginx config overrides this response, the app host will advertise itself as an open crawl surface with an apex-owned sitemap.
+
+**Fix**: Either:
+- Override in Nginx: `location = /robots.txt { return 200 "User-agent: *\nDisallow: /\n"; }`
+- Or replace `build/robots.txt` with a disallow-all file as part of the normalization step
+
+---
+
+### D4 — `build/sitemap.xml` lists apex URLs (🔴 Critical)
+
+**File**: `build/sitemap.xml` (committed, served on what becomes `app.knowtowin.com`)
+
+```xml
+<loc>https://knowtowin.com/</loc>
+<loc>https://knowtowin.com/learn/</loc>
+<loc>https://knowtowin.com/privacy</loc>
+<loc>https://knowtowin.com/terms</loc>
+<loc>https://knowtowin.com/email_help</loc>
+```
+
+When served from `app.knowtowin.com/sitemap.xml`, Google Search Console will associate this sitemap with the wrong property. The `loc` entries describe apex URLs, not app-subdomain URLs. This file should not be publicly served from the app host at all.
+
+**Fix**: Override in Nginx to return 404 or empty: `location = /sitemap.xml { return 404; }`, or omit it entirely from `build/` during bundle normalization.
+
+---
+
+### D5 — Production bundle `index.html` preconnects to the dev API (🔴 Critical)
+
+**File**: `build/index.html:43–44`
+
+```html
+<link rel="preconnect" href="https://dapi.knowtowin.com" crossorigin>
+<link rel="dns-prefetch" href="//dapi.knowtowin.com">
+```
+
+`dapi.knowtowin.com` is the **dev/preprod API host**, not `api.knowtowin.com`. This is the bundle committed in `build/` (production) with `serviceWorkerVersion = "646966990"`. Every production page load will pre-connect to the dev API. If the dev API is not reachable from production context, this causes a wasted TLS handshake on every page load, and risks accidentally routing traffic to the wrong backend.
+
+This is the same symptom as gap **G15** from the Flutter/backend analysis — the `settings.dart` `apiBaseUrl` is still toggled to the dev host, meaning the production bundle was built against the wrong endpoint.
+
+**Fix**: Rebuild the production Flutter bundle with `--dart-define=API_BASE_URL=https://api.knowtowin.com`. The plan (§8) assumes this has been done before copying into `build/`.
+
+---
+
+### D6 — Font Awesome redirect creates a loop for `%2520`-encoded requests (🟠 High)
+
+**File**: `nginx.conf.template:102–105` (PROD block)
+
+```nginx
+location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
+  add_header Cache-Control "private, no-store" always;
+  return 302 /Font%20Awesome%207%20$1.otf?$canon_qs_prod;
+}
+```
+
+The redirect target is `/Font%20Awesome%207%20$1.otf`. The top-level files in `build/` are:
+- `Font Awesome 7 Brands-Regular-400.otf` (space-named — accessible as `Font%20Awesome%207%20Brands-Regular-400.otf`)
+- `Font%20Awesome%207%20Brands-Regular-400.otf` (percent-named — accessible as `Font%2520Awesome%2520...` when double-encoded)
+
+When a request comes for `Font%2520Awesome%2520...` (double-encoded, matched by `%2520`), Nginx redirects to `/Font%20Awesome%207%20$1.otf`. Nginx will then serve the literal file named `Font%20Awesome%207%20...otf` (the percent-encoded filename in the `build/` root), which is correct — this works.
+
+However, the **static asset block** at line 108 also matches `.otf` files and enforces canonical versioning. A font request that hits the redirect, then follows the redirect URL, will be processed by the static asset block which checks `$need_vredir_prod`. If the `?version=` query string from the redirect is not exactly the canonical version, it will redirect again. Because `$canon_qs_prod` is appended to the redirect target, this should be stable on first redirect. **But** the redirect target `/Font%20Awesome%207%20$1.otf?$canon_qs_prod` appends the version from the map at template-render time — not from the actual request. Verify that `$canon_qs_prod` in the regex location context correctly expands via the http-level map. If not, the version redirect and font redirect interact to create multiple 302 hops per font request.
+
+**Fix**: Add explicit `break` behavior or combine the Font Awesome redirect with the version query in a single step. At minimum this must be verified with browser network traces.
+
+---
+
+### D7 — `devbuild/` has no `robots.txt` (🟠 High)
+
+**Observed**: `find` on `devbuild/` lists 28 files — no `robots.txt` present.
+
+The DEV (`devapp.knowtowin.com`) server block has a global `X-Robots-Tag: noindex, nofollow` header (line 147 — correct). However, the Nginx config **also explicitly serves `robots.txt` from the bundle**:
+
+```nginx
+# DEV block line 183:
+location = /robots.txt { default_type text/plain; add_header Cache-Control "public, max-age=86400" always; try_files $uri =404; }
+```
+
+Since `devbuild/robots.txt` does not exist, this returns **404**. A crawler that checks `robots.txt` before crawling gets a 404, which by RFC means the crawler should assume **no restrictions** and crawl freely. Combined with the `X-Robots-Tag` header, the robots situation on devapp is inconsistent.
+
+**Fix**: Either add an explicit `Disallow: /` robots.txt to `devbuild/`, or change the DEV robots location to return the disallow inline:
+```nginx
+location = /robots.txt { default_type text/plain; return 200 "User-agent: *\nDisallow: /\n"; }
+```
+
+---
+
+### D8 — No `.well-known` location block anywhere in the config (🟠 High)
+
+**File**: `nginx.conf.template` (entire file searched — zero results for `well-known`)
+
+The plan (Workstream 6) says:
+> "add a stable place in this repo for those files and ensure the Nginx config serves them without SPA fallback interference"
+
+The SPA fallback at line 127–132 is:
+```nginx
+location / {
+  try_files $uri $uri/ /index.html;   ← SPA fallback
+```
+
+`/.well-known/assetlinks.json` must return the actual JSON file with the correct `Content-Type`, **not** the Flutter `index.html`. Without an explicit `location ^~ /.well-known/` block before the SPA fallback, Android and iOS app-link verification will either receive `index.html` (verification fails silently) or 404.
+
+The plan correctly identifies this risk and recommends a fix — the config change has not been done.
+
+**Fix**: Add to both PROD and DEV server blocks:
+```nginx
+location ^~ /.well-known/ {
+  root /usr/share/nginx/html;   # or devhtml for DEV
+  default_type application/json;
+  add_header Cache-Control "public, max-age=3600" always;
+  try_files $uri =404;
+}
+```
+This must appear **before** the `location /` SPA fallback.
+
+---
+
+### D9 — Localhost block missing `Strict-Transport-Security` and `X-Robots-Tag` (🟡 Medium)
+
+**File**: `nginx.conf.template:224–282`
+
+The localhost block omits:
+- `Strict-Transport-Security` (present in PROD and DEV blocks at lines 46/143)
+- `X-Robots-Tag`
+
+While localhost smoke checks happen over HTTP and HSTS is largely irrelevant there, the omission creates asymmetry that makes smoke-check results misleading (different response headers than prod). If this container is ever exposed via a tunnel (ngrok, local port-forward, etc.), the missing HSTS header is a real gap.
+
+**Fix**: Add to the localhost block if symmetry with prod/dev is desired:
+```nginx
+add_header X-Robots-Tag "noindex, nofollow" always;
+```
+
+---
+
+### D10 — `envsubst` scope excludes potential `server_name` variables (🟡 Medium)
+
+**File**: `docker-entrypoint.sh:92`
+
+```sh
+envsubst '$APP_VERSION_PROD $APP_VERSION_DEV' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+```
+
+`envsubst` is called with an **explicit variable allowlist** (`'$APP_VERSION_PROD $APP_VERSION_DEV'`). Only those two variables are substituted. If the `server_name` is later parameterized (e.g., `server_name $PROD_HOST;`) to make the host configurable via env vars, the entrypoint will silently leave the literal `$PROD_HOST` string in the rendered config, causing Nginx to start with a literal dollar-sign as the server name.
+
+This is an operational footgun: the test (`nginx -g 'daemon off;'`) at the end may still pass because Nginx tolerates unknown server names, but requests will not route correctly.
+
+**Fix**: Either:
+- Document that `envsubst` scope must be expanded whenever a new `$VAR` is added to the template, or
+- Remove the explicit allowlist to substitute all env vars (`envsubst < template > output`)
+
+---
+
+### D11 — `build/index.html` apex metadata committed (🟡 Medium)
+
+**File**: `build/index.html` (key lines confirmed by grep)
+
+| Line | Issue |
+|------|-------|
+| 30 | `og:url = https://knowtowin.com/` — wrong host |
+| 303 | JSON-LD `"url": "https://knowtowin.com/"` — wrong host |
+| 344 | JSON-LD ItemList `"url": "https://knowtowin.com/"` — wrong host |
+| 310 | `"sameAs": ["https://knowtowin.com/learn/index.html"]` — will link app shell to apex learn page |
+
+These are carry-overs from the Flutter repo source (gap G7 in the Flutter/backend gap analysis). The plan says to normalize the copied bundle — this is part of what normalization must cover. Since the Flutter source hasn't been updated yet, the normalization script must either mutate these values in the committed HTML or the Flutter source must be updated first.
+
+---
+
+### D12 / D13 — PROD and DEV explicitly serve `robots.txt`/`sitemap.xml` from the bundle (🟡 Medium)
+
+**File**: `nginx.conf.template:86–88` (PROD), `:183–185` (DEV)
+
+```nginx
+location = /robots.txt  { ... add_header Cache-Control "public, max-age=86400" always; try_files $uri =404; }
+location = /sitemap.xml { ... add_header Cache-Control "public, max-age=3600" always; try_files $uri =404; }
+```
+
+These are **explicit cache-and-serve** rules for files the plan says should be suppressed or replaced on app hosts. The existence of these rules means:
+- Even if D1 (wrong `server_name`) is fixed, the app host will return `Cache-Control: public, max-age=86400` for the apex robots file
+- A Googlebot or Bing that hits `app.knowtowin.com/robots.txt` will cache an `Allow: /` result for **24 hours**
+
+These location rules must be changed to either return synthesized `Disallow: /` content or be removed entirely for both app host blocks.
+
+---
+
+### D14 — Dockerfile `RUN ls` error silently swallowed (🟢 Low)
+
+**File**: `Dockerfile:21–22`
+
+```dockerfile
+RUN ls -la /usr/share/nginx/html/assets/packages/font_awesome_flutter/lib/fonts/ || echo "PROD: Fonts dir missing" \
+ && ls -la /usr/share/nginx/devhtml/assets/packages/font_awesome_flutter/lib/fonts/ || echo "DEV: Fonts dir missing"
+```
+
+The `||` short-circuits the `&&`: if the first `ls` fails, `echo "PROD: Fonts dir missing"` runs, and then `&&` continues to the second `ls`. But if the second `ls` fails, `echo "DEV: Fonts dir missing"` runs successfully, and the entire `RUN` command exits 0 — silently passing the build even when **both** font directories are missing. The `set -e` from outside the Dockerfile does not apply here.
+
+**Fix**: Use separate `RUN` lines or force-fail:
+```dockerfile
+RUN ls -la /usr/share/nginx/html/assets/packages/font_awesome_flutter/lib/fonts/ \
+ && ls -la /usr/share/nginx/devhtml/assets/packages/font_awesome_flutter/lib/fonts/
+```
+
+---
+
+### D15 — No guard against prod/devbuild ordering mistake (🟢 Low)
+
+**File**: Plan §7 (rsync commands)
+
+The plan warns: *"the prod copy must happen immediately after the prod build, before running the preprod build"* because Flutter reuses `build/web/`. However, there is:
+- No script in the repo that enforces this order
+- No Makefile target
+- No CI check
+
+Manual operator error (running dev build first, then copying to `build/`) would commit the dev bundle as the production bundle. Given the `dapi.knowtowin.com` preconnect already present in `build/index.html` (D5), this may have already happened once.
+
+**Fix**: Add a `promote.sh` (or similar) script that codifies the exact order, names the expected `--dart-define` values for each build, and prompts the operator to diff before committing.
+
+---
+
+## Defects the Plan Correctly Identifies (No New Gaps)
+
+These are already accurately described in the plan and confirmed by code inspection:
+- D1 (`server_name` change) — plan Workstream 1 ✓
+- D2 (noindex) — plan Workstream 2 ✓
+- The Font Awesome fallback retention — plan Workstream 5 ✓
+- `.well-known` serving gap — plan Workstream 6 ✓
+- The bundle normalization requirement — plan Workstream 3 ✓
+- The `__force_update__` / version boot path integrity — plan Workstream 4 ✓
+
+---
+
+## Priority Order For Fixes Before Cutover
+
+1. **D1** — change `server_name` (gateway to everything else)
+2. **D5** — rebuild the production bundle against the correct API host
+3. **D3 + D4** — suppress/replace `robots.txt` and `sitemap.xml` in the prod server block
+4. **D2** — add global `X-Robots-Tag: noindex` to the PROD server block
+5. **D8** — add `.well-known` location block (before SPA fallback)
+6. **D7** — add explicit `Disallow: /` robots for the devbuild host
+7. **D12/D13** — change crawl-file serving rules to return synthesized safe content
+8. **D6** — verify font redirect chain with browser net trace
+9. **D10 + D14 + D15** — operational robustness fixes
+
+---
+
+*Generated: 2026-04-06 · Based on actual source inspection of `nginx.conf.template`, `docker-entrypoint.sh`, `Dockerfile`, `build/`, `devbuild/`*
