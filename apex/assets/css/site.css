@@ -2138,3 +2138,209 @@ h1 {
     white-space: normal;
   }
 }
+
+/* ============================================================
+   App Tour Page
+   ============================================================ */
+
+.app-story-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.app-tour-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+}
+
+.app-tour-card {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-card);
+  padding: 1.6rem;
+}
+
+.app-tour-card h3,
+.app-story-grid h3 {
+  font-size: 1.12rem;
+  line-height: 1.14;
+  color: var(--ink);
+}
+
+.app-tour-card p,
+.app-story-grid p {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  line-height: 1.72;
+  font-size: 0.94rem;
+}
+
+.app-tour-label {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-pill);
+  background: rgba(14, 138, 150, 0.1);
+  border: 1px solid rgba(14, 138, 150, 0.2);
+  color: var(--brand-strong);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.app-shot-card {
+  position: relative;
+  background:
+    radial-gradient(circle at top right, rgba(14, 138, 150, 0.22), transparent 12rem),
+    linear-gradient(180deg, rgba(8, 24, 32, 0.96), rgba(12, 33, 44, 0.98));
+  border: 1px solid rgba(14, 138, 150, 0.24);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 64px rgba(11, 27, 38, 0.18);
+  overflow: hidden;
+  padding: 1.1rem;
+}
+
+.app-shot-card-hero {
+  align-self: stretch;
+}
+
+.app-shot-frame {
+  max-width: 320px;
+  margin: 0 auto;
+  padding: 0.8rem;
+  border-radius: 1.8rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.app-shot-card-hero .app-shot-frame {
+  max-width: 340px;
+}
+
+.app-shot-device {
+  position: relative;
+  aspect-ratio: 9 / 19.5;
+  border-radius: 1.4rem;
+  background:
+    linear-gradient(180deg, rgba(14, 138, 150, 0.2), rgba(245, 166, 35, 0.12)),
+    linear-gradient(180deg, #133545, #0d2430);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.3rem 1rem;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.app-shot-device::before {
+  content: "";
+  position: absolute;
+  top: 0.7rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 34%;
+  height: 0.35rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.app-shot-device::after {
+  content: "";
+  position: absolute;
+  inset: auto 18% 0.8rem;
+  height: 0.28rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.app-shot-name {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0 0.8rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #d9f4f7;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.app-shot-device strong {
+  display: block;
+  margin-top: 0.9rem;
+  color: var(--hero-ink);
+  font-size: 1.08rem;
+  line-height: 1.12;
+  max-width: 14ch;
+}
+
+.app-shot-device p {
+  margin: 0.8rem 0 0;
+  color: rgba(230, 244, 247, 0.72);
+  font-size: 0.84rem;
+  line-height: 1.62;
+  max-width: 22ch;
+}
+
+.app-shot-notes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-top: 0.95rem;
+}
+
+.app-shot-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.9rem;
+  padding: 0 0.75rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(230, 244, 247, 0.88);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.app-spec-band {
+  margin-top: 1rem;
+}
+
+@media (max-width: 1020px) {
+  .app-story-grid,
+  .app-tour-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-tour-card {
+    padding: 1.35rem;
+  }
+
+  .app-shot-card {
+    padding: 0.9rem;
+  }
+
+  .app-shot-frame,
+  .app-shot-card-hero .app-shot-frame {
+    max-width: 300px;
+  }
+}

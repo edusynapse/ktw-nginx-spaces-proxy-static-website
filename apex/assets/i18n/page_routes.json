@@ -38,6 +38,9 @@
     "jobs": {
       "EN": "/jobs"
     },
+    "app": {
+      "EN": "/app"
+    },
     "services": {
       "EN": "/services",
       "HI": "/services_HI.html"
