@@ -34,6 +34,18 @@
     },
     "support": {
       "EN": "/support"
+    },
+    "services": {
+      "EN": "/services",
+      "HI": "/services_HI.html"
+    },
+    "partners": {
+      "EN": "/partners",
+      "HI": "/partners_HI.html"
+    },
+    "downloads": {
+      "EN": "/downloads",
+      "HI": "/downloads_HI.html"
     }
   },
   "legal": {

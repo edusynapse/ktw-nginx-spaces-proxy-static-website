@@ -82,7 +82,49 @@ http {
       try_files $uri =404;
     }
 
-    location ~ ^/(index|support)_[A-Z][A-Z]\.html$ {
+    location = /services {
+      add_header Cache-Control "public, max-age=600, must-revalidate" always;
+      try_files /services.html =404;
+    }
+
+    location = /services/ {
+      return 301 /services;
+    }
+
+    location = /services.html {
+      add_header Cache-Control "public, max-age=600, must-revalidate" always;
+      try_files $uri =404;
+    }
+
+    location = /partners {
+      add_header Cache-Control "public, max-age=600, must-revalidate" always;
+      try_files /partners.html =404;
+    }
+
+    location = /partners/ {
+      return 301 /partners;
+    }
+
+    location = /partners.html {
+      add_header Cache-Control "public, max-age=600, must-revalidate" always;
+      try_files $uri =404;
+    }
+
+    location = /downloads {
+      add_header Cache-Control "public, max-age=600, must-revalidate" always;
+      try_files /downloads.html =404;
+    }
+
+    location = /downloads/ {
+      return 301 /downloads;
+    }
+
+    location = /downloads.html {
+      add_header Cache-Control "public, max-age=600, must-revalidate" always;
+      try_files $uri =404;
+    }
+
+    location ~ ^/(index|support|services|partners|downloads)_[A-Z][A-Z]\.html$ {
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files $uri =404;
     }
