@@ -35,6 +35,9 @@
     "support": {
       "EN": "/support"
     },
+    "jobs": {
+      "EN": "/jobs"
+    },
     "services": {
       "EN": "/services",
       "HI": "/services_HI.html"
