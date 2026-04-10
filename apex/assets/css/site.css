@@ -2228,6 +2228,18 @@ h1 {
   max-width: 340px;
 }
 
+.app-shot-frame-landscape {
+  max-width: 680px;
+}
+
+.app-shot-frame-portrait {
+  max-width: 320px;
+}
+
+.app-shot-card-hero .app-shot-frame-landscape {
+  max-width: 760px;
+}
+
 .app-shot-device {
   position: relative;
   aspect-ratio: 9 / 19.5;
@@ -2242,6 +2254,36 @@ h1 {
   justify-items: center;
   text-align: center;
   overflow: hidden;
+}
+
+.app-shot-device-image {
+  padding: 0;
+  background: rgba(4, 16, 22, 0.94);
+}
+
+.app-shot-device-image::before,
+.app-shot-device-image::after {
+  content: none;
+}
+
+.app-shot-device-landscape {
+  aspect-ratio: 2560 / 1800;
+}
+
+.app-shot-device-portrait {
+  aspect-ratio: 1080 / 1920;
+}
+
+.app-shot-media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.app-shot-device-portrait .app-shot-media {
+  object-fit: contain;
 }
 
 .app-shot-device::before {
@@ -2323,6 +2365,10 @@ h1 {
   margin-top: 1rem;
 }
 
+.app-tour-grid-support {
+  margin-top: 1.5rem;
+}
+
 @media (max-width: 1020px) {
   .app-story-grid,
   .app-tour-grid {
@@ -2340,7 +2386,9 @@ h1 {
   }
 
   .app-shot-frame,
-  .app-shot-card-hero .app-shot-frame {
+  .app-shot-card-hero .app-shot-frame,
+  .app-shot-frame-landscape,
+  .app-shot-card-hero .app-shot-frame-landscape {
     max-width: 300px;
   }
 }
