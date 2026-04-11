@@ -49538,7 +49538,7 @@ A.al("No connectivity, backing off without HTTP")
 n=[1]
 s=5
 break
-case 9:A.M("Checking uri: https://api.knowtowin.com/appdetails")
+case 9:A.M("Checking uri: https://dapi.knowtowin.com/appdetails")
 k=$.dz?10:5
 s=12
 return A.e(A.xX(),$async$uB)
@@ -49757,7 +49757,7 @@ a1=a0==null?"Unknown Device":a0
 if(b){A.al("Request blocked due to maintenance mode.")
 q=A.it("Service is under maintenance",503,B.bM)
 s=1
-break}n="https://api.knowtowin.com"+a4
+break}n="https://dapi.knowtowin.com"+a4
 p=6
 m=null
 e=a
@@ -49866,7 +49866,7 @@ a4=$.bxn
 a4.toString
 q=a4
 s=1
-break}n="https://api.knowtowin.com"+b4
+break}n="https://dapi.knowtowin.com"+b4
 A.M("Checking uri : "+A.f(n))
 p=6
 m=null
@@ -50029,7 +50029,7 @@ case 4:a2=a9
 a3=a2==null?"Unknown Device":a2
 if(a0){q=A.it("Service is under maintenance",503,B.bM)
 s=1
-break}n="https://api.knowtowin.com"+a6
+break}n="https://dapi.knowtowin.com"+a6
 A.M("Checking uri with params: "+A.f(n))
 p=6
 m=null
@@ -51726,7 +51726,7 @@ n=e.h(a,"token")
 m=e.h(a,"device")
 if(n==null||n.length===0){q=B.bmR
 s=1
-break}l=A.f4("https://api.knowtowin.com/auth/tarm/refresh",0,null)
+break}l=A.f4("https://dapi.knowtowin.com/auth/tarm/refresh",0,null)
 s=4
 return A.e(A.a6J("POST /auth/tarm/refresh"),$async$q6)
 case 4:d=a3
@@ -52092,7 +52092,7 @@ break}o=J.w(p)
 n=o.h(p,"token")
 m=n==null||n.length===0
 l=o.h(p,"device")
-k=A.f4("https://api.knowtowin.com"+a,0,null)
+k=A.f4("https://dapi.knowtowin.com"+a,0,null)
 j=new Uint8Array(A.c_(B.be.bc(B.o.eD(b,null))))
 o=B.y.b_(j)
 q=A.mt(l,B.o.eD(b,null),c,"SessionURI.post","POST",m,a,o,n,d,k)
@@ -52112,7 +52112,7 @@ s=1
 break}o=J.w(p)
 n=o.h(p,"token")
 m=n==null||n.length===0
-q=A.p2(b,o.h(p,"device"),c,d,"SessionURI.postWithFiles","POST",m,a,n,null,A.f4("https://api.knowtowin.com"+a,0,null))
+q=A.p2(b,o.h(p,"device"),c,d,"SessionURI.postWithFiles","POST",m,a,n,null,A.f4("https://dapi.knowtowin.com"+a,0,null))
 s=1
 break
 case 1:return A.k(q,r)}})
@@ -52129,7 +52129,7 @@ s=1
 break}o=J.w(p)
 n=o.h(p,"token")
 m=n==null||n.length===0
-q=A.mt(o.h(p,"device"),null,null,"SessionURI.get","GET",m,a,B.ea,n,b,A.f4("https://api.knowtowin.com"+a,0,null))
+q=A.mt(o.h(p,"device"),null,null,"SessionURI.get","GET",m,a,B.ea,n,b,A.f4("https://dapi.knowtowin.com"+a,0,null))
 s=1
 break
 case 1:return A.k(q,r)}})
@@ -52147,7 +52147,7 @@ break}o=J.w(p)
 n=o.h(p,"token")
 m=n==null||n.length===0
 l=o.h(p,"device")
-k=A.f4("https://api.knowtowin.com"+a,0,null).arn(0,b.lX(b,new A.bs3(),t.N,t.z))
+k=A.f4("https://dapi.knowtowin.com"+a,0,null).arn(0,b.lX(b,new A.bs3(),t.N,t.z))
 q=A.mt(l,null,null,"SessionURI.getWithParams","GET",m,a,B.ea,n,null,k)
 s=1
 break
@@ -52166,7 +52166,7 @@ break}o=J.w(p)
 n=o.h(p,"token")
 m=n==null||n.length===0
 l=o.h(p,"device")
-k=A.f4("https://api.knowtowin.com"+a,0,null)
+k=A.f4("https://dapi.knowtowin.com"+a,0,null)
 j=new Uint8Array(A.c_(B.be.bc(B.o.eD(b,null))))
 o=B.y.b_(j)
 q=A.mt(l,B.o.eD(b,null),null,"SessionURI.put","PUT",m,a,o,n,null,k)
@@ -52186,7 +52186,7 @@ s=1
 break}o=J.w(p)
 n=o.h(p,"token")
 m=n==null||n.length===0
-q=A.p2(b,o.h(p,"device"),c,null,"SessionURI.putWithFiles","PUT",m,a,n,null,A.f4("https://api.knowtowin.com"+a,0,null))
+q=A.p2(b,o.h(p,"device"),c,null,"SessionURI.putWithFiles","PUT",m,a,n,null,A.f4("https://dapi.knowtowin.com"+a,0,null))
 s=1
 break
 case 1:return A.k(q,r)}})
@@ -52204,7 +52204,7 @@ break}o=J.w(p)
 n=o.h(p,"token")
 m=n==null||n.length===0
 l=o.h(p,"device")
-k=A.f4("https://api.knowtowin.com"+a,0,null)
+k=A.f4("https://dapi.knowtowin.com"+a,0,null)
 j=b==null?null:B.o.eD(b,null)
 if(j==null)i=new Uint8Array(0)
 else i=new Uint8Array(A.c_(B.be.bc(j)))
@@ -220553,7 +220553,7 @@ s=7
 return A.e(A.yg(),$async$QU)
 case 7:k=b
 n=k==null?"Unknown Device":k
-if(o!=null){m="https://api.knowtowin.com/logout"
+if(o!=null){m="https://dapi.knowtowin.com/logout"
 j=t.N
 B.o.eD(A.L(["token",o,"device",n],j,j),null)
 A.M("Beacon (stub) to "+A.f(m)+" with JSON body")}else A.al("No token found for logout (already deleted)")
@@ -225345,7 +225345,7 @@ a1o(a,b){var s=null,r=a?B.nM:B.lR,q=A.a4(4)
 return A.x(s,A.d(b,s,s,s,s,s,s,A.n(s,s,a?B.qh:B.ql,s,s,s,s,s,s,s,s,s,s,s,s,s,s,!0,s,s,s,s,s,s,s,s),s,s,s,s),B.d,s,s,new A.aF(r,s,s,q,s,s,s,B.F),s,s,s,s,B.cG,s,s,s)},
 a0w(){var s=0,r=A.m(t.H),q=1,p=[],o,n,m
 var $async$a0w=A.i(function(a,b){if(a===1){p.push(b)
-s=q}for(;;)switch(s){case 0:n="https://app.knowtowin.com/__force_update__?t="+Date.now()
+s=q}for(;;)switch(s){case 0:n="https://devapp.knowtowin.com/__force_update__?t="+Date.now()
 q=3
 s=6
 return A.e(A.kp(n,!1,8),$async$a0w)
@@ -256199,7 +256199,7 @@ if(!d){q.j(new A.cJa(q,t.a.a(B.o.an(0,g,null))))
 A.cM("Loaded cached milestone master data.")}else q.Jo()
 return A.k(null,r)}})
 return A.l($async$wT,r)},
-aCV(){var s="https://app.knowtowin.com/signup?referral_code="+A.f(this.d)
+aCV(){var s="https://devapp.knowtowin.com/signup?referral_code="+A.f(this.d)
 this.e=s
 A.M("Deep link URL generated: "+s)},
 a3R(){var s=0,r=A.m(t.H),q=this,p
