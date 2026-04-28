@@ -844,6 +844,14 @@
         return A.IndexError$withLength(index, $length, indexable, _s5_);
       return A.RangeError$value(index, _s5_);
     },
+    diagnoseRangeError(start, end, $length) {
+      if (start > $length)
+        return A.RangeError$range(start, 0, $length, "start", null);
+      if (end != null)
+        if (end < start || end > $length)
+          return A.RangeError$range(end, start, $length, "end", null);
+      return new A.ArgumentError(true, end, "end", null);
+    },
     argumentErrorValue(object) {
       return new A.ArgumentError(true, object, null, null);
     },
@@ -1640,12 +1648,22 @@
       if (index >>> 0 !== index || index >= $length)
         throw A.wrapException(A.diagnoseIndexError(list, index));
     },
+    _checkValidRange(start, end, $length) {
+      var t1;
+      if (!(start >>> 0 !== start))
+        t1 = end >>> 0 !== end || start > end || end > $length;
+      else
+        t1 = true;
+      if (t1)
+        throw A.wrapException(A.diagnoseRangeError(start, end, $length));
+      return end;
+    },
     NativeByteBuffer: function NativeByteBuffer() {
     },
     NativeTypedData: function NativeTypedData() {
     },
     _UnmodifiableNativeByteBufferView: function _UnmodifiableNativeByteBufferView(t0) {
-      this.__native_typed_data$_data = t0;
+      this._data = t0;
     },
     NativeByteData: function NativeByteData() {
     },
@@ -4134,6 +4152,8 @@
     },
     Converter: function Converter() {
     },
+    Encoding: function Encoding() {
+    },
     JsonUnsupportedObjectError: function JsonUnsupportedObjectError(t0, t1) {
       this.unsupportedObject = t0;
       this.cause = t1;
@@ -4175,6 +4195,14 @@
       _._sink = t2;
       _._seen = t3;
       _._toEncodable = t4;
+    },
+    Utf8Codec: function Utf8Codec() {
+    },
+    Utf8Encoder: function Utf8Encoder() {
+    },
+    _Utf8Encoder: function _Utf8Encoder(t0) {
+      this._bufferIndex = 0;
+      this._convert$_buffer = t0;
     },
     Utf8Decoder: function Utf8Decoder(t0) {
       this._allowMalformed = t0;
@@ -5071,6 +5099,8 @@
     },
     _GZipDecoder: function _GZipDecoder() {
     },
+    _GZipEncoder: function _GZipEncoder() {
+    },
     HuffmanTable$(lengths) {
       var t1 = new A.HuffmanTable();
       t1.HuffmanTable$1(lengths);
@@ -5084,6 +5114,157 @@
     ZLibDecoderBase: function ZLibDecoderBase() {
     },
     _ZLibDecoder: function _ZLibDecoder() {
+    },
+    ZLibEncoderBase: function ZLibEncoderBase() {
+    },
+    Deflate$stream(_input, level, output, windowBits) {
+      var t1 = A._HuffmanTree$(),
+        t2 = A._HuffmanTree$(),
+        t3 = A._HuffmanTree$(),
+        t4 = new Uint16Array(16),
+        t5 = new Uint32Array(573),
+        t6 = new Uint8Array(573);
+      t1 = new A.Deflate(_input, output, t1, t2, t3, t4, t5, t6);
+      t1._init$2$windowBits(level, windowBits);
+      t1._deflate$1(B._DeflateFlushMode_3);
+      return t1;
+    },
+    Deflate__smaller(tree, n, m, depth) {
+      var t3,
+        t1 = n * 2,
+        t2 = tree.length;
+      if (!(t1 >= 0 && t1 < t2))
+        return A.ioore(tree, t1);
+      t1 = tree[t1];
+      t3 = m * 2;
+      if (!(t3 >= 0 && t3 < t2))
+        return A.ioore(tree, t3);
+      t3 = tree[t3];
+      if (t1 >= t3)
+        if (t1 === t3) {
+          if (!(n >= 0 && n < 573))
+            return A.ioore(depth, n);
+          t1 = depth[n];
+          if (!(m >= 0 && m < 573))
+            return A.ioore(depth, m);
+          t1 = t1 <= depth[m];
+        } else
+          t1 = false;
+      else
+        t1 = true;
+      return t1;
+    },
+    _HuffmanTree$() {
+      return new A._HuffmanTree();
+    },
+    _HuffmanTree__genCodes(tree, maxCode, blCount) {
+      var code, bits, t1, n, t2, t3, len,
+        nextCode = new Uint16Array(16);
+      for (code = 0, bits = 1; bits <= 15; ++bits) {
+        code = code + blCount[bits - 1] << 1 >>> 0;
+        if (!(bits < 16))
+          return A.ioore(nextCode, bits);
+        nextCode[bits] = code;
+      }
+      for (t1 = tree.length, n = 0; n <= maxCode; ++n) {
+        t2 = n * 2;
+        t3 = t2 + 1;
+        if (!(t3 < t1))
+          return A.ioore(tree, t3);
+        len = tree[t3];
+        if (len === 0)
+          continue;
+        if (!(len < 16))
+          return A.ioore(nextCode, len);
+        t3 = nextCode[len];
+        if (!(len < 16))
+          return A.ioore(nextCode, len);
+        nextCode[len] = t3 + 1;
+        t3 = A._HuffmanTree__reverseBits(t3, len);
+        tree.$flags & 2 && A.throwUnsupportedOperation(tree);
+        if (!(t2 < t1))
+          return A.ioore(tree, t2);
+        tree[t2] = t3;
+      }
+    },
+    _HuffmanTree__reverseBits(code, len) {
+      var code0, res = 0;
+      do {
+        code0 = A._rshift(code, 1);
+        res = (res | code & 1) << 1 >>> 0;
+        if (--len, len > 0) {
+          code = code0;
+          continue;
+        } else
+          break;
+      } while (true);
+      return A._rshift(res, 1);
+    },
+    _HuffmanTree__dCode(dist) {
+      var t1;
+      if (dist < 256) {
+        if (!(dist >= 0))
+          return A.ioore(B.List_BSx, dist);
+        t1 = B.List_BSx[dist];
+      } else {
+        t1 = 256 + A._rshift(dist, 7);
+        if (!(t1 < 512))
+          return A.ioore(B.List_BSx, t1);
+        t1 = B.List_BSx[t1];
+      }
+      return t1;
+    },
+    _StaticTree$(staticTree, extraBits, extraBase, numElements, maxLength) {
+      return new A._StaticTree(staticTree, extraBits, extraBase, numElements, maxLength);
+    },
+    _rshift(number, bits) {
+      if (number >= 0)
+        return B.JSInt_methods.$shr(number, bits);
+      else
+        return B.JSInt_methods.$shr(number, bits) + B.JSInt_methods._shlPositive$1(2, (~bits >>> 0) + 65536 & 65535);
+    },
+    _DeflateFlushMode: function _DeflateFlushMode(t0, t1) {
+      this.index = t0;
+      this._core$_name = t1;
+    },
+    Deflate: function Deflate(t0, t1, t2, t3, t4, t5, t6, t7) {
+      var _ = this;
+      _._deflate$_input = t0;
+      _._deflate$_output = t1;
+      _._status = null;
+      _.total = _.crc32 = 0;
+      _.__Deflate__pending_A = _.__Deflate__pendingOut_A = _.__Deflate__pendingBufferSize_A = _.__Deflate__pendingBuffer_A = $;
+      _._dataType = 2;
+      _.__Deflate__strStart_A = _.__Deflate__matchAvailable_A = _.__Deflate__prevMatch_A = _.__Deflate__matchLength_A = _.__Deflate__blockStart_A = _.__Deflate__hashShift_A = _.__Deflate__hashMask_A = _.__Deflate__hashBits_A = _.__Deflate__hashSize_A = _.__Deflate__insertHash_A = _.__Deflate__head_A = _.__Deflate__prev_A = _.__Deflate__actualWindowSize_A = _.__Deflate__window_A = _.__Deflate__windowMask_A = _.__Deflate__windowBits_A = _.__Deflate__windowSize_A = $;
+      _._matchStart = 0;
+      _.__Deflate__bitLengthTree_A = _.__Deflate__dynamicDistTree_A = _.__Deflate__dynamicLengthTree_A = _.__Deflate__strategy_A = _.__Deflate__level_A = _.__Deflate__prevLength_A = _.__Deflate__lookAhead_A = $;
+      _._lDesc = t2;
+      _._dDesc = t3;
+      _._blDesc = t4;
+      _._bitLengthCount = t5;
+      _._heap = t6;
+      _.__Deflate__heapMax_A = _.__Deflate__heapLen_A = $;
+      _._depth = t7;
+      _.__Deflate__numValidBits_A = _.__Deflate__bitBuffer_A = _.__Deflate__lastEOBLen_A = _.__Deflate__matches_A = _.__Deflate__staticLen_A = _.__Deflate__optimalLen_A = _.__Deflate__dbuf_A = _.__Deflate__lastLit_A = _.__Deflate__litBufferSize_A = _.__Deflate__lbuf_A = $;
+    },
+    _DeflaterConfig: function _DeflaterConfig(t0, t1, t2, t3, t4) {
+      var _ = this;
+      _.goodLength = t0;
+      _.maxLazy = t1;
+      _.niceLength = t2;
+      _.maxChain = t3;
+      _.$function = t4;
+    },
+    _HuffmanTree: function _HuffmanTree() {
+      this.___HuffmanTree_staticDesc_A = this.___HuffmanTree_maxCode_A = this.___HuffmanTree_dynamicTree_A = $;
+    },
+    _StaticTree: function _StaticTree(t0, t1, t2, t3, t4) {
+      var _ = this;
+      _.staticTree = t0;
+      _.extraBits = t1;
+      _.extraBase = t2;
+      _.numElements = t3;
+      _.maxLength = t4;
     },
     Inflate: function Inflate(t0, t1) {
       var _ = this;
@@ -5124,13 +5305,14 @@
     InputStream_readString_codesToString: function InputStream_readString_codesToString(t0) {
       this.utf8 = t0;
     },
-    OutputMemoryStream$(size) {
+    OutputMemoryStream$(byteOrder, size) {
       var t1 = size == null ? 32768 : size;
-      return new A.OutputMemoryStream(new Uint8Array(t1));
+      return new A.OutputMemoryStream(new Uint8Array(t1), byteOrder);
     },
-    OutputMemoryStream: function OutputMemoryStream(t0) {
+    OutputMemoryStream: function OutputMemoryStream(t0, t1) {
       this.length = 0;
       this._buffer = t0;
+      this.byteOrder = t1;
     },
     OutputStream: function OutputStream() {
     },
@@ -5139,10 +5321,13 @@
     Clock: function Clock() {
     },
     _extension_0__$getOperations(_this) {
-      return A.LinkedHashMap_LinkedHashMap$_literal([1, new A._extension_0__$getOperations_closure(_this), 2, new A._extension_0__$getOperations_closure0(_this)], type$.int, type$.dynamic_Function_List_dynamic);
+      return A.LinkedHashMap_LinkedHashMap$_literal([1, new A._extension_0__$getOperations_closure(_this), 2, new A._extension_0__$getOperations_closure0(_this), 3, new A._extension_0__$getOperations_closure1(_this), 4, new A._extension_0__$getOperations_closure2(_this), 5, new A._extension_0__$getOperations_closure3(_this), 6, new A._extension_0__$getOperations_closure4(_this), 7, new A._extension_0__$getOperations_closure5(_this), 8, new A._extension_0__$getOperations_closure6(_this)], type$.int, type$.dynamic_Function_List_dynamic);
     },
     $DecompressServiceInitializer($$req) {
       return new A._$DecompressService$WorkerService();
+    },
+    _$Deser$(contextAware) {
+      return new A._$Deser(B.C_CastConverter);
     },
     DecompressService: function DecompressService() {
     },
@@ -5152,12 +5337,30 @@
     _extension_0__$getOperations_closure0: function _extension_0__$getOperations_closure0(t0) {
       this._this = t0;
     },
+    _extension_0__$getOperations_closure1: function _extension_0__$getOperations_closure1(t0) {
+      this._this = t0;
+    },
+    _extension_0__$getOperations_closure2: function _extension_0__$getOperations_closure2(t0) {
+      this._this = t0;
+    },
+    _extension_0__$getOperations_closure3: function _extension_0__$getOperations_closure3(t0) {
+      this._this = t0;
+    },
+    _extension_0__$getOperations_closure4: function _extension_0__$getOperations_closure4(t0) {
+      this._this = t0;
+    },
+    _extension_0__$getOperations_closure5: function _extension_0__$getOperations_closure5(t0) {
+      this._this = t0;
+    },
+    _extension_0__$getOperations_closure6: function _extension_0__$getOperations_closure6(t0) {
+      this._this = t0;
+    },
     _$DecompressService$WorkerService: function _$DecompressService$WorkerService() {
     },
     _$Deser: function _$Deser(t0) {
       var _ = this;
-      _.___$Deser_$2_FI = _.___$Deser_$1_FI = _.___$Deser_$0_FI = $;
-      _._marshaling_context$_converter = t0;
+      _.___$Deser_$3_FI = _.___$Deser_$2_FI = _.___$Deser_$1_FI = _.___$Deser_$0_FI = $;
+      _._converter = t0;
     },
     LogEvent: function LogEvent(t0, t1, t2, t3, t4) {
       var _ = this;
@@ -5412,7 +5615,7 @@
     CastConverter: function CastConverter() {
     },
     ContextAwareConverter: function ContextAwareConverter(t0, t1) {
-      this._converter = t0;
+      this._context_aware_converter$_converter = t0;
       this._context_aware_converter$_arguments = t1;
     },
     ContextAwareConverter_value_closure: function ContextAwareConverter_value_closure(t0, t1, t2) {
@@ -5482,7 +5685,7 @@
       this.T = t1;
     },
     LazyInPlaceMap: function LazyInPlaceMap(t0, t1, t2) {
-      this._data = t0;
+      this._lazy_in_place_map$_data = t0;
       this._vcast = t1;
       this.$ti = t2;
     },
@@ -5626,7 +5829,7 @@
       this._squadron_exception$_stackTrace = t2;
     },
     ConverterExt_get_converter(_this) {
-      var t1 = _this._marshaling_context$_converter;
+      var t1 = _this._converter;
       return t1;
     },
     MarshalingContext: function MarshalingContext() {
@@ -5686,6 +5889,59 @@
     },
     JSFunctionUnsafeUtilExtension_callAsConstructor(_this, arg1, $R) {
       return $R._as(A.callConstructor(_this, [arg1], type$.JSObject));
+    },
+    getCrc32(array, crc) {
+      var len0, ip, ip0,
+        len = array.length;
+      crc ^= 4294967295;
+      for (len0 = len, ip = 0; len0 >= 8;) {
+        ip0 = ip + 1;
+        if (!(ip < len))
+          return A.ioore(array, ip);
+        crc = B.List_kC8[(crc ^ array[ip]) & 255] ^ crc >>> 8;
+        ip = ip0 + 1;
+        if (!(ip0 < len))
+          return A.ioore(array, ip0);
+        crc = B.List_kC8[(crc ^ array[ip0]) & 255] ^ crc >>> 8;
+        ip0 = ip + 1;
+        if (!(ip < len))
+          return A.ioore(array, ip);
+        crc = B.List_kC8[(crc ^ array[ip]) & 255] ^ crc >>> 8;
+        ip = ip0 + 1;
+        if (!(ip0 < len))
+          return A.ioore(array, ip0);
+        crc = B.List_kC8[(crc ^ array[ip0]) & 255] ^ crc >>> 8;
+        ip0 = ip + 1;
+        if (!(ip < len))
+          return A.ioore(array, ip);
+        crc = B.List_kC8[(crc ^ array[ip]) & 255] ^ crc >>> 8;
+        ip = ip0 + 1;
+        if (!(ip0 < len))
+          return A.ioore(array, ip0);
+        crc = B.List_kC8[(crc ^ array[ip0]) & 255] ^ crc >>> 8;
+        ip0 = ip + 1;
+        if (!(ip < len))
+          return A.ioore(array, ip);
+        crc = B.List_kC8[(crc ^ array[ip]) & 255] ^ crc >>> 8;
+        ip = ip0 + 1;
+        if (!(ip0 < len))
+          return A.ioore(array, ip0);
+        crc = B.List_kC8[(crc ^ array[ip0]) & 255] ^ crc >>> 8;
+        len0 -= 8;
+      }
+      if (len0 > 0)
+        do {
+          ip0 = ip + 1;
+          if (!(ip < len))
+            return A.ioore(array, ip);
+          crc = B.List_kC8[(crc ^ array[ip]) & 255] ^ crc >>> 8;
+          if (--len0, len0 > 0) {
+            ip = ip0;
+            continue;
+          } else
+            break;
+        } while (true);
+      return (crc ^ 4294967295) >>> 0;
     },
     systemTime() {
       return new A.DateTime(Date.now(), 0, false);
@@ -7038,19 +7294,19 @@
     call$1(o) {
       return this.getTag(o);
     },
-    $signature: 8
+    $signature: 11
   };
   A.initHooks_closure0.prototype = {
     call$2(o, tag) {
       return this.getUnknownTag(o, tag);
     },
-    $signature: 33
+    $signature: 27
   };
   A.initHooks_closure1.prototype = {
     call$1(tag) {
       return this.prototypeForTag(A._asString(tag));
     },
-    $signature: 11
+    $signature: 25
   };
   A.JSSyntaxRegExp.prototype = {
     toString$0(_) {
@@ -7125,7 +7381,7 @@
   };
   A._UnmodifiableNativeByteBufferView.prototype = {
     asUint8List$2(_, offsetInBytes, $length) {
-      var result = A.NativeUint8List_NativeUint8List$view(this.__native_typed_data$_data, offsetInBytes, $length);
+      var result = A.NativeUint8List_NativeUint8List$view(this._data, offsetInBytes, $length);
       result.$flags = 3;
       return result;
     },
@@ -7329,7 +7585,7 @@
       t1.storedCallback = null;
       f.call$0();
     },
-    $signature: 7
+    $signature: 10
   };
   A._AsyncRun__initializeScheduleImmediate_closure.prototype = {
     call$1(callback) {
@@ -7345,13 +7601,13 @@
     call$0() {
       this.callback.call$0();
     },
-    $signature: 10
+    $signature: 7
   };
   A._AsyncRun__scheduleImmediateWithSetImmediate_internalCallback.prototype = {
     call$0() {
       this.callback.call$0();
     },
-    $signature: 10
+    $signature: 7
   };
   A._TimerImpl.prototype = {
     _TimerImpl$2(milliseconds, callback) {
@@ -7397,19 +7653,19 @@
     call$1(result) {
       return this.bodyFunction.call$2(0, result);
     },
-    $signature: 2
+    $signature: 3
   };
   A._awaitOnObject_closure0.prototype = {
     call$2(error, stackTrace) {
       this.bodyFunction.call$2(1, new A.ExceptionAndStackTrace(error, type$.StackTrace._as(stackTrace)));
     },
-    $signature: 12
+    $signature: 21
   };
   A._wrapJsFunctionForAsync_closure.prototype = {
     call$2(errorCode, result) {
       this.$protected(A._asInt(errorCode), result);
     },
-    $signature: 13
+    $signature: 17
   };
   A.AsyncError.prototype = {
     toString$0(_) {
@@ -7750,7 +8006,7 @@
     call$1(__wc0_formal) {
       this.joinedResult._completeWithResultOf$1(this.originalSource);
     },
-    $signature: 7
+    $signature: 10
   };
   A._Future__propagateToListeners_handleWhenCompleteCallback_closure0.prototype = {
     call$2(e, s) {
@@ -7758,7 +8014,7 @@
       type$.StackTrace._as(s);
       this.joinedResult._completeErrorObject$1(new A.AsyncError(e, s));
     },
-    $signature: 15
+    $signature: 13
   };
   A._Future__propagateToListeners_handleValueCallback.prototype = {
     call$0() {
@@ -8098,7 +8354,7 @@
     call$1(v) {
       return this.K._is(v);
     },
-    $signature: 16
+    $signature: 12
   };
   A._HashMapKeyIterable.prototype = {
     get$length(_) {
@@ -8321,6 +8577,13 @@
     cast$1$0(receiver, $R) {
       return new A.CastList(receiver, A.instanceType(receiver)._eval$1("@<ListBase.E>")._bind$1($R)._eval$1("CastList<1,2>"));
     },
+    fillRange$3(receiver, start, end, fill) {
+      var i;
+      A.instanceType(receiver)._eval$1("ListBase.E?")._as(fill);
+      A.RangeError_checkValidRange(start, end, this.get$length(receiver));
+      for (i = start; i < end; ++i)
+        this.$indexSet(receiver, i, fill);
+    },
     toString$0(receiver) {
       return A.Iterable_iterableToFullString(receiver, "[", "]");
     }
@@ -8408,7 +8671,7 @@
       t2 = A.S(v);
       t1._contents += t2;
     },
-    $signature: 4
+    $signature: 6
   };
   A.SetBase.prototype = {
     get$isEmpty(_) {
@@ -8584,7 +8847,7 @@
       }
       return null;
     },
-    $signature: 6
+    $signature: 9
   };
   A._Utf8Decoder__decoderNonfatal_closure.prototype = {
     call$0() {
@@ -8596,7 +8859,7 @@
       }
       return null;
     },
-    $signature: 6
+    $signature: 9
   };
   A.Base64Decoder.prototype = {
     convert$1(input) {
@@ -8633,6 +8896,7 @@
   };
   A.Codec.prototype = {};
   A.Converter.prototype = {};
+  A.Encoding.prototype = {};
   A.JsonUnsupportedObjectError.prototype = {
     toString$0(_) {
       var safeString = A.Error_safeToString(this.unsupportedObject);
@@ -8886,7 +9150,7 @@
       B.JSArray_methods.$indexSet(t1, t2.i++, key);
       B.JSArray_methods.$indexSet(t1, t2.i++, value);
     },
-    $signature: 4
+    $signature: 6
   };
   A._JsonPrettyPrintMixin.prototype = {
     writeList$1(list) {
@@ -8954,7 +9218,7 @@
       B.JSArray_methods.$indexSet(t1, t2.i++, key);
       B.JSArray_methods.$indexSet(t1, t2.i++, value);
     },
-    $signature: 4
+    $signature: 6
   };
   A._JsonStringStringifier.prototype = {
     get$_partialResult() {
@@ -8967,6 +9231,152 @@
       var t1, t2, i;
       for (t1 = this._indent, t2 = this._sink, i = 0; i < count; ++i)
         t2._contents += t1;
+    }
+  };
+  A.Utf8Codec.prototype = {
+    decode$1(codeUnits) {
+      type$.List_int._as(codeUnits);
+      return B.Utf8Decoder_false.convert$1(codeUnits);
+    }
+  };
+  A.Utf8Encoder.prototype = {
+    convert$1(string) {
+      var t1, t2, encoder, t3,
+        stringLength = string.length,
+        end = A.RangeError_checkValidRange(0, null, stringLength);
+      if (end === 0)
+        return new Uint8Array(0);
+      t1 = end * 3;
+      t2 = new Uint8Array(t1);
+      encoder = new A._Utf8Encoder(t2);
+      if (encoder._fillBuffer$3(string, 0, end) !== end) {
+        t3 = end - 1;
+        if (!(t3 >= 0 && t3 < stringLength))
+          return A.ioore(string, t3);
+        encoder._writeReplacementCharacter$0();
+      }
+      return new Uint8Array(t2.subarray(0, A._checkValidRange(0, encoder._bufferIndex, t1)));
+    }
+  };
+  A._Utf8Encoder.prototype = {
+    _writeReplacementCharacter$0() {
+      var t4, _this = this,
+        t1 = _this._convert$_buffer,
+        t2 = _this._bufferIndex,
+        t3 = _this._bufferIndex = t2 + 1;
+      t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+      t4 = t1.length;
+      if (!(t2 < t4))
+        return A.ioore(t1, t2);
+      t1[t2] = 239;
+      t2 = _this._bufferIndex = t3 + 1;
+      if (!(t3 < t4))
+        return A.ioore(t1, t3);
+      t1[t3] = 191;
+      _this._bufferIndex = t2 + 1;
+      if (!(t2 < t4))
+        return A.ioore(t1, t2);
+      t1[t2] = 189;
+    },
+    _writeSurrogate$2(leadingSurrogate, nextCodeUnit) {
+      var rune, t1, t2, t3, t4, _this = this;
+      if ((nextCodeUnit & 64512) === 56320) {
+        rune = 65536 + ((leadingSurrogate & 1023) << 10) | nextCodeUnit & 1023;
+        t1 = _this._convert$_buffer;
+        t2 = _this._bufferIndex;
+        t3 = _this._bufferIndex = t2 + 1;
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t4 = t1.length;
+        if (!(t2 < t4))
+          return A.ioore(t1, t2);
+        t1[t2] = rune >>> 18 | 240;
+        t2 = _this._bufferIndex = t3 + 1;
+        if (!(t3 < t4))
+          return A.ioore(t1, t3);
+        t1[t3] = rune >>> 12 & 63 | 128;
+        t3 = _this._bufferIndex = t2 + 1;
+        if (!(t2 < t4))
+          return A.ioore(t1, t2);
+        t1[t2] = rune >>> 6 & 63 | 128;
+        _this._bufferIndex = t3 + 1;
+        if (!(t3 < t4))
+          return A.ioore(t1, t3);
+        t1[t3] = rune & 63 | 128;
+        return true;
+      } else {
+        _this._writeReplacementCharacter$0();
+        return false;
+      }
+    },
+    _fillBuffer$3(str, start, end) {
+      var t1, t2, t3, t4, stringIndex, codeUnit, t5, t6, _this = this;
+      if (start !== end) {
+        t1 = end - 1;
+        if (!(t1 >= 0 && t1 < str.length))
+          return A.ioore(str, t1);
+        t1 = (str.charCodeAt(t1) & 64512) === 55296;
+      } else
+        t1 = false;
+      if (t1)
+        --end;
+      for (t1 = _this._convert$_buffer, t2 = t1.$flags | 0, t3 = t1.length, t4 = str.length, stringIndex = start; stringIndex < end; ++stringIndex) {
+        if (!(stringIndex < t4))
+          return A.ioore(str, stringIndex);
+        codeUnit = str.charCodeAt(stringIndex);
+        if (codeUnit <= 127) {
+          t5 = _this._bufferIndex;
+          if (t5 >= t3)
+            break;
+          _this._bufferIndex = t5 + 1;
+          t2 & 2 && A.throwUnsupportedOperation(t1);
+          t1[t5] = codeUnit;
+        } else {
+          t5 = codeUnit & 64512;
+          if (t5 === 55296) {
+            if (_this._bufferIndex + 4 > t3)
+              break;
+            t5 = stringIndex + 1;
+            if (!(t5 < t4))
+              return A.ioore(str, t5);
+            if (_this._writeSurrogate$2(codeUnit, str.charCodeAt(t5)))
+              stringIndex = t5;
+          } else if (t5 === 56320) {
+            if (_this._bufferIndex + 3 > t3)
+              break;
+            _this._writeReplacementCharacter$0();
+          } else if (codeUnit <= 2047) {
+            t5 = _this._bufferIndex;
+            t6 = t5 + 1;
+            if (t6 >= t3)
+              break;
+            _this._bufferIndex = t6;
+            t2 & 2 && A.throwUnsupportedOperation(t1);
+            if (!(t5 < t3))
+              return A.ioore(t1, t5);
+            t1[t5] = codeUnit >>> 6 | 192;
+            _this._bufferIndex = t6 + 1;
+            t1[t6] = codeUnit & 63 | 128;
+          } else {
+            t5 = _this._bufferIndex;
+            if (t5 + 2 >= t3)
+              break;
+            t6 = _this._bufferIndex = t5 + 1;
+            t2 & 2 && A.throwUnsupportedOperation(t1);
+            if (!(t5 < t3))
+              return A.ioore(t1, t5);
+            t1[t5] = codeUnit >>> 12 | 224;
+            t5 = _this._bufferIndex = t6 + 1;
+            if (!(t6 < t3))
+              return A.ioore(t1, t6);
+            t1[t6] = codeUnit >>> 6 & 63 | 128;
+            _this._bufferIndex = t5 + 1;
+            if (!(t5 < t3))
+              return A.ioore(t1, t5);
+            t1[t5] = codeUnit & 63 | 128;
+          }
+        }
+      }
+      return stringIndex;
     }
   };
   A.Utf8Decoder.prototype = {
@@ -9468,7 +9878,7 @@
       hash = hash + ((hash & 524287) << 10) & 536870911;
       return hash ^ hash >>> 6;
     },
-    $signature: 17
+    $signature: 15
   };
   A._BigIntImpl_hashCode_finish.prototype = {
     call$1(hash) {
@@ -9476,7 +9886,7 @@
       hash ^= hash >>> 11;
       return hash + ((hash & 16383) << 15) & 536870911;
     },
-    $signature: 18
+    $signature: 16
   };
   A.DateTime.prototype = {
     $eq(_, other) {
@@ -9871,7 +10281,7 @@
     call$1(r) {
       return this.completer.complete$1(this.T._eval$1("0/?")._as(r));
     },
-    $signature: 2
+    $signature: 3
   };
   A.promiseToFuture_closure0.prototype = {
     call$1(e) {
@@ -9879,7 +10289,7 @@
         return this.completer.completeError$1(new A.NullRejectionException(e === undefined));
       return this.completer.completeError$1(e);
     },
-    $signature: 2
+    $signature: 3
   };
   A.dartify_convert.prototype = {
     call$1(o) {
@@ -9929,6 +10339,13 @@
     $signature: 1
   };
   A._GZipDecoder.prototype = {
+    decodeBytes$2$verify(data, verify) {
+      var output;
+      type$.List_int._as(data);
+      output = A.OutputMemoryStream$(B.ByteOrder_0, 32768);
+      this.decodeStream$4$raw$verify(A.InputMemoryStream$(data, B.ByteOrder_0, null, null), output, false, false);
+      return output.getBytes$0();
+    },
     decodeStream$4$raw$verify(input, output, raw, verify) {
       var t1, t2;
       for (;;) {
@@ -9966,6 +10383,34 @@
       if ((flags & 2) !== 0)
         input.readUint16$0();
       return true;
+    }
+  };
+  A._GZipEncoder.prototype = {
+    encodeBytes$2$level(bytes, level) {
+      var output;
+      type$.List_int._as(bytes);
+      output = A.OutputMemoryStream$(B.ByteOrder_0, 32768);
+      this.encodeStream$5$level$raw$windowBits(A.InputMemoryStream$(bytes, B.ByteOrder_0, null, null), output, level, false, null);
+      return output.getBytes$0();
+    },
+    encodeStream$5$level$raw$windowBits(input, output, level, raw, windowBits) {
+      var fileModTime,
+        dataLength = input.get$length(0);
+      if (output.byteOrder === B.ByteOrder_1) {
+        output.writeByte$1(139);
+        output.writeByte$1(31);
+      } else {
+        output.writeByte$1(31);
+        output.writeByte$1(139);
+      }
+      output.writeByte$1(8);
+      fileModTime = B.JSInt_methods._tdivFast$1(Date.now(), 1000);
+      output.writeByte$1(0);
+      output.writeUint32$1(fileModTime);
+      output.writeByte$1(0);
+      output.writeByte$1(255);
+      output.writeUint32$1(A.Deflate$stream(input, 6, output, 15).crc32);
+      output.writeUint32$1(dataLength);
     }
   };
   A.HuffmanTable.prototype = {
@@ -10033,7 +10478,7 @@
         }
         if (buffer != null)
           output.writeBytes$1(buffer);
-        t1 = new A.OutputMemoryStream(new Uint8Array(32768));
+        t1 = new A.OutputMemoryStream(new Uint8Array(32768), B.ByteOrder_0);
         new A.Inflate(input, t1)._inflate$0();
         buffer = J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(t1._buffer), t1._buffer.byteOffset, t1.length);
         input.readUint32$0();
@@ -10043,6 +10488,1788 @@
       return true;
     }
   };
+  A.ZLibEncoderBase.prototype = {};
+  A._DeflateFlushMode.prototype = {
+    _enumToString$0() {
+      return "_DeflateFlushMode." + this._core$_name;
+    }
+  };
+  A.Deflate.prototype = {
+    _init$2$windowBits(level, windowBits) {
+      var config, t2, t3, t4, _this = this,
+        t1 = true;
+      if (windowBits >= 9)
+        if (windowBits <= 15)
+          t1 = level > 9;
+      if (t1)
+        return false;
+      config = _this._getConfig$1(level);
+      if (config == null)
+        return false;
+      $.Deflate____config._value = config;
+      t1 = new Uint16Array(1146);
+      _this.__Deflate__dynamicLengthTree_A = t1;
+      t2 = new Uint16Array(122);
+      _this.__Deflate__dynamicDistTree_A = t2;
+      t3 = new Uint16Array(78);
+      _this.__Deflate__bitLengthTree_A = t3;
+      _this.__Deflate__windowBits_A = windowBits;
+      t4 = _this.__Deflate__windowSize_A = B.JSInt_methods._shlPositive$1(1, windowBits);
+      _this.__Deflate__windowMask_A = t4 - 1;
+      _this.__Deflate__hashBits_A = 15;
+      _this.__Deflate__hashSize_A = 32768;
+      _this.__Deflate__hashMask_A = 32767;
+      _this.__Deflate__hashShift_A = 5;
+      _this.__Deflate__window_A = new Uint8Array(t4 * 2);
+      _this.__Deflate__prev_A = new Uint16Array(t4);
+      _this.__Deflate__head_A = new Uint16Array(32768);
+      _this.__Deflate__litBufferSize_A = 16384;
+      _this.__Deflate__pendingBuffer_A = new Uint8Array(65536);
+      _this.__Deflate__pendingBufferSize_A = 65536;
+      _this.__Deflate__dbuf_A = 16384;
+      _this.__Deflate__lbuf_A = 49152;
+      _this.__Deflate__level_A = level;
+      _this.__Deflate__pendingOut_A = _this.__Deflate__pending_A = _this.__Deflate__strategy_A = 0;
+      _this._status = 113;
+      _this.crc32 = 0;
+      t4 = _this._lDesc;
+      t4.___HuffmanTree_dynamicTree_A = t1;
+      t4.___HuffmanTree_staticDesc_A = $.$get$_StaticTree_staticLDesc();
+      t4 = _this._dDesc;
+      t4.___HuffmanTree_dynamicTree_A = t2;
+      t4.___HuffmanTree_staticDesc_A = $.$get$_StaticTree_staticDDesc();
+      t4 = _this._blDesc;
+      t4.___HuffmanTree_dynamicTree_A = t3;
+      t4.___HuffmanTree_staticDesc_A = $.$get$_StaticTree_staticBlDesc();
+      _this.__Deflate__numValidBits_A = _this.__Deflate__bitBuffer_A = 0;
+      _this.__Deflate__lastEOBLen_A = 8;
+      _this._initBlock$0();
+      _this.__Deflate__actualWindowSize_A = 2 * _this.__Deflate__windowSize_A;
+      B.NativeUint16List_methods.fillRange$3(_this.__Deflate__head_A, 0, _this.__Deflate__hashSize_A, 0);
+      _this.__Deflate__lookAhead_A = _this.__Deflate__blockStart_A = _this.__Deflate__strStart_A = 0;
+      _this.__Deflate__matchLength_A = _this.__Deflate__prevLength_A = 2;
+      _this.__Deflate__insertHash_A = _this.__Deflate__matchAvailable_A = 0;
+      return true;
+    },
+    _deflate$1(flush) {
+      var t2, t3, bState, i, _this = this,
+        t1 = _this.__Deflate__pending_A;
+      t1 === $ && A.throwLateFieldNI("_pending");
+      if (t1 !== 0)
+        _this._flushPending$0();
+      t1 = _this._deflate$_input;
+      t2 = t1._position;
+      t1 = t1.__InputMemoryStream__length_A;
+      t1 === $ && A.throwLateFieldNI("_length");
+      t3 = true;
+      if (t2 >= t1) {
+        t1 = _this.__Deflate__lookAhead_A;
+        t1 === $ && A.throwLateFieldNI("_lookAhead");
+        if (t1 === 0)
+          t1 = flush !== B._DeflateFlushMode_0 && _this._status !== 666;
+        else
+          t1 = t3;
+      } else
+        t1 = t3;
+      if (t1) {
+        switch ($.Deflate____config._readField$0().$function) {
+          case 0:
+            bState = _this._deflateStored$1(flush);
+            break;
+          case 1:
+            bState = _this._deflateFast$1(flush);
+            break;
+          case 2:
+            bState = _this._deflateSlow$1(flush);
+            break;
+          default:
+            bState = -1;
+            break;
+        }
+        t1 = bState === 2;
+        if (t1 || bState === 3)
+          _this._status = 666;
+        if (bState === 0 || t1)
+          return 0;
+        if (bState === 1) {
+          if (flush === B._DeflateFlushMode_1) {
+            _this._sendBits$2(2, 3);
+            _this._sendCode$2(256, B.List_LCt);
+            _this.biFlush$0();
+            t1 = _this.__Deflate__lastEOBLen_A;
+            t1 === $ && A.throwLateFieldNI("_lastEOBLen");
+            t2 = _this.__Deflate__numValidBits_A;
+            t2 === $ && A.throwLateFieldNI("_numValidBits");
+            if (1 + t1 + 10 - t2 < 9) {
+              _this._sendBits$2(2, 3);
+              _this._sendCode$2(256, B.List_LCt);
+              _this.biFlush$0();
+            }
+            _this.__Deflate__lastEOBLen_A = 7;
+          } else {
+            _this._trStoredBlock$3(0, 0, false);
+            if (flush === B._DeflateFlushMode_2) {
+              t1 = _this.__Deflate__hashSize_A;
+              t1 === $ && A.throwLateFieldNI("_hashSize");
+              t2 = _this.__Deflate__head_A;
+              i = 0;
+              for (; i < t1; ++i) {
+                t2 === $ && A.throwLateFieldNI("_head");
+                t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+                if (!(i < t2.length))
+                  return A.ioore(t2, i);
+                t2[i] = 0;
+              }
+            }
+          }
+          _this._flushPending$0();
+        }
+      }
+      if (flush !== B._DeflateFlushMode_3)
+        return 0;
+      return 1;
+    },
+    _initBlock$0() {
+      var _this = this,
+        t1 = _this.__Deflate__dynamicLengthTree_A;
+      t1 === $ && A.throwLateFieldNI("_dynamicLengthTree");
+      B.NativeUint16List_methods.fillRange$3(t1, 0, 572, 0);
+      t1 = _this.__Deflate__dynamicDistTree_A;
+      t1 === $ && A.throwLateFieldNI("_dynamicDistTree");
+      B.NativeUint16List_methods.fillRange$3(t1, 0, 60, 0);
+      t1 = _this.__Deflate__bitLengthTree_A;
+      t1 === $ && A.throwLateFieldNI("_bitLengthTree");
+      B.NativeUint16List_methods.fillRange$3(t1, 0, 38, 0);
+      t1 = _this.__Deflate__dynamicLengthTree_A;
+      t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+      t1[512] = 1;
+      _this.__Deflate__lastLit_A = _this.__Deflate__matches_A = _this.__Deflate__optimalLen_A = _this.__Deflate__staticLen_A = 0;
+    },
+    _pqdownheap$2(tree, k) {
+      var v, j, t2, t3, t4, j0,
+        t1 = this._heap;
+      if (!(k >= 0 && k < 573))
+        return A.ioore(t1, k);
+      v = t1[k];
+      j = k << 1 >>> 0;
+      t2 = t1.$flags | 0;
+      t3 = this._depth;
+      for (;;) {
+        t4 = this.__Deflate__heapLen_A;
+        t4 === $ && A.throwLateFieldNI("_heapLen");
+        if (!(j <= t4))
+          break;
+        if (j < t4) {
+          t4 = j + 1;
+          if (!(t4 >= 0 && t4 < 573))
+            return A.ioore(t1, t4);
+          t4 = t1[t4];
+          if (!(j >= 0 && j < 573))
+            return A.ioore(t1, j);
+          t4 = A.Deflate__smaller(tree, t4, t1[j], t3);
+        } else
+          t4 = false;
+        if (t4)
+          ++j;
+        if (!(j >= 0 && j < 573))
+          return A.ioore(t1, j);
+        if (A.Deflate__smaller(tree, v, t1[j], t3))
+          break;
+        t4 = t1[j];
+        t2 & 2 && A.throwUnsupportedOperation(t1);
+        if (!(k >= 0 && k < 573))
+          return A.ioore(t1, k);
+        t1[k] = t4;
+        j0 = j << 1 >>> 0;
+        k = j;
+        j = j0;
+      }
+      t2 & 2 && A.throwUnsupportedOperation(t1);
+      if (!(k >= 0 && k < 573))
+        return A.ioore(t1, k);
+      t1[k] = v;
+    },
+    _scanTree$2(tree, maxCode) {
+      var nextLen, maxCount, minCount, t2, n, prevLen, count, t3, nextLen0, minCount0, t4,
+        _s14_ = "_bitLengthTree",
+        t1 = tree.length;
+      if (1 >= t1)
+        return A.ioore(tree, 1);
+      nextLen = tree[1];
+      if (nextLen === 0) {
+        maxCount = 138;
+        minCount = 3;
+      } else {
+        maxCount = 7;
+        minCount = 4;
+      }
+      t2 = (maxCode + 1) * 2 + 1;
+      tree.$flags & 2 && A.throwUnsupportedOperation(tree);
+      if (!(t2 >= 0 && t2 < t1))
+        return A.ioore(tree, t2);
+      tree[t2] = 65535;
+      for (t2 = this.__Deflate__bitLengthTree_A, n = 0, prevLen = -1, count = 0; n <= maxCode; nextLen = nextLen0) {
+        ++n;
+        t3 = n * 2 + 1;
+        if (!(t3 < t1))
+          return A.ioore(tree, t3);
+        nextLen0 = tree[t3];
+        ++count;
+        if (count < maxCount && nextLen === nextLen0)
+          continue;
+        else {
+          minCount0 = 3;
+          if (count < minCount) {
+            t2 === $ && A.throwLateFieldNI(_s14_);
+            t3 = nextLen * 2;
+            if (!(t3 < 78))
+              return A.ioore(t2, t3);
+            t4 = t2[t3];
+            t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+            t2[t3] = t4 + count;
+          } else if (nextLen !== 0) {
+            if (nextLen !== prevLen) {
+              t2 === $ && A.throwLateFieldNI(_s14_);
+              t3 = nextLen * 2;
+              if (!(t3 < 78))
+                return A.ioore(t2, t3);
+              t4 = t2[t3];
+              t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+              t2[t3] = t4 + 1;
+            }
+            t2 === $ && A.throwLateFieldNI(_s14_);
+            t3 = t2[32];
+            t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+            t2[32] = t3 + 1;
+          } else if (count <= 10) {
+            t2 === $ && A.throwLateFieldNI(_s14_);
+            t3 = t2[34];
+            t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+            t2[34] = t3 + 1;
+          } else {
+            t2 === $ && A.throwLateFieldNI(_s14_);
+            t3 = t2[36];
+            t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+            t2[36] = t3 + 1;
+          }
+        }
+        if (nextLen0 === 0) {
+          minCount = minCount0;
+          maxCount = 138;
+        } else if (nextLen === nextLen0) {
+          minCount = minCount0;
+          maxCount = 6;
+        } else {
+          maxCount = 7;
+          minCount = 4;
+        }
+        prevLen = nextLen;
+        count = 0;
+      }
+    },
+    _buildBitLengthTree$0() {
+      var t2, maxBLIndex, _this = this,
+        t1 = _this.__Deflate__dynamicLengthTree_A;
+      t1 === $ && A.throwLateFieldNI("_dynamicLengthTree");
+      t2 = _this._lDesc.___HuffmanTree_maxCode_A;
+      t2 === $ && A.throwLateFieldNI("maxCode");
+      _this._scanTree$2(t1, t2);
+      t2 = _this.__Deflate__dynamicDistTree_A;
+      t2 === $ && A.throwLateFieldNI("_dynamicDistTree");
+      t1 = _this._dDesc.___HuffmanTree_maxCode_A;
+      t1 === $ && A.throwLateFieldNI("maxCode");
+      _this._scanTree$2(t2, t1);
+      _this._blDesc._buildTree$1(_this);
+      for (t1 = _this.__Deflate__bitLengthTree_A, maxBLIndex = 18; maxBLIndex >= 3; --maxBLIndex) {
+        t1 === $ && A.throwLateFieldNI("_bitLengthTree");
+        t2 = B.List_lln[maxBLIndex] * 2 + 1;
+        if (!(t2 < 78))
+          return A.ioore(t1, t2);
+        if (t1[t2] !== 0)
+          break;
+      }
+      t1 = _this.__Deflate__optimalLen_A;
+      t1 === $ && A.throwLateFieldNI("_optimalLen");
+      _this.__Deflate__optimalLen_A = t1 + (3 * (maxBLIndex + 1) + 5 + 5 + 4);
+      return maxBLIndex;
+    },
+    _sendAllTrees$3(lCodes, dCodes, blCodes) {
+      var t1, rank, t2, t3, _this = this;
+      _this._sendBits$2(lCodes - 257, 5);
+      t1 = dCodes - 1;
+      _this._sendBits$2(t1, 5);
+      _this._sendBits$2(blCodes - 4, 4);
+      for (rank = 0; rank < blCodes; ++rank) {
+        t2 = _this.__Deflate__bitLengthTree_A;
+        t2 === $ && A.throwLateFieldNI("_bitLengthTree");
+        if (!(rank < 19))
+          return A.ioore(B.List_lln, rank);
+        t3 = B.List_lln[rank] * 2 + 1;
+        if (!(t3 < 78))
+          return A.ioore(t2, t3);
+        _this._sendBits$2(t2[t3], 3);
+      }
+      t2 = _this.__Deflate__dynamicLengthTree_A;
+      t2 === $ && A.throwLateFieldNI("_dynamicLengthTree");
+      _this._sendTree$2(t2, lCodes - 1);
+      t2 = _this.__Deflate__dynamicDistTree_A;
+      t2 === $ && A.throwLateFieldNI("_dynamicDistTree");
+      _this._sendTree$2(t2, t1);
+    },
+    _sendTree$2(tree, maxCode) {
+      var nextLen, maxCount, minCount, t2, n, prevLen, count, t3, nextLen0, minCount0, t4, t5, t6, _this = this,
+        _s14_ = "_bitLengthTree",
+        t1 = tree.length;
+      if (1 >= t1)
+        return A.ioore(tree, 1);
+      nextLen = tree[1];
+      if (nextLen === 0) {
+        maxCount = 138;
+        minCount = 3;
+      } else {
+        maxCount = 7;
+        minCount = 4;
+      }
+      for (t2 = type$.List_int, n = 0, prevLen = -1, count = 0; n <= maxCode; nextLen = nextLen0) {
+        ++n;
+        t3 = n * 2 + 1;
+        if (!(t3 < t1))
+          return A.ioore(tree, t3);
+        nextLen0 = tree[t3];
+        ++count;
+        if (count < maxCount && nextLen === nextLen0)
+          continue;
+        else {
+          minCount0 = 3;
+          if (count < minCount) {
+            t3 = nextLen * 2;
+            t4 = t3 + 1;
+            do {
+              t5 = _this.__Deflate__bitLengthTree_A;
+              t5 === $ && A.throwLateFieldNI(_s14_);
+              t2._as(t5);
+              if (!(t3 < 78))
+                return A.ioore(t5, t3);
+              t6 = t5[t3];
+              if (!(t4 < 78))
+                return A.ioore(t5, t4);
+              _this._sendBits$2(t6 & 65535, t5[t4] & 65535);
+            } while (--count, count !== 0);
+          } else if (nextLen !== 0) {
+            if (nextLen !== prevLen) {
+              t3 = _this.__Deflate__bitLengthTree_A;
+              t3 === $ && A.throwLateFieldNI(_s14_);
+              t2._as(t3);
+              t4 = nextLen * 2;
+              if (!(t4 < 78))
+                return A.ioore(t3, t4);
+              t5 = t3[t4];
+              ++t4;
+              if (!(t4 < 78))
+                return A.ioore(t3, t4);
+              _this._sendBits$2(t5 & 65535, t3[t4] & 65535);
+              --count;
+            }
+            t3 = _this.__Deflate__bitLengthTree_A;
+            t3 === $ && A.throwLateFieldNI(_s14_);
+            t2._as(t3);
+            _this._sendBits$2(t3[32] & 65535, t3[33] & 65535);
+            _this._sendBits$2(count - 3, 2);
+          } else {
+            t3 = _this.__Deflate__bitLengthTree_A;
+            if (count <= 10) {
+              t3 === $ && A.throwLateFieldNI(_s14_);
+              t2._as(t3);
+              _this._sendBits$2(t3[34] & 65535, t3[35] & 65535);
+              _this._sendBits$2(count - 3, 3);
+            } else {
+              t3 === $ && A.throwLateFieldNI(_s14_);
+              t2._as(t3);
+              _this._sendBits$2(t3[36] & 65535, t3[37] & 65535);
+              _this._sendBits$2(count - 11, 7);
+            }
+          }
+        }
+        if (nextLen0 === 0) {
+          minCount = minCount0;
+          maxCount = 138;
+        } else if (nextLen === nextLen0) {
+          minCount = minCount0;
+          maxCount = 6;
+        } else {
+          maxCount = 7;
+          minCount = 4;
+        }
+        prevLen = nextLen;
+        count = 0;
+      }
+    },
+    _putBytes$3(p, start, len) {
+      var t1, t2, _this = this;
+      if (len === 0)
+        return;
+      t1 = _this.__Deflate__pendingBuffer_A;
+      t1 === $ && A.throwLateFieldNI("_pendingBuffer");
+      t2 = _this.__Deflate__pending_A;
+      t2 === $ && A.throwLateFieldNI("_pending");
+      B.NativeUint8List_methods.setRange$4(t1, t2, t2 + len, p, start);
+      _this.__Deflate__pending_A = _this.__Deflate__pending_A + len;
+    },
+    _putByte$1(c) {
+      var t2,
+        t1 = this.__Deflate__pendingBuffer_A;
+      t1 === $ && A.throwLateFieldNI("_pendingBuffer");
+      t2 = this.__Deflate__pending_A;
+      t2 === $ && A.throwLateFieldNI("_pending");
+      this.__Deflate__pending_A = t2 + 1;
+      t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+      if (!(t2 >= 0 && t2 < t1.length))
+        return A.ioore(t1, t2);
+      t1[t2] = c;
+    },
+    _sendCode$2(c, tree) {
+      var t1, t2, t3;
+      type$.List_int._as(tree);
+      t1 = c * 2;
+      t2 = tree.length;
+      if (!(t1 < t2))
+        return A.ioore(tree, t1);
+      t3 = tree[t1];
+      ++t1;
+      if (!(t1 < t2))
+        return A.ioore(tree, t1);
+      this._sendBits$2(t3 & 65535, tree[t1] & 65535);
+    },
+    _sendBits$2(valueRenamed, $length) {
+      var t2, _this = this,
+        _s10_ = "_bitBuffer",
+        t1 = _this.__Deflate__numValidBits_A;
+      t1 === $ && A.throwLateFieldNI("_numValidBits");
+      t2 = _this.__Deflate__bitBuffer_A;
+      if (t1 > 16 - $length) {
+        t2 === $ && A.throwLateFieldNI(_s10_);
+        t1 = _this.__Deflate__bitBuffer_A = (t2 | B.JSInt_methods.$shl(valueRenamed, t1) & 65535) >>> 0;
+        _this._putByte$1(t1);
+        _this._putByte$1(A._rshift(t1, 8));
+        _this.__Deflate__bitBuffer_A = A._rshift(valueRenamed, 16 - _this.__Deflate__numValidBits_A);
+        _this.__Deflate__numValidBits_A = _this.__Deflate__numValidBits_A + ($length - 16);
+      } else {
+        t2 === $ && A.throwLateFieldNI(_s10_);
+        _this.__Deflate__bitBuffer_A = (t2 | B.JSInt_methods.$shl(valueRenamed, t1) & 65535) >>> 0;
+        _this.__Deflate__numValidBits_A = t1 + $length;
+      }
+    },
+    _trTally$2(dist, lc) {
+      var t2, t3, t4, outLength, dcode, _this = this,
+        _s18_ = "_dynamicLengthTree",
+        _s8_ = "_matches",
+        _s16_ = "_dynamicDistTree",
+        t1 = _this.__Deflate__pendingBuffer_A;
+      t1 === $ && A.throwLateFieldNI("_pendingBuffer");
+      t2 = _this.__Deflate__dbuf_A;
+      t2 === $ && A.throwLateFieldNI("_dbuf");
+      t3 = _this.__Deflate__lastLit_A;
+      t3 === $ && A.throwLateFieldNI("_lastLit");
+      t3 = t2 + t3 * 2;
+      t2 = A._rshift(dist, 8);
+      t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+      if (!(t3 < t1.length))
+        return A.ioore(t1, t3);
+      t1[t3] = t2;
+      t2 = _this.__Deflate__pendingBuffer_A;
+      t3 = _this.__Deflate__dbuf_A;
+      t1 = _this.__Deflate__lastLit_A;
+      t3 = t3 + t1 * 2 + 1;
+      t2.$flags & 2 && A.throwUnsupportedOperation(t2);
+      t4 = t2.length;
+      if (!(t3 < t4))
+        return A.ioore(t2, t3);
+      t2[t3] = dist;
+      t3 = _this.__Deflate__lbuf_A;
+      t3 === $ && A.throwLateFieldNI("_lbuf");
+      t3 += t1;
+      if (!(t3 < t4))
+        return A.ioore(t2, t3);
+      t2[t3] = lc;
+      _this.__Deflate__lastLit_A = t1 + 1;
+      if (dist === 0) {
+        t1 = _this.__Deflate__dynamicLengthTree_A;
+        t1 === $ && A.throwLateFieldNI(_s18_);
+        t2 = lc * 2;
+        if (!(t2 >= 0 && t2 < 1146))
+          return A.ioore(t1, t2);
+        t3 = t1[t2];
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[t2] = t3 + 1;
+      } else {
+        t1 = _this.__Deflate__matches_A;
+        t1 === $ && A.throwLateFieldNI(_s8_);
+        _this.__Deflate__matches_A = t1 + 1;
+        t1 = _this.__Deflate__dynamicLengthTree_A;
+        t1 === $ && A.throwLateFieldNI(_s18_);
+        if (!(lc >= 0 && lc < 256))
+          return A.ioore(B.List_GYx, lc);
+        t2 = (B.List_GYx[lc] + 256 + 1) * 2;
+        if (!(t2 < 1146))
+          return A.ioore(t1, t2);
+        t3 = t1[t2];
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[t2] = t3 + 1;
+        t3 = _this.__Deflate__dynamicDistTree_A;
+        t3 === $ && A.throwLateFieldNI(_s16_);
+        t2 = A._HuffmanTree__dCode(dist - 1) * 2;
+        if (!(t2 < 122))
+          return A.ioore(t3, t2);
+        t1 = t3[t2];
+        t3.$flags & 2 && A.throwUnsupportedOperation(t3);
+        t3[t2] = t1 + 1;
+      }
+      t1 = _this.__Deflate__lastLit_A;
+      if ((t1 & 8191) === 0) {
+        t2 = _this.__Deflate__level_A;
+        t2 === $ && A.throwLateFieldNI("_level");
+        t2 = t2 > 2;
+      } else
+        t2 = false;
+      if (t2) {
+        outLength = t1 * 8;
+        t1 = _this.__Deflate__strStart_A;
+        t1 === $ && A.throwLateFieldNI("_strStart");
+        t2 = _this.__Deflate__blockStart_A;
+        t2 === $ && A.throwLateFieldNI("_blockStart");
+        for (t3 = _this.__Deflate__dynamicDistTree_A, dcode = 0; dcode < 30; ++dcode) {
+          t3 === $ && A.throwLateFieldNI(_s16_);
+          t4 = dcode * 2;
+          if (!(t4 < 122))
+            return A.ioore(t3, t4);
+          outLength += t3[t4] * (5 + B.List_HmF[dcode]);
+        }
+        outLength = A._rshift(outLength, 3);
+        t3 = _this.__Deflate__matches_A;
+        t3 === $ && A.throwLateFieldNI(_s8_);
+        t4 = _this.__Deflate__lastLit_A;
+        if (t3 < t4 / 2 && outLength < (t1 - t2) / 2)
+          return true;
+        t1 = t4;
+      }
+      t2 = _this.__Deflate__litBufferSize_A;
+      t2 === $ && A.throwLateFieldNI("_litBufferSize");
+      return t1 === t2 - 1;
+    },
+    _compressBlock$2(ltree, dtree) {
+      var lx, t2, t3, t4, dist, lc, code, extra, _this = this,
+        t1 = type$.List_int;
+      t1._as(ltree);
+      t1._as(dtree);
+      t1 = _this.__Deflate__lastLit_A;
+      t1 === $ && A.throwLateFieldNI("_lastLit");
+      if (t1 !== 0) {
+        lx = 0;
+        do {
+          t1 = _this.__Deflate__pendingBuffer_A;
+          t1 === $ && A.throwLateFieldNI("_pendingBuffer");
+          t2 = _this.__Deflate__dbuf_A;
+          t2 === $ && A.throwLateFieldNI("_dbuf");
+          t2 += lx * 2;
+          t3 = t1.length;
+          if (!(t2 < t3))
+            return A.ioore(t1, t2);
+          t4 = t1[t2];
+          ++t2;
+          if (!(t2 < t3))
+            return A.ioore(t1, t2);
+          dist = t4 << 8 & 65280 | t1[t2] & 255;
+          t2 = _this.__Deflate__lbuf_A;
+          t2 === $ && A.throwLateFieldNI("_lbuf");
+          t2 += lx;
+          if (!(t2 < t3))
+            return A.ioore(t1, t2);
+          lc = t1[t2] & 255;
+          ++lx;
+          if (dist === 0)
+            _this._sendCode$2(lc, ltree);
+          else {
+            code = B.List_GYx[lc];
+            _this._sendCode$2(code + 256 + 1, ltree);
+            if (!(code < 29))
+              return A.ioore(B.List_1eA, code);
+            extra = B.List_1eA[code];
+            if (extra !== 0)
+              _this._sendBits$2(lc - B.List_2Xs[code], extra);
+            --dist;
+            code = A._HuffmanTree__dCode(dist);
+            _this._sendCode$2(code, dtree);
+            if (!(code < 30))
+              return A.ioore(B.List_HmF, code);
+            extra = B.List_HmF[code];
+            if (extra !== 0)
+              _this._sendBits$2(dist - B.List_972[code], extra);
+          }
+        } while (lx < _this.__Deflate__lastLit_A);
+      }
+      _this._sendCode$2(256, ltree);
+      if (513 >= ltree.length)
+        return A.ioore(ltree, 513);
+      _this.__Deflate__lastEOBLen_A = ltree[513];
+    },
+    setDataType$0() {
+      var t1, n, binFreq, t2, asciiFreq,
+        _s18_ = "_dynamicLengthTree";
+      for (t1 = this.__Deflate__dynamicLengthTree_A, n = 0, binFreq = 0; n < 7;) {
+        t1 === $ && A.throwLateFieldNI(_s18_);
+        t2 = n * 2;
+        if (!(t2 < 1146))
+          return A.ioore(t1, t2);
+        binFreq += t1[t2];
+        ++n;
+      }
+      for (asciiFreq = 0; n < 128;) {
+        t1 === $ && A.throwLateFieldNI(_s18_);
+        t2 = n * 2;
+        if (!(t2 < 1146))
+          return A.ioore(t1, t2);
+        asciiFreq += t1[t2];
+        ++n;
+      }
+      while (n < 256) {
+        t1 === $ && A.throwLateFieldNI(_s18_);
+        t2 = n * 2;
+        if (!(t2 < 1146))
+          return A.ioore(t1, t2);
+        binFreq += t1[t2];
+        ++n;
+      }
+      this._dataType = binFreq > A._rshift(asciiFreq, 2) ? 0 : 1;
+    },
+    biFlush$0() {
+      var _this = this,
+        _s10_ = "_bitBuffer",
+        t1 = _this.__Deflate__numValidBits_A;
+      t1 === $ && A.throwLateFieldNI("_numValidBits");
+      if (t1 === 16) {
+        t1 = _this.__Deflate__bitBuffer_A;
+        t1 === $ && A.throwLateFieldNI(_s10_);
+        _this._putByte$1(t1);
+        _this._putByte$1(A._rshift(t1, 8));
+        _this.__Deflate__numValidBits_A = _this.__Deflate__bitBuffer_A = 0;
+      } else if (t1 >= 8) {
+        t1 = _this.__Deflate__bitBuffer_A;
+        t1 === $ && A.throwLateFieldNI(_s10_);
+        _this._putByte$1(t1);
+        _this.__Deflate__bitBuffer_A = A._rshift(_this.__Deflate__bitBuffer_A, 8);
+        _this.__Deflate__numValidBits_A = _this.__Deflate__numValidBits_A - 8;
+      }
+    },
+    _biWindup$0() {
+      var _this = this,
+        _s10_ = "_bitBuffer",
+        t1 = _this.__Deflate__numValidBits_A;
+      t1 === $ && A.throwLateFieldNI("_numValidBits");
+      if (t1 > 8) {
+        t1 = _this.__Deflate__bitBuffer_A;
+        t1 === $ && A.throwLateFieldNI(_s10_);
+        _this._putByte$1(t1);
+        _this._putByte$1(A._rshift(t1, 8));
+      } else if (t1 > 0) {
+        t1 = _this.__Deflate__bitBuffer_A;
+        t1 === $ && A.throwLateFieldNI(_s10_);
+        _this._putByte$1(t1);
+      }
+      _this.__Deflate__numValidBits_A = _this.__Deflate__bitBuffer_A = 0;
+    },
+    _flushBlockOnly$1(eof) {
+      var t2, t3, maxBlIndex, optLenb, staticLenb, _this = this,
+        t1 = _this.__Deflate__blockStart_A;
+      t1 === $ && A.throwLateFieldNI("_blockStart");
+      if (t1 >= 0)
+        t2 = t1;
+      else
+        t2 = -1;
+      t3 = _this.__Deflate__strStart_A;
+      t3 === $ && A.throwLateFieldNI("_strStart");
+      t1 = t3 - t1;
+      t3 = _this.__Deflate__level_A;
+      t3 === $ && A.throwLateFieldNI("_level");
+      if (t3 > 0) {
+        if (_this._dataType === 2)
+          _this.setDataType$0();
+        _this._lDesc._buildTree$1(_this);
+        _this._dDesc._buildTree$1(_this);
+        maxBlIndex = _this._buildBitLengthTree$0();
+        t3 = _this.__Deflate__optimalLen_A;
+        t3 === $ && A.throwLateFieldNI("_optimalLen");
+        optLenb = A._rshift(t3 + 3 + 7, 3);
+        t3 = _this.__Deflate__staticLen_A;
+        t3 === $ && A.throwLateFieldNI("_staticLen");
+        staticLenb = A._rshift(t3 + 3 + 7, 3);
+        if (staticLenb <= optLenb)
+          optLenb = staticLenb;
+      } else {
+        staticLenb = t1 + 5;
+        optLenb = staticLenb;
+        maxBlIndex = 0;
+      }
+      if (t1 + 4 <= optLenb && t2 !== -1)
+        _this._trStoredBlock$3(t2, t1, eof);
+      else if (staticLenb === optLenb) {
+        _this._sendBits$2(2 + (eof ? 1 : 0), 3);
+        _this._compressBlock$2(B.List_LCt, B.List_LJO);
+      } else {
+        _this._sendBits$2(4 + (eof ? 1 : 0), 3);
+        t1 = _this._lDesc.___HuffmanTree_maxCode_A;
+        t1 === $ && A.throwLateFieldNI("maxCode");
+        t2 = _this._dDesc.___HuffmanTree_maxCode_A;
+        t2 === $ && A.throwLateFieldNI("maxCode");
+        _this._sendAllTrees$3(t1 + 1, t2 + 1, maxBlIndex + 1);
+        t2 = _this.__Deflate__dynamicLengthTree_A;
+        t2 === $ && A.throwLateFieldNI("_dynamicLengthTree");
+        t1 = _this.__Deflate__dynamicDistTree_A;
+        t1 === $ && A.throwLateFieldNI("_dynamicDistTree");
+        _this._compressBlock$2(t2, t1);
+      }
+      _this._initBlock$0();
+      if (eof)
+        _this._biWindup$0();
+      _this.__Deflate__blockStart_A = _this.__Deflate__strStart_A;
+      _this._flushPending$0();
+    },
+    _deflateStored$1(flush) {
+      var maxBlockSize, t2, t3, maxStart, t4, _this = this,
+        t1 = _this.__Deflate__pendingBufferSize_A;
+      t1 === $ && A.throwLateFieldNI("_pendingBufferSize");
+      maxBlockSize = t1 - 5;
+      maxBlockSize = 65535 > maxBlockSize ? maxBlockSize : 65535;
+      for (t1 = flush === B._DeflateFlushMode_0;;) {
+        t2 = _this.__Deflate__lookAhead_A;
+        t2 === $ && A.throwLateFieldNI("_lookAhead");
+        if (t2 <= 1) {
+          _this._fillWindow$0();
+          t2 = _this.__Deflate__lookAhead_A;
+          t3 = t2 === 0;
+          if (t3 && t1)
+            return 0;
+          if (t3)
+            break;
+        }
+        t3 = _this.__Deflate__strStart_A;
+        t3 === $ && A.throwLateFieldNI("_strStart");
+        t2 = _this.__Deflate__strStart_A = t3 + t2;
+        _this.__Deflate__lookAhead_A = 0;
+        t3 = _this.__Deflate__blockStart_A;
+        t3 === $ && A.throwLateFieldNI("_blockStart");
+        maxStart = t3 + maxBlockSize;
+        if (t2 >= maxStart) {
+          _this.__Deflate__lookAhead_A = t2 - maxStart;
+          _this.__Deflate__strStart_A = maxStart;
+          _this._flushBlockOnly$1(false);
+        }
+        t2 = _this.__Deflate__strStart_A;
+        t3 = _this.__Deflate__blockStart_A;
+        t4 = _this.__Deflate__windowSize_A;
+        t4 === $ && A.throwLateFieldNI("_windowSize");
+        if (t2 - t3 >= t4 - 262)
+          _this._flushBlockOnly$1(false);
+      }
+      t1 = flush === B._DeflateFlushMode_3;
+      _this._flushBlockOnly$1(t1);
+      return t1 ? 3 : 1;
+    },
+    _trStoredBlock$3(buf, storedLen, eof) {
+      var t1, _this = this;
+      _this._sendBits$2(eof ? 1 : 0, 3);
+      _this._biWindup$0();
+      _this.__Deflate__lastEOBLen_A = 8;
+      _this._putByte$1(storedLen);
+      _this._putByte$1(A._rshift(storedLen, 8));
+      t1 = (~storedLen >>> 0) + 65536 & 65535;
+      _this._putByte$1(t1);
+      _this._putByte$1(A._rshift(t1, 8));
+      t1 = _this.__Deflate__window_A;
+      t1 === $ && A.throwLateFieldNI("_window");
+      _this._putBytes$3(t1, buf, storedLen);
+    },
+    _fillWindow$0() {
+      var t2, t3, t4, more, p, t5, p0, n, m, t6, t7, _this = this,
+        _s11_ = "_windowSize",
+        t1 = _this._deflate$_input;
+      do {
+        t2 = _this.__Deflate__actualWindowSize_A;
+        t2 === $ && A.throwLateFieldNI("_actualWindowSize");
+        t3 = _this.__Deflate__lookAhead_A;
+        t3 === $ && A.throwLateFieldNI("_lookAhead");
+        t4 = _this.__Deflate__strStart_A;
+        t4 === $ && A.throwLateFieldNI("_strStart");
+        more = t2 - t3 - t4;
+        if (more === 0 && t4 === 0 && t3 === 0) {
+          t2 = _this.__Deflate__windowSize_A;
+          t2 === $ && A.throwLateFieldNI(_s11_);
+          more = t2;
+        } else {
+          t2 = _this.__Deflate__windowSize_A;
+          t2 === $ && A.throwLateFieldNI(_s11_);
+          if (t4 >= t2 + t2 - 262) {
+            t3 = _this.__Deflate__window_A;
+            t3 === $ && A.throwLateFieldNI("_window");
+            B.NativeUint8List_methods.setRange$4(t3, 0, t2, t3, t2);
+            t2 = _this._matchStart;
+            p = _this.__Deflate__windowSize_A;
+            _this._matchStart = t2 - p;
+            _this.__Deflate__strStart_A = _this.__Deflate__strStart_A - p;
+            t2 = _this.__Deflate__blockStart_A;
+            t2 === $ && A.throwLateFieldNI("_blockStart");
+            _this.__Deflate__blockStart_A = t2 - p;
+            t2 = _this.__Deflate__hashSize_A;
+            t2 === $ && A.throwLateFieldNI("_hashSize");
+            t3 = _this.__Deflate__head_A;
+            t3 === $ && A.throwLateFieldNI("_head");
+            t4 = t3.length;
+            t5 = t3.$flags | 0;
+            p0 = t2;
+            n = p0;
+            do {
+              --p0;
+              if (!(p0 >= 0 && p0 < t4))
+                return A.ioore(t3, p0);
+              m = t3[p0] & 65535;
+              t2 = m >= p ? m - p : 0;
+              t5 & 2 && A.throwUnsupportedOperation(t3);
+              t3[p0] = t2;
+            } while (--n, n !== 0);
+            t2 = _this.__Deflate__prev_A;
+            t2 === $ && A.throwLateFieldNI("_prev");
+            t3 = t2.length;
+            t4 = t2.$flags | 0;
+            p0 = p;
+            n = p0;
+            do {
+              --p0;
+              if (!(p0 >= 0 && p0 < t3))
+                return A.ioore(t2, p0);
+              m = t2[p0] & 65535;
+              t5 = m >= p ? m - p : 0;
+              t4 & 2 && A.throwUnsupportedOperation(t2);
+              t2[p0] = t5;
+            } while (--n, n !== 0);
+            more += p;
+          }
+        }
+        t2 = t1._position;
+        t3 = t1.__InputMemoryStream__length_A;
+        t3 === $ && A.throwLateFieldNI("_length");
+        if (t2 >= t3)
+          return;
+        t2 = _this.__Deflate__window_A;
+        t2 === $ && A.throwLateFieldNI("_window");
+        n = _this._readBuf$3(t2, _this.__Deflate__strStart_A + _this.__Deflate__lookAhead_A, more);
+        t2 = _this.__Deflate__lookAhead_A = _this.__Deflate__lookAhead_A + n;
+        if (t2 >= 3) {
+          t3 = _this.__Deflate__window_A;
+          t4 = _this.__Deflate__strStart_A;
+          t5 = t3.length;
+          if (t4 >>> 0 !== t4 || t4 >= t5)
+            return A.ioore(t3, t4);
+          t6 = t3[t4] & 255;
+          _this.__Deflate__insertHash_A = t6;
+          t7 = _this.__Deflate__hashShift_A;
+          t7 === $ && A.throwLateFieldNI("_hashShift");
+          t7 = B.JSInt_methods.$shl(t6, t7);
+          ++t4;
+          if (!(t4 < t5))
+            return A.ioore(t3, t4);
+          t4 = t3[t4];
+          t3 = _this.__Deflate__hashMask_A;
+          t3 === $ && A.throwLateFieldNI("_hashMask");
+          _this.__Deflate__insertHash_A = ((t7 ^ t4 & 255) & t3) >>> 0;
+        }
+      } while (t2 < 262 && !(t1._position >= t1.__InputMemoryStream__length_A));
+    },
+    _deflateFast$1(flush) {
+      var t1, t2, hashHead, t3, t4, t5, t6, t7, t8, bflush, t9, _this = this,
+        _s11_ = "_insertHash",
+        _s10_ = "_hashShift",
+        _s7_ = "_window",
+        _s9_ = "_strStart",
+        _s9_0 = "_hashMask",
+        _s11_0 = "_windowMask";
+      for (t1 = flush === B._DeflateFlushMode_0, t2 = $.Deflate____config._name, hashHead = 0;;) {
+        t3 = _this.__Deflate__lookAhead_A;
+        t3 === $ && A.throwLateFieldNI("_lookAhead");
+        if (t3 < 262) {
+          _this._fillWindow$0();
+          t3 = _this.__Deflate__lookAhead_A;
+          if (t3 < 262 && t1)
+            return 0;
+          if (t3 === 0)
+            break;
+        }
+        if (t3 >= 3) {
+          t3 = _this.__Deflate__insertHash_A;
+          t3 === $ && A.throwLateFieldNI(_s11_);
+          t4 = _this.__Deflate__hashShift_A;
+          t4 === $ && A.throwLateFieldNI(_s10_);
+          t4 = B.JSInt_methods.$shl(t3, t4);
+          t3 = _this.__Deflate__window_A;
+          t3 === $ && A.throwLateFieldNI(_s7_);
+          t5 = _this.__Deflate__strStart_A;
+          t5 === $ && A.throwLateFieldNI(_s9_);
+          t6 = t5 + 2;
+          if (!(t6 >= 0 && t6 < t3.length))
+            return A.ioore(t3, t6);
+          t6 = t3[t6];
+          t3 = _this.__Deflate__hashMask_A;
+          t3 === $ && A.throwLateFieldNI(_s9_0);
+          t3 = ((t4 ^ t6 & 255) & t3) >>> 0;
+          _this.__Deflate__insertHash_A = t3;
+          t6 = _this.__Deflate__head_A;
+          t6 === $ && A.throwLateFieldNI("_head");
+          if (!(t3 < t6.length))
+            return A.ioore(t6, t3);
+          t4 = t6[t3];
+          hashHead = t4 & 65535;
+          t7 = _this.__Deflate__prev_A;
+          t7 === $ && A.throwLateFieldNI("_prev");
+          t8 = _this.__Deflate__windowMask_A;
+          t8 === $ && A.throwLateFieldNI(_s11_0);
+          t8 = (t5 & t8) >>> 0;
+          t7.$flags & 2 && A.throwUnsupportedOperation(t7);
+          if (!(t8 >= 0 && t8 < t7.length))
+            return A.ioore(t7, t8);
+          t7[t8] = t4;
+          t6.$flags & 2 && A.throwUnsupportedOperation(t6);
+          t6[t3] = t5;
+        }
+        if (hashHead !== 0) {
+          t3 = _this.__Deflate__strStart_A;
+          t3 === $ && A.throwLateFieldNI(_s9_);
+          t4 = _this.__Deflate__windowSize_A;
+          t4 === $ && A.throwLateFieldNI("_windowSize");
+          t4 = (t3 - hashHead & 65535) <= t4 - 262;
+          t3 = t4;
+        } else
+          t3 = false;
+        if (t3) {
+          t3 = _this.__Deflate__strategy_A;
+          t3 === $ && A.throwLateFieldNI("_strategy");
+          if (t3 !== 2)
+            _this.__Deflate__matchLength_A = _this._longestMatch$1(hashHead);
+        }
+        t3 = _this.__Deflate__matchLength_A;
+        t3 === $ && A.throwLateFieldNI("_matchLength");
+        t4 = _this.__Deflate__strStart_A;
+        if (t3 >= 3) {
+          t4 === $ && A.throwLateFieldNI(_s9_);
+          bflush = _this._trTally$2(t4 - _this._matchStart, t3 - 3);
+          t3 = _this.__Deflate__lookAhead_A;
+          t4 = _this.__Deflate__matchLength_A;
+          t3 -= t4;
+          _this.__Deflate__lookAhead_A = t3;
+          t5 = $.Deflate____config._value;
+          if (t5 === $.Deflate____config)
+            A.throwExpression(A.LateError$fieldNI(t2));
+          if (t4 <= t5.maxLazy && t3 >= 3) {
+            t3 = _this.__Deflate__matchLength_A = t4 - 1;
+            do {
+              t4 = _this.__Deflate__strStart_A = _this.__Deflate__strStart_A + 1;
+              t5 = _this.__Deflate__insertHash_A;
+              t5 === $ && A.throwLateFieldNI(_s11_);
+              t6 = _this.__Deflate__hashShift_A;
+              t6 === $ && A.throwLateFieldNI(_s10_);
+              t6 = B.JSInt_methods.$shl(t5, t6);
+              t5 = _this.__Deflate__window_A;
+              t5 === $ && A.throwLateFieldNI(_s7_);
+              t7 = t4 + 2;
+              if (!(t7 >= 0 && t7 < t5.length))
+                return A.ioore(t5, t7);
+              t7 = t5[t7];
+              t5 = _this.__Deflate__hashMask_A;
+              t5 === $ && A.throwLateFieldNI(_s9_0);
+              t5 = ((t6 ^ t7 & 255) & t5) >>> 0;
+              _this.__Deflate__insertHash_A = t5;
+              t7 = _this.__Deflate__head_A;
+              t7 === $ && A.throwLateFieldNI("_head");
+              if (!(t5 < t7.length))
+                return A.ioore(t7, t5);
+              t6 = t7[t5];
+              hashHead = t6 & 65535;
+              t8 = _this.__Deflate__prev_A;
+              t8 === $ && A.throwLateFieldNI("_prev");
+              t9 = _this.__Deflate__windowMask_A;
+              t9 === $ && A.throwLateFieldNI(_s11_0);
+              t9 = (t4 & t9) >>> 0;
+              t8.$flags & 2 && A.throwUnsupportedOperation(t8);
+              if (!(t9 >= 0 && t9 < t8.length))
+                return A.ioore(t8, t9);
+              t8[t9] = t6;
+              t7.$flags & 2 && A.throwUnsupportedOperation(t7);
+              t7[t5] = t4;
+            } while (t3 = _this.__Deflate__matchLength_A = t3 - 1, t3 !== 0);
+            _this.__Deflate__strStart_A = t4 + 1;
+          } else {
+            t3 = _this.__Deflate__strStart_A = _this.__Deflate__strStart_A + t4;
+            _this.__Deflate__matchLength_A = 0;
+            t4 = _this.__Deflate__window_A;
+            t4 === $ && A.throwLateFieldNI(_s7_);
+            t5 = t4.length;
+            if (!(t3 >= 0 && t3 < t5))
+              return A.ioore(t4, t3);
+            t6 = t4[t3] & 255;
+            _this.__Deflate__insertHash_A = t6;
+            t7 = _this.__Deflate__hashShift_A;
+            t7 === $ && A.throwLateFieldNI(_s10_);
+            t7 = B.JSInt_methods.$shl(t6, t7);
+            ++t3;
+            if (!(t3 < t5))
+              return A.ioore(t4, t3);
+            t3 = t4[t3];
+            t4 = _this.__Deflate__hashMask_A;
+            t4 === $ && A.throwLateFieldNI(_s9_0);
+            _this.__Deflate__insertHash_A = ((t7 ^ t3 & 255) & t4) >>> 0;
+          }
+        } else {
+          t3 = _this.__Deflate__window_A;
+          t3 === $ && A.throwLateFieldNI(_s7_);
+          t4 === $ && A.throwLateFieldNI(_s9_);
+          if (!(t4 >= 0 && t4 < t3.length))
+            return A.ioore(t3, t4);
+          bflush = _this._trTally$2(0, t3[t4] & 255);
+          _this.__Deflate__lookAhead_A = _this.__Deflate__lookAhead_A - 1;
+          _this.__Deflate__strStart_A = _this.__Deflate__strStart_A + 1;
+        }
+        if (bflush)
+          _this._flushBlockOnly$1(false);
+      }
+      t1 = flush === B._DeflateFlushMode_3;
+      _this._flushBlockOnly$1(t1);
+      return t1 ? 3 : 1;
+    },
+    _deflateSlow$1(flush) {
+      var t1, t2, hashHead, t3, t4, t5, t6, t7, t8, maxInsert, bflush, t9, _this = this,
+        _s11_ = "_insertHash",
+        _s10_ = "_hashShift",
+        _s7_ = "_window",
+        _s9_ = "_strStart",
+        _s9_0 = "_hashMask",
+        _s11_0 = "_windowMask",
+        _s15_ = "_matchAvailable";
+      for (t1 = flush === B._DeflateFlushMode_0, t2 = $.Deflate____config._name, hashHead = 0;;) {
+        t3 = _this.__Deflate__lookAhead_A;
+        t3 === $ && A.throwLateFieldNI("_lookAhead");
+        if (t3 < 262) {
+          _this._fillWindow$0();
+          t3 = _this.__Deflate__lookAhead_A;
+          if (t3 < 262 && t1)
+            return 0;
+          if (t3 === 0)
+            break;
+        }
+        if (t3 >= 3) {
+          t3 = _this.__Deflate__insertHash_A;
+          t3 === $ && A.throwLateFieldNI(_s11_);
+          t4 = _this.__Deflate__hashShift_A;
+          t4 === $ && A.throwLateFieldNI(_s10_);
+          t4 = B.JSInt_methods.$shl(t3, t4);
+          t3 = _this.__Deflate__window_A;
+          t3 === $ && A.throwLateFieldNI(_s7_);
+          t5 = _this.__Deflate__strStart_A;
+          t5 === $ && A.throwLateFieldNI(_s9_);
+          t6 = t5 + 2;
+          if (!(t6 >= 0 && t6 < t3.length))
+            return A.ioore(t3, t6);
+          t6 = t3[t6];
+          t3 = _this.__Deflate__hashMask_A;
+          t3 === $ && A.throwLateFieldNI(_s9_0);
+          t3 = ((t4 ^ t6 & 255) & t3) >>> 0;
+          _this.__Deflate__insertHash_A = t3;
+          t6 = _this.__Deflate__head_A;
+          t6 === $ && A.throwLateFieldNI("_head");
+          if (!(t3 < t6.length))
+            return A.ioore(t6, t3);
+          t4 = t6[t3];
+          hashHead = t4 & 65535;
+          t7 = _this.__Deflate__prev_A;
+          t7 === $ && A.throwLateFieldNI("_prev");
+          t8 = _this.__Deflate__windowMask_A;
+          t8 === $ && A.throwLateFieldNI(_s11_0);
+          t8 = (t5 & t8) >>> 0;
+          t7.$flags & 2 && A.throwUnsupportedOperation(t7);
+          if (!(t8 >= 0 && t8 < t7.length))
+            return A.ioore(t7, t8);
+          t7[t8] = t4;
+          t6.$flags & 2 && A.throwUnsupportedOperation(t6);
+          t6[t3] = t5;
+        }
+        t3 = _this.__Deflate__matchLength_A;
+        t3 === $ && A.throwLateFieldNI("_matchLength");
+        _this.__Deflate__prevLength_A = t3;
+        _this.__Deflate__prevMatch_A = _this._matchStart;
+        _this.__Deflate__matchLength_A = 2;
+        t4 = false;
+        if (hashHead !== 0) {
+          t5 = $.Deflate____config._value;
+          if (t5 === $.Deflate____config)
+            A.throwExpression(A.LateError$fieldNI(t2));
+          if (t3 < t5.maxLazy) {
+            t3 = _this.__Deflate__strStart_A;
+            t3 === $ && A.throwLateFieldNI(_s9_);
+            t4 = _this.__Deflate__windowSize_A;
+            t4 === $ && A.throwLateFieldNI("_windowSize");
+            t4 = (t3 - hashHead & 65535) <= t4 - 262;
+            t3 = t4;
+          } else
+            t3 = t4;
+        } else
+          t3 = t4;
+        t4 = 2;
+        if (t3) {
+          t3 = _this.__Deflate__strategy_A;
+          t3 === $ && A.throwLateFieldNI("_strategy");
+          if (t3 !== 2) {
+            t3 = _this._longestMatch$1(hashHead);
+            _this.__Deflate__matchLength_A = t3;
+          } else
+            t3 = t4;
+          t5 = false;
+          if (t3 <= 5)
+            if (_this.__Deflate__strategy_A !== 1) {
+              if (t3 === 3) {
+                t5 = _this.__Deflate__strStart_A;
+                t5 === $ && A.throwLateFieldNI(_s9_);
+                t5 = t5 - _this._matchStart > 4096;
+              }
+            } else
+              t5 = true;
+          if (t5) {
+            _this.__Deflate__matchLength_A = 2;
+            t3 = t4;
+          }
+        } else
+          t3 = t4;
+        t4 = _this.__Deflate__prevLength_A;
+        if (t4 >= 3 && t3 <= t4) {
+          t3 = _this.__Deflate__strStart_A;
+          t3 === $ && A.throwLateFieldNI(_s9_);
+          maxInsert = t3 + _this.__Deflate__lookAhead_A - 3;
+          bflush = _this._trTally$2(t3 - 1 - _this.__Deflate__prevMatch_A, t4 - 3);
+          t4 = _this.__Deflate__lookAhead_A;
+          t3 = _this.__Deflate__prevLength_A;
+          _this.__Deflate__lookAhead_A = t4 - (t3 - 1);
+          t3 = _this.__Deflate__prevLength_A = t3 - 2;
+          do {
+            t4 = _this.__Deflate__strStart_A = _this.__Deflate__strStart_A + 1;
+            if (t4 <= maxInsert) {
+              t5 = _this.__Deflate__insertHash_A;
+              t5 === $ && A.throwLateFieldNI(_s11_);
+              t6 = _this.__Deflate__hashShift_A;
+              t6 === $ && A.throwLateFieldNI(_s10_);
+              t6 = B.JSInt_methods.$shl(t5, t6);
+              t5 = _this.__Deflate__window_A;
+              t5 === $ && A.throwLateFieldNI(_s7_);
+              t7 = t4 + 2;
+              if (!(t7 >= 0 && t7 < t5.length))
+                return A.ioore(t5, t7);
+              t7 = t5[t7];
+              t5 = _this.__Deflate__hashMask_A;
+              t5 === $ && A.throwLateFieldNI(_s9_0);
+              t5 = ((t6 ^ t7 & 255) & t5) >>> 0;
+              _this.__Deflate__insertHash_A = t5;
+              t7 = _this.__Deflate__head_A;
+              t7 === $ && A.throwLateFieldNI("_head");
+              if (!(t5 < t7.length))
+                return A.ioore(t7, t5);
+              t6 = t7[t5];
+              hashHead = t6 & 65535;
+              t8 = _this.__Deflate__prev_A;
+              t8 === $ && A.throwLateFieldNI("_prev");
+              t9 = _this.__Deflate__windowMask_A;
+              t9 === $ && A.throwLateFieldNI(_s11_0);
+              t9 = (t4 & t9) >>> 0;
+              t8.$flags & 2 && A.throwUnsupportedOperation(t8);
+              if (!(t9 >= 0 && t9 < t8.length))
+                return A.ioore(t8, t9);
+              t8[t9] = t6;
+              t7.$flags & 2 && A.throwUnsupportedOperation(t7);
+              t7[t5] = t4;
+            }
+          } while (t3 = _this.__Deflate__prevLength_A = t3 - 1, t3 !== 0);
+          _this.__Deflate__matchAvailable_A = 0;
+          _this.__Deflate__matchLength_A = 2;
+          _this.__Deflate__strStart_A = t4 + 1;
+          if (bflush)
+            _this._flushBlockOnly$1(false);
+        } else {
+          t3 = _this.__Deflate__matchAvailable_A;
+          t3 === $ && A.throwLateFieldNI(_s15_);
+          if (t3 !== 0) {
+            t3 = _this.__Deflate__window_A;
+            t3 === $ && A.throwLateFieldNI(_s7_);
+            t4 = _this.__Deflate__strStart_A;
+            t4 === $ && A.throwLateFieldNI(_s9_);
+            --t4;
+            if (!(t4 >= 0 && t4 < t3.length))
+              return A.ioore(t3, t4);
+            if (_this._trTally$2(0, t3[t4] & 255))
+              _this._flushBlockOnly$1(false);
+            _this.__Deflate__strStart_A = _this.__Deflate__strStart_A + 1;
+            _this.__Deflate__lookAhead_A = _this.__Deflate__lookAhead_A - 1;
+          } else {
+            _this.__Deflate__matchAvailable_A = 1;
+            t3 = _this.__Deflate__strStart_A;
+            t3 === $ && A.throwLateFieldNI(_s9_);
+            _this.__Deflate__strStart_A = t3 + 1;
+            _this.__Deflate__lookAhead_A = _this.__Deflate__lookAhead_A - 1;
+          }
+        }
+      }
+      t1 = _this.__Deflate__matchAvailable_A;
+      t1 === $ && A.throwLateFieldNI(_s15_);
+      if (t1 !== 0) {
+        t1 = _this.__Deflate__window_A;
+        t1 === $ && A.throwLateFieldNI(_s7_);
+        t2 = _this.__Deflate__strStart_A;
+        t2 === $ && A.throwLateFieldNI(_s9_);
+        --t2;
+        if (!(t2 >= 0 && t2 < t1.length))
+          return A.ioore(t1, t2);
+        _this._trTally$2(0, t1[t2] & 255);
+        _this.__Deflate__matchAvailable_A = 0;
+      }
+      t1 = flush === B._DeflateFlushMode_3;
+      _this._flushBlockOnly$1(t1);
+      return t1 ? 3 : 1;
+    },
+    _longestMatch$1(curMatch) {
+      var t2, t3, limit, niceMatch, strend, t4, t5, t6, t7, scanEnd1, scanEnd, scan, bestLen, scan0, match, len, _this = this,
+        chainLength = $.Deflate____config._readField$0().maxChain,
+        t1 = _this.__Deflate__strStart_A;
+      t1 === $ && A.throwLateFieldNI("_strStart");
+      t2 = _this.__Deflate__prevLength_A;
+      t2 === $ && A.throwLateFieldNI("_prevLength");
+      t3 = _this.__Deflate__windowSize_A;
+      t3 === $ && A.throwLateFieldNI("_windowSize");
+      t3 -= 262;
+      limit = t1 > t3 ? t1 - t3 : 0;
+      niceMatch = $.Deflate____config._readField$0().niceLength;
+      t3 = _this.__Deflate__windowMask_A;
+      t3 === $ && A.throwLateFieldNI("_windowMask");
+      strend = _this.__Deflate__strStart_A + 258;
+      t4 = _this.__Deflate__window_A;
+      t4 === $ && A.throwLateFieldNI("_window");
+      t5 = t1 + t2;
+      t6 = t5 - 1;
+      t7 = t4.length;
+      if (!(t6 >= 0 && t6 < t7))
+        return A.ioore(t4, t6);
+      scanEnd1 = t4[t6];
+      if (!(t5 >= 0 && t5 < t7))
+        return A.ioore(t4, t5);
+      scanEnd = t4[t5];
+      if (_this.__Deflate__prevLength_A >= $.Deflate____config._readField$0().goodLength)
+        chainLength = chainLength >>> 2;
+      t4 = _this.__Deflate__lookAhead_A;
+      t4 === $ && A.throwLateFieldNI("_lookAhead");
+      if (niceMatch > t4)
+        niceMatch = t4;
+      scan = strend - 258;
+      bestLen = t2;
+      scan0 = t1;
+      do {
+        c$0: {
+          t1 = _this.__Deflate__window_A;
+          t2 = curMatch + bestLen;
+          t4 = t1.length;
+          if (!(t2 >= 0 && t2 < t4))
+            return A.ioore(t1, t2);
+          t5 = true;
+          if (t1[t2] === scanEnd) {
+            --t2;
+            if (!(t2 >= 0))
+              return A.ioore(t1, t2);
+            if (t1[t2] === scanEnd1) {
+              if (!(curMatch >= 0 && curMatch < t4))
+                return A.ioore(t1, curMatch);
+              t2 = t1[curMatch];
+              if (!(scan0 >= 0 && scan0 < t4))
+                return A.ioore(t1, scan0);
+              if (t2 === t1[scan0]) {
+                match = curMatch + 1;
+                if (!(match < t4))
+                  return A.ioore(t1, match);
+                t2 = t1[match];
+                t5 = scan0 + 1;
+                if (!(t5 < t4))
+                  return A.ioore(t1, t5);
+                t5 = t2 !== t1[t5];
+                t2 = t5;
+              } else {
+                t2 = t5;
+                match = curMatch;
+              }
+            } else {
+              t2 = t5;
+              match = curMatch;
+            }
+          } else {
+            t2 = t5;
+            match = curMatch;
+          }
+          if (t2)
+            break c$0;
+          scan0 += 2;
+          ++match;
+          do {
+            ++scan0;
+            if (!(scan0 >= 0 && scan0 < t4))
+              return A.ioore(t1, scan0);
+            t2 = t1[scan0];
+            ++match;
+            if (!(match >= 0 && match < t4))
+              return A.ioore(t1, match);
+            t5 = false;
+            if (t2 === t1[match]) {
+              ++scan0;
+              if (!(scan0 < t4))
+                return A.ioore(t1, scan0);
+              t2 = t1[scan0];
+              ++match;
+              if (!(match < t4))
+                return A.ioore(t1, match);
+              if (t2 === t1[match]) {
+                ++scan0;
+                if (!(scan0 < t4))
+                  return A.ioore(t1, scan0);
+                t2 = t1[scan0];
+                ++match;
+                if (!(match < t4))
+                  return A.ioore(t1, match);
+                if (t2 === t1[match]) {
+                  ++scan0;
+                  if (!(scan0 < t4))
+                    return A.ioore(t1, scan0);
+                  t2 = t1[scan0];
+                  ++match;
+                  if (!(match < t4))
+                    return A.ioore(t1, match);
+                  if (t2 === t1[match]) {
+                    ++scan0;
+                    if (!(scan0 < t4))
+                      return A.ioore(t1, scan0);
+                    t2 = t1[scan0];
+                    ++match;
+                    if (!(match < t4))
+                      return A.ioore(t1, match);
+                    if (t2 === t1[match]) {
+                      ++scan0;
+                      if (!(scan0 < t4))
+                        return A.ioore(t1, scan0);
+                      t2 = t1[scan0];
+                      ++match;
+                      if (!(match < t4))
+                        return A.ioore(t1, match);
+                      if (t2 === t1[match]) {
+                        ++scan0;
+                        if (!(scan0 < t4))
+                          return A.ioore(t1, scan0);
+                        t2 = t1[scan0];
+                        ++match;
+                        if (!(match < t4))
+                          return A.ioore(t1, match);
+                        if (t2 === t1[match]) {
+                          ++scan0;
+                          if (!(scan0 < t4))
+                            return A.ioore(t1, scan0);
+                          t2 = t1[scan0];
+                          ++match;
+                          if (!(match < t4))
+                            return A.ioore(t1, match);
+                          t2 = t2 === t1[match] && scan0 < strend;
+                        } else
+                          t2 = t5;
+                      } else
+                        t2 = t5;
+                    } else
+                      t2 = t5;
+                  } else
+                    t2 = t5;
+                } else
+                  t2 = t5;
+              } else
+                t2 = t5;
+            } else
+              t2 = t5;
+          } while (t2);
+          len = 258 - (strend - scan0);
+          if (len > bestLen) {
+            _this._matchStart = curMatch;
+            if (len >= niceMatch) {
+              bestLen = len;
+              break;
+            }
+            t1 = _this.__Deflate__window_A;
+            t2 = scan + len;
+            t4 = t2 - 1;
+            t5 = t1.length;
+            if (!(t4 >= 0 && t4 < t5))
+              return A.ioore(t1, t4);
+            scanEnd1 = t1[t4];
+            if (!(t2 < t5))
+              return A.ioore(t1, t2);
+            scanEnd = t1[t2];
+            bestLen = len;
+          }
+          scan0 = scan;
+        }
+        t1 = _this.__Deflate__prev_A;
+        t1 === $ && A.throwLateFieldNI("_prev");
+        t2 = curMatch & t3;
+        if (!(t2 >= 0 && t2 < t1.length))
+          return A.ioore(t1, t2);
+        curMatch = t1[t2] & 65535;
+        if (curMatch > limit) {
+          --chainLength;
+          t1 = chainLength !== 0;
+        } else
+          t1 = false;
+      } while (t1);
+      t1 = _this.__Deflate__lookAhead_A;
+      if (bestLen <= t1)
+        return bestLen;
+      return t1;
+    },
+    _readBuf$3(buf, start, size) {
+      var t1, t2, data, len, bytes, len0, _this = this;
+      if (size !== 0) {
+        t1 = _this._deflate$_input;
+        t2 = t1._position;
+        t1 = t1.__InputMemoryStream__length_A;
+        t1 === $ && A.throwLateFieldNI("_length");
+        t1 = t2 >= t1;
+      } else
+        t1 = true;
+      if (t1)
+        return 0;
+      data = _this._deflate$_input.readBytes$1(size);
+      len = data.get$length(0);
+      if (len === 0)
+        return 0;
+      bytes = data.toUint8List$0();
+      len0 = bytes.length;
+      if (len > len0)
+        len = len0;
+      B.NativeUint8List_methods.setRange$3(buf, start, start + len, bytes);
+      _this.total += len;
+      _this.crc32 = A.getCrc32(bytes, _this.crc32);
+      return len;
+    },
+    _flushPending$0() {
+      var t2, _this = this,
+        t1 = _this.__Deflate__pending_A;
+      t1 === $ && A.throwLateFieldNI("_pending");
+      t2 = _this.__Deflate__pendingBuffer_A;
+      t2 === $ && A.throwLateFieldNI("_pendingBuffer");
+      _this._deflate$_output.writeBytes$2$length(t2, t1);
+      t2 = _this.__Deflate__pendingOut_A;
+      t2 === $ && A.throwLateFieldNI("_pendingOut");
+      _this.__Deflate__pendingOut_A = t2 + t1;
+      t1 = _this.__Deflate__pending_A - t1;
+      _this.__Deflate__pending_A = t1;
+      if (t1 === 0)
+        _this.__Deflate__pendingOut_A = 0;
+    },
+    _getConfig$1(level) {
+      switch (level) {
+        case 0:
+          return new A._DeflaterConfig(0, 0, 0, 0, 0);
+        case 1:
+          return new A._DeflaterConfig(4, 4, 8, 4, 1);
+        case 2:
+          return new A._DeflaterConfig(4, 5, 16, 8, 1);
+        case 3:
+          return new A._DeflaterConfig(4, 6, 32, 32, 1);
+        case 4:
+          return new A._DeflaterConfig(4, 4, 16, 16, 2);
+        case 5:
+          return new A._DeflaterConfig(8, 16, 32, 32, 2);
+        case 6:
+          return new A._DeflaterConfig(8, 16, 128, 128, 2);
+        case 7:
+          return new A._DeflaterConfig(8, 32, 128, 256, 2);
+        case 8:
+          return new A._DeflaterConfig(32, 128, 258, 1024, 2);
+        case 9:
+          return new A._DeflaterConfig(32, 258, 258, 4096, 2);
+      }
+      return null;
+    }
+  };
+  A._DeflaterConfig.prototype = {};
+  A._HuffmanTree.prototype = {
+    _genBitlen$1(s) {
+      var t2, stree, extra, baseRenamed, maxLength, t3, bits, t4, t5, t6, t7, h, overflow, n, t8, t9, t10, xbits, f, bits0, m, _this = this,
+        _s11_ = "_optimalLen",
+        t1 = _this.___HuffmanTree_dynamicTree_A;
+      t1 === $ && A.throwLateFieldNI("dynamicTree");
+      t2 = _this.___HuffmanTree_staticDesc_A;
+      t2 === $ && A.throwLateFieldNI("staticDesc");
+      stree = t2.staticTree;
+      extra = t2.extraBits;
+      baseRenamed = t2.extraBase;
+      maxLength = t2.maxLength;
+      for (t2 = s._bitLengthCount, t3 = t2.$flags | 0, bits = 0; bits <= 15; ++bits) {
+        t3 & 2 && A.throwUnsupportedOperation(t2);
+        t2[bits] = 0;
+      }
+      t4 = s._heap;
+      t5 = s.__Deflate__heapMax_A;
+      t5 === $ && A.throwLateFieldNI("_heapMax");
+      if (!(t5 >= 0 && t5 < 573))
+        return A.ioore(t4, t5);
+      t6 = t4[t5] * 2 + 1;
+      t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+      t7 = t1.length;
+      if (!(t6 >= 0 && t6 < t7))
+        return A.ioore(t1, t6);
+      t1[t6] = 0;
+      for (h = t5 + 1, t5 = stree != null, t6 = extra.length, overflow = 0; h < 573; ++h) {
+        n = t4[h];
+        t8 = n * 2;
+        t9 = t8 + 1;
+        if (!(t9 >= 0 && t9 < t7))
+          return A.ioore(t1, t9);
+        t10 = t1[t9] * 2 + 1;
+        if (!(t10 < t7))
+          return A.ioore(t1, t10);
+        bits = t1[t10] + 1;
+        if (bits > maxLength) {
+          ++overflow;
+          bits = maxLength;
+        }
+        t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+        t1[t9] = bits;
+        t10 = _this.___HuffmanTree_maxCode_A;
+        t10 === $ && A.throwLateFieldNI("maxCode");
+        if (n > t10)
+          continue;
+        if (!(bits < 16))
+          return A.ioore(t2, bits);
+        t10 = t2[bits];
+        t3 & 2 && A.throwUnsupportedOperation(t2);
+        t2[bits] = t10 + 1;
+        if (n >= baseRenamed) {
+          t10 = n - baseRenamed;
+          if (!(t10 >= 0 && t10 < t6))
+            return A.ioore(extra, t10);
+          xbits = extra[t10];
+        } else
+          xbits = 0;
+        if (!(t8 >= 0 && t8 < t7))
+          return A.ioore(t1, t8);
+        f = t1[t8];
+        t8 = s.__Deflate__optimalLen_A;
+        t8 === $ && A.throwLateFieldNI(_s11_);
+        s.__Deflate__optimalLen_A = t8 + f * (bits + xbits);
+        if (t5) {
+          t8 = s.__Deflate__staticLen_A;
+          t8 === $ && A.throwLateFieldNI("_staticLen");
+          if (!(t9 < stree.length))
+            return A.ioore(stree, t9);
+          s.__Deflate__staticLen_A = t8 + f * (stree[t9] + xbits);
+        }
+      }
+      if (overflow === 0)
+        return;
+      bits = maxLength - 1;
+      do {
+        bits0 = bits;
+        for (;;) {
+          if (!(bits0 >= 0 && bits0 < 16))
+            return A.ioore(t2, bits0);
+          t5 = t2[bits0];
+          if (!(t5 === 0))
+            break;
+          --bits0;
+        }
+        t3 & 2 && A.throwUnsupportedOperation(t2);
+        t2[bits0] = t5 - 1;
+        t5 = bits0 + 1;
+        if (!(t5 < 16))
+          return A.ioore(t2, t5);
+        t2[t5] = t2[t5] + 2;
+        if (!(maxLength < 16))
+          return A.ioore(t2, maxLength);
+        t2[maxLength] = t2[maxLength] - 1;
+        overflow -= 2;
+      } while (overflow > 0);
+      for (bits = maxLength; bits !== 0; --bits) {
+        if (!(bits >= 0))
+          return A.ioore(t2, bits);
+        n = t2[bits];
+        while (n !== 0) {
+          --h;
+          if (!(h >= 0 && h < 573))
+            return A.ioore(t4, h);
+          m = t4[h];
+          t3 = _this.___HuffmanTree_maxCode_A;
+          t3 === $ && A.throwLateFieldNI("maxCode");
+          if (m > t3)
+            continue;
+          t3 = m * 2;
+          t5 = t3 + 1;
+          if (!(t5 >= 0 && t5 < t7))
+            return A.ioore(t1, t5);
+          t6 = t1[t5];
+          if (t6 !== bits) {
+            t8 = s.__Deflate__optimalLen_A;
+            t8 === $ && A.throwLateFieldNI(_s11_);
+            if (!(t3 >= 0 && t3 < t7))
+              return A.ioore(t1, t3);
+            s.__Deflate__optimalLen_A = t8 + (bits - t6) * t1[t3];
+            t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+            t1[t5] = bits;
+          }
+          --n;
+        }
+      }
+    },
+    _buildTree$1(s) {
+      var t2, stree, elems, t3, t4, t5, t6, t7, n, maxCode, t8, t9, node, t10, m, t11, t12, node0, _this = this,
+        t1 = _this.___HuffmanTree_dynamicTree_A;
+      t1 === $ && A.throwLateFieldNI("dynamicTree");
+      t2 = _this.___HuffmanTree_staticDesc_A;
+      t2 === $ && A.throwLateFieldNI("staticDesc");
+      stree = t2.staticTree;
+      elems = t2.numElements;
+      s.__Deflate__heapLen_A = 0;
+      s.__Deflate__heapMax_A = 573;
+      for (t2 = t1.length, t3 = s._heap, t4 = t3.$flags | 0, t5 = s._depth, t6 = t5.$flags | 0, t7 = t1.$flags | 0, n = 0, maxCode = -1; n < elems; ++n) {
+        t8 = n * 2;
+        if (!(t8 < t2))
+          return A.ioore(t1, t8);
+        if (t1[t8] !== 0) {
+          t8 = ++s.__Deflate__heapLen_A;
+          t4 & 2 && A.throwUnsupportedOperation(t3);
+          if (!(t8 >= 0 && t8 < 573))
+            return A.ioore(t3, t8);
+          t3[t8] = n;
+          t6 & 2 && A.throwUnsupportedOperation(t5);
+          if (!(n < 573))
+            return A.ioore(t5, n);
+          t5[n] = 0;
+          maxCode = n;
+        } else {
+          ++t8;
+          t7 & 2 && A.throwUnsupportedOperation(t1);
+          if (!(t8 < t2))
+            return A.ioore(t1, t8);
+          t1[t8] = 0;
+        }
+      }
+      for (t8 = stree != null; t9 = s.__Deflate__heapLen_A, t9 < 2;) {
+        ++t9;
+        s.__Deflate__heapLen_A = t9;
+        if (maxCode < 2) {
+          ++maxCode;
+          node = maxCode;
+        } else
+          node = 0;
+        t4 & 2 && A.throwUnsupportedOperation(t3);
+        if (!(t9 >= 0))
+          return A.ioore(t3, t9);
+        t3[t9] = node;
+        t9 = node * 2;
+        t7 & 2 && A.throwUnsupportedOperation(t1);
+        if (!(t9 >= 0 && t9 < t2))
+          return A.ioore(t1, t9);
+        t1[t9] = 1;
+        t6 & 2 && A.throwUnsupportedOperation(t5);
+        if (!(node >= 0))
+          return A.ioore(t5, node);
+        t5[node] = 0;
+        t10 = s.__Deflate__optimalLen_A;
+        t10 === $ && A.throwLateFieldNI("_optimalLen");
+        s.__Deflate__optimalLen_A = t10 - 1;
+        if (t8) {
+          t10 = s.__Deflate__staticLen_A;
+          t10 === $ && A.throwLateFieldNI("_staticLen");
+          ++t9;
+          if (!(t9 < stree.length))
+            return A.ioore(stree, t9);
+          s.__Deflate__staticLen_A = t10 - stree[t9];
+        }
+      }
+      _this.___HuffmanTree_maxCode_A = maxCode;
+      for (n = B.JSInt_methods._tdivFast$1(t9, 2); n >= 1; --n)
+        s._pqdownheap$2(t1, n);
+      node = elems;
+      do {
+        n = t3[1];
+        t8 = s.__Deflate__heapLen_A--;
+        if (!(t8 >= 0 && t8 < 573))
+          return A.ioore(t3, t8);
+        t8 = t3[t8];
+        t4 & 2 && A.throwUnsupportedOperation(t3);
+        t3[1] = t8;
+        s._pqdownheap$2(t1, 1);
+        m = t3[1];
+        t8 = --s.__Deflate__heapMax_A;
+        if (!(t8 >= 0 && t8 < 573))
+          return A.ioore(t3, t8);
+        t3[t8] = n;
+        --t8;
+        s.__Deflate__heapMax_A = t8;
+        if (!(t8 >= 0))
+          return A.ioore(t3, t8);
+        t3[t8] = m;
+        t8 = node * 2;
+        t9 = n * 2;
+        if (!(t9 >= 0 && t9 < t2))
+          return A.ioore(t1, t9);
+        t10 = t1[t9];
+        t11 = m * 2;
+        if (!(t11 >= 0 && t11 < t2))
+          return A.ioore(t1, t11);
+        t12 = t1[t11];
+        t7 & 2 && A.throwUnsupportedOperation(t1);
+        if (!(t8 < t2))
+          return A.ioore(t1, t8);
+        t1[t8] = t10 + t12;
+        if (!(n >= 0 && n < 573))
+          return A.ioore(t5, n);
+        t12 = t5[n];
+        if (!(m >= 0 && m < 573))
+          return A.ioore(t5, m);
+        t10 = t5[m];
+        t8 = t12 > t10 ? t12 : t10;
+        t6 & 2 && A.throwUnsupportedOperation(t5);
+        if (!(node < 573))
+          return A.ioore(t5, node);
+        t5[node] = t8 + 1;
+        ++t9;
+        ++t11;
+        if (!(t11 < t2))
+          return A.ioore(t1, t11);
+        t1[t11] = node;
+        if (!(t9 < t2))
+          return A.ioore(t1, t9);
+        t1[t9] = node;
+        node0 = node + 1;
+        t3[1] = node;
+        s._pqdownheap$2(t1, 1);
+        if (s.__Deflate__heapLen_A >= 2) {
+          node = node0;
+          continue;
+        } else
+          break;
+      } while (true);
+      t2 = --s.__Deflate__heapMax_A;
+      t4 = t3[1];
+      if (!(t2 >= 0 && t2 < 573))
+        return A.ioore(t3, t2);
+      t3[t2] = t4;
+      _this._genBitlen$1(s);
+      A._HuffmanTree__genCodes(t1, maxCode, s._bitLengthCount);
+    }
+  };
+  A._StaticTree.prototype = {};
   A.Inflate.prototype = {
     get$_inputStream() {
       var t1 = this._input;
@@ -10214,7 +12441,7 @@
       return _this._decodeHuffman$2(A.HuffmanTable$(litlenLengths), A.HuffmanTable$(distLengths));
     },
     _decodeHuffman$2(litLen, dist) {
-      var t1, code, t2, t3, ti, codeLength, distCode, distance, _this = this;
+      var t1, code, ti, codeLength, distCode, distance, t2, t3, _this = this;
       for (t1 = _this._inflate$_output;;) {
         code = _this._readCodeByTable$1(litLen);
         if (code < 0 || code > 285)
@@ -10222,14 +12449,7 @@
         if (code === 256)
           break;
         if (code < 256) {
-          if (t1.length === t1._buffer.length)
-            t1._expandBuffer$0();
-          t2 = t1._buffer;
-          t3 = t1.length++;
-          t2.$flags & 2 && A.throwUnsupportedOperation(t2);
-          if (!(t3 >= 0 && t3 < t2.length))
-            return A.ioore(t2, t3);
-          t2[t3] = code & 255;
+          t1.writeByte$1(code & 255);
           continue;
         }
         ti = code - 257;
@@ -10360,6 +12580,18 @@
       if (!(t2 >= 0 && t2 < t1.length))
         return A.ioore(t1, t2);
       return t1[t2];
+    },
+    toUint8List$0() {
+      var len, t2, t3, _this = this,
+        t1 = _this.buffer;
+      if (t1 == null)
+        return new Uint8Array(0);
+      len = _this.get$length(0);
+      t2 = _this._position;
+      t3 = t1.length;
+      if (t2 + len > t3)
+        len = t3 - t2;
+      return J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(t1), _this.buffer.byteOffset + _this._position, len);
     }
   };
   A.InputStream.prototype = {
@@ -10422,20 +12654,35 @@
         return t1;
       }
     },
-    $signature: 20
+    $signature: 18
   };
   A.OutputMemoryStream.prototype = {
     getBytes$0() {
       return J.asUint8List$2$x(B.NativeUint8List_methods.get$buffer(this._buffer), this._buffer.byteOffset, this.length);
     },
-    writeBytes$1(bytes) {
-      var $length, t1, t2, t3, t4, _this = this;
+    writeByte$1(value) {
+      var t1, t2, _this = this;
+      if (_this.length === _this._buffer.length)
+        _this._expandBuffer$0();
+      t1 = _this._buffer;
+      t2 = _this.length++;
+      t1.$flags & 2 && A.throwUnsupportedOperation(t1);
+      if (!(t2 >= 0 && t2 < t1.length))
+        return A.ioore(t1, t2);
+      t1[t2] = value;
+    },
+    writeBytes$2$length(bytes, $length) {
+      var t1, t2, t3, t4, _this = this;
       type$.List_int._as(bytes);
-      $length = bytes.length;
+      if ($length == null)
+        $length = bytes.length;
       while (t1 = _this.length, t2 = t1 + $length, t3 = _this._buffer, t4 = t3.length, t2 > t4)
         _this._expandBuffer$1(t2 - t4);
       B.NativeUint8List_methods.setRange$3(t3, t1, t2, bytes);
       _this.length += $length;
+    },
+    writeBytes$1(bytes) {
+      return this.writeBytes$2$length(bytes, null);
     },
     writeStream$1(stream) {
       var t1, t2, t3, t4, t5, t6, _this = this;
@@ -10482,7 +12729,23 @@
       return this.length;
     }
   };
-  A.OutputStream.prototype = {};
+  A.OutputStream.prototype = {
+    writeUint32$1(value) {
+      var _this = this,
+        t1 = value & 255;
+      if (_this.byteOrder === B.ByteOrder_1) {
+        _this.writeByte$1(B.JSInt_methods._shrOtherPositive$1(value, 24) & 255);
+        _this.writeByte$1(B.JSInt_methods._shrOtherPositive$1(value, 16) & 255);
+        _this.writeByte$1(B.JSInt_methods._shrOtherPositive$1(value, 8) & 255);
+        _this.writeByte$1(t1);
+      } else {
+        _this.writeByte$1(t1);
+        _this.writeByte$1(B.JSInt_methods._shrOtherPositive$1(value, 8) & 255);
+        _this.writeByte$1(B.JSInt_methods._shrOtherPositive$1(value, 16) & 255);
+        _this.writeByte$1(B.JSInt_methods._shrOtherPositive$1(value, 24) & 255);
+      }
+    }
+  };
   A.CancelationToken.prototype = {
     throwIfCanceled$0() {
       var t1 = this.__squadron_cancelation_token$_exception;
@@ -10498,7 +12761,7 @@
     processResponse$body$DecompressService(serialized) {
       var $async$goto = 0,
         $async$completer = A._makeAsyncAwaitCompleter(type$.Map_String_dynamic),
-        $async$returnValue, responseJson, compressFlag, base64Body, compressedBytes, decompressedBytes, decompressedBody, t1, t2, output, exception;
+        $async$returnValue, responseJson, compressFlag, base64Body, compressedBytes, decompressedBytes, decompressedBody, t1, exception;
       var $async$processResponse$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
         if ($async$errorCode === 1)
           return A._asyncRethrow($async$result, $async$completer);
@@ -10513,13 +12776,8 @@
                   base64Body = J.$index$asx(responseJson, "body");
                   if (base64Body != null && typeof base64Body == "string") {
                     compressedBytes = B.C_Base64Decoder.convert$1(base64Body);
-                    t1 = type$.List_int;
-                    t2 = t1._as(compressedBytes);
-                    output = A.OutputMemoryStream$(32768);
-                    B.C__GZipDecoder.decodeStream$4$raw$verify(A.InputMemoryStream$(t2, B.ByteOrder_0, null, null), output, false, false);
-                    decompressedBytes = output.getBytes$0();
-                    t1 = t1._as(decompressedBytes);
-                    decompressedBody = B.Utf8Decoder_false.convert$1(t1);
+                    decompressedBytes = B.C__GZipDecoder.decodeBytes$2$verify(type$.List_int._as(compressedBytes), false);
+                    decompressedBody = B.C_Utf8Codec.decode$1(decompressedBytes);
                     t1 = A.LinkedHashMap_LinkedHashMap$_literal(["status", serialized.$index(0, "status"), "headers", serialized.$index(0, "headers"), "body", decompressedBody], type$.String, type$.dynamic);
                     $async$returnValue = t1;
                     // goto return
@@ -10540,6 +12798,141 @@
       });
       return A._asyncStartSync($async$processResponse$1, $async$completer);
     },
+    gzipEncodeBytes$1(bytes) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
+        $async$returnValue;
+      var $async$gzipEncodeBytes$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        for (;;)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              $async$returnValue = new Uint8Array(A._ensureNativeList(B.C__GZipEncoder.encodeBytes$2$level(type$.List_int._as(bytes), null)));
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$gzipEncodeBytes$1, $async$completer);
+    },
+    gzipDecodeBytes$1(bytes) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
+        $async$returnValue;
+      var $async$gzipDecodeBytes$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        for (;;)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              $async$returnValue = new Uint8Array(A._ensureNativeList(B.C__GZipDecoder.decodeBytes$2$verify(type$.List_int._as(bytes), false)));
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$gzipDecodeBytes$1, $async$completer);
+    },
+    gzipEncodeText$1(text) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
+        $async$returnValue;
+      var $async$gzipEncodeText$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        for (;;)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              $async$returnValue = new Uint8Array(A._ensureNativeList(B.C__GZipEncoder.encodeBytes$2$level(type$.List_int._as(B.C_Utf8Encoder.convert$1(text)), null)));
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$gzipEncodeText$1, $async$completer);
+    },
+    gzipDecodeToText$1(bytes) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.String),
+        $async$returnValue;
+      var $async$gzipDecodeToText$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        for (;;)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              $async$returnValue = B.C_Utf8Codec.decode$1(B.C__GZipDecoder.decodeBytes$2$verify(type$.List_int._as(bytes), false));
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$gzipDecodeToText$1, $async$completer);
+    },
+    base64DecodeBytes$1(value) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
+        $async$returnValue;
+      var $async$base64DecodeBytes$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        for (;;)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              $async$returnValue = new Uint8Array(A._ensureNativeList(B.C_Base64Decoder.convert$1(value)));
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$base64DecodeBytes$1, $async$completer);
+    },
+    extractFontBytesFromResponse$1(responseBody) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
+        $async$returnValue, decoded;
+      var $async$extractFontBytesFromResponse$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        for (;;)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              decoded = B.C_JsonCodec.decode$2$reviver(responseBody, null);
+              if (!type$.Map_dynamic_dynamic._is(decoded) || typeof decoded.$index(0, "body") != "string")
+                throw A.wrapException(A.StateError$("Invalid font response body"));
+              $async$returnValue = new Uint8Array(A._ensureNativeList(B.C_Base64Decoder.convert$1(A._asString(decoded.$index(0, "body")))));
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$extractFontBytesFromResponse$1, $async$completer);
+    },
     noop$0() {
       var $async$goto = 0,
         $async$completer = A._makeAsyncAwaitCompleter(type$.void);
@@ -10559,11 +12952,347 @@
   };
   A._extension_0__$getOperations_closure.prototype = {
     call$1($$req) {
-      return this._this.noop$0();
+      return this.$call$body$_extension_0__$getOperations_closure5($$req);
     },
-    $signature: 21
+    $call$body$_extension_0__$getOperations_closure5($$req) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
+        $async$returnValue, $async$handler = 2, $async$errorStack = [], $async$next = [], $async$self = this, $$dsr, $$res;
+      var $async$call$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1) {
+          $async$errorStack.push($async$result);
+          $async$goto = $async$handler;
+        }
+        for (;;)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              $$res = null;
+              $async$handler = 3;
+              $$dsr = A._$Deser$(false);
+              $async$goto = 6;
+              return A._asyncAwait($async$self._this.base64DecodeBytes$1($$dsr.$$0$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+            case 6:
+              // returning from await.
+              $$res = $async$result;
+              $async$next.push(5);
+              // goto finally
+              $async$goto = 4;
+              break;
+            case 3:
+              // uncaught
+              $async$next = [2];
+            case 4:
+              // finally
+              $async$handler = 2;
+              // goto the next finally handler
+              $async$goto = $async$next.pop();
+              break;
+            case 5:
+              // after finally
+              $async$returnValue = $$res;
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+            case 2:
+              // rethrow
+              return A._asyncRethrow($async$errorStack.at(-1), $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$call$1, $async$completer);
+    },
+    $signature: 2
   };
   A._extension_0__$getOperations_closure0.prototype = {
+    call$1($$req) {
+      return this.$call$body$_extension_0__$getOperations_closure4($$req);
+    },
+    $call$body$_extension_0__$getOperations_closure4($$req) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
+        $async$returnValue, $async$handler = 2, $async$errorStack = [], $async$next = [], $async$self = this, $$dsr, $$res;
+      var $async$call$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1) {
+          $async$errorStack.push($async$result);
+          $async$goto = $async$handler;
+        }
+        for (;;)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              $$res = null;
+              $async$handler = 3;
+              $$dsr = A._$Deser$(false);
+              $async$goto = 6;
+              return A._asyncAwait($async$self._this.extractFontBytesFromResponse$1($$dsr.$$0$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+            case 6:
+              // returning from await.
+              $$res = $async$result;
+              $async$next.push(5);
+              // goto finally
+              $async$goto = 4;
+              break;
+            case 3:
+              // uncaught
+              $async$next = [2];
+            case 4:
+              // finally
+              $async$handler = 2;
+              // goto the next finally handler
+              $async$goto = $async$next.pop();
+              break;
+            case 5:
+              // after finally
+              $async$returnValue = $$res;
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+            case 2:
+              // rethrow
+              return A._asyncRethrow($async$errorStack.at(-1), $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$call$1, $async$completer);
+    },
+    $signature: 2
+  };
+  A._extension_0__$getOperations_closure1.prototype = {
+    call$1($$req) {
+      return this.$call$body$_extension_0__$getOperations_closure3($$req);
+    },
+    $call$body$_extension_0__$getOperations_closure3($$req) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
+        $async$returnValue, $async$handler = 2, $async$errorStack = [], $async$next = [], $async$self = this, $$dsr, $$res;
+      var $async$call$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1) {
+          $async$errorStack.push($async$result);
+          $async$goto = $async$handler;
+        }
+        for (;;)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              $$res = null;
+              $async$handler = 3;
+              $$dsr = A._$Deser$(false);
+              $async$goto = 6;
+              return A._asyncAwait($async$self._this.gzipDecodeBytes$1($$dsr.$$1$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+            case 6:
+              // returning from await.
+              $$res = $async$result;
+              $async$next.push(5);
+              // goto finally
+              $async$goto = 4;
+              break;
+            case 3:
+              // uncaught
+              $async$next = [2];
+            case 4:
+              // finally
+              $async$handler = 2;
+              // goto the next finally handler
+              $async$goto = $async$next.pop();
+              break;
+            case 5:
+              // after finally
+              $async$returnValue = $$res;
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+            case 2:
+              // rethrow
+              return A._asyncRethrow($async$errorStack.at(-1), $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$call$1, $async$completer);
+    },
+    $signature: 2
+  };
+  A._extension_0__$getOperations_closure2.prototype = {
+    call$1($$req) {
+      return this.$call$body$_extension_0__$getOperations_closure2($$req);
+    },
+    $call$body$_extension_0__$getOperations_closure2($$req) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.String),
+        $async$returnValue, $async$handler = 2, $async$errorStack = [], $async$next = [], $async$self = this, $$dsr, $$res;
+      var $async$call$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1) {
+          $async$errorStack.push($async$result);
+          $async$goto = $async$handler;
+        }
+        for (;;)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              $$res = null;
+              $async$handler = 3;
+              $$dsr = A._$Deser$(false);
+              $async$goto = 6;
+              return A._asyncAwait($async$self._this.gzipDecodeToText$1($$dsr.$$1$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+            case 6:
+              // returning from await.
+              $$res = $async$result;
+              $async$next.push(5);
+              // goto finally
+              $async$goto = 4;
+              break;
+            case 3:
+              // uncaught
+              $async$next = [2];
+            case 4:
+              // finally
+              $async$handler = 2;
+              // goto the next finally handler
+              $async$goto = $async$next.pop();
+              break;
+            case 5:
+              // after finally
+              $async$returnValue = $$res;
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+            case 2:
+              // rethrow
+              return A._asyncRethrow($async$errorStack.at(-1), $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$call$1, $async$completer);
+    },
+    $signature: 20
+  };
+  A._extension_0__$getOperations_closure3.prototype = {
+    call$1($$req) {
+      return this.$call$body$_extension_0__$getOperations_closure1($$req);
+    },
+    $call$body$_extension_0__$getOperations_closure1($$req) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
+        $async$returnValue, $async$handler = 2, $async$errorStack = [], $async$next = [], $async$self = this, $$dsr, $$res;
+      var $async$call$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1) {
+          $async$errorStack.push($async$result);
+          $async$goto = $async$handler;
+        }
+        for (;;)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              $$res = null;
+              $async$handler = 3;
+              $$dsr = A._$Deser$(false);
+              $async$goto = 6;
+              return A._asyncAwait($async$self._this.gzipEncodeBytes$1($$dsr.$$1$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+            case 6:
+              // returning from await.
+              $$res = $async$result;
+              $async$next.push(5);
+              // goto finally
+              $async$goto = 4;
+              break;
+            case 3:
+              // uncaught
+              $async$next = [2];
+            case 4:
+              // finally
+              $async$handler = 2;
+              // goto the next finally handler
+              $async$goto = $async$next.pop();
+              break;
+            case 5:
+              // after finally
+              $async$returnValue = $$res;
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+            case 2:
+              // rethrow
+              return A._asyncRethrow($async$errorStack.at(-1), $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$call$1, $async$completer);
+    },
+    $signature: 2
+  };
+  A._extension_0__$getOperations_closure4.prototype = {
+    call$1($$req) {
+      return this.$call$body$_extension_0__$getOperations_closure0($$req);
+    },
+    $call$body$_extension_0__$getOperations_closure0($$req) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
+        $async$returnValue, $async$handler = 2, $async$errorStack = [], $async$next = [], $async$self = this, $$dsr, $$res;
+      var $async$call$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1) {
+          $async$errorStack.push($async$result);
+          $async$goto = $async$handler;
+        }
+        for (;;)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              $$res = null;
+              $async$handler = 3;
+              $$dsr = A._$Deser$(false);
+              $async$goto = 6;
+              return A._asyncAwait($async$self._this.gzipEncodeText$1($$dsr.$$0$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+            case 6:
+              // returning from await.
+              $$res = $async$result;
+              $async$next.push(5);
+              // goto finally
+              $async$goto = 4;
+              break;
+            case 3:
+              // uncaught
+              $async$next = [2];
+            case 4:
+              // finally
+              $async$handler = 2;
+              // goto the next finally handler
+              $async$goto = $async$next.pop();
+              break;
+            case 5:
+              // after finally
+              $async$returnValue = $$res;
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+            case 2:
+              // rethrow
+              return A._asyncRethrow($async$errorStack.at(-1), $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$call$1, $async$completer);
+    },
+    $signature: 2
+  };
+  A._extension_0__$getOperations_closure5.prototype = {
+    call$1($$req) {
+      return this._this.noop$0();
+    },
+    $signature: 42
+  };
+  A._extension_0__$getOperations_closure6.prototype = {
     call$1($$req) {
       return this.$call$body$_extension_0__$getOperations_closure($$req);
     },
@@ -10582,9 +13311,9 @@
               // Function start
               $$res = null;
               $async$handler = 3;
-              $$dsr = new A._$Deser(B.C_CastConverter);
+              $$dsr = A._$Deser$(false);
               $async$goto = 6;
-              return A._asyncAwait($async$self._this.processResponse$1($$dsr.$$2$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+              return A._asyncAwait($async$self._this.processResponse$1($$dsr.$$3$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
             case 6:
               // returning from await.
               $$res = $async$result;
@@ -10621,33 +13350,55 @@
   };
   A._$DecompressService$WorkerService.prototype = {$isWorkerService: 1};
   A._$Deser.prototype = {
-    get$$$2() {
-      var result, value0, _this = this,
-        value = _this.___$Deser_$2_FI;
-      if (value === $) {
+    get$$$0() {
+      var result, _this = this,
         value = _this.___$Deser_$0_FI;
-        if (value === $) {
-          result = A.ConverterExt_get_converter(_this).value$1$0(type$.String);
-          _this.___$Deser_$0_FI !== $ && A.throwLateFieldADI("$0");
-          _this.___$Deser_$0_FI = result;
-          value = result;
-        }
-        value0 = _this.___$Deser_$1_FI;
-        if (value0 === $) {
-          result = A.ConverterExt_get_converter(_this).value$1$0(type$.Object);
-          _this.___$Deser_$1_FI !== $ && A.throwLateFieldADI("$1");
-          _this.___$Deser_$1_FI = result;
-          value0 = result;
-        }
-        result = A.ConverterExt_get_converter(_this).nmap$2$2$kcast$vcast(value, value0, type$.String, type$.Object);
-        _this.___$Deser_$2_FI !== $ && A.throwLateFieldADI("$2");
-        _this.___$Deser_$2_FI = result;
+      if (value === $) {
+        result = A.ConverterExt_get_converter(_this).value$1$0(type$.String);
+        _this.___$Deser_$0_FI !== $ && A.throwLateFieldADI("$0");
+        _this.___$Deser_$0_FI = result;
         value = result;
       }
       return value;
     },
-    $$2$1(arg0) {
-      return this.get$$$2().call$1(arg0);
+    get$$$1() {
+      var result, _this = this,
+        value = _this.___$Deser_$1_FI;
+      if (value === $) {
+        result = A.ConverterExt_get_converter(_this).value$1$0(type$.Uint8List);
+        _this.___$Deser_$1_FI !== $ && A.throwLateFieldADI("$1");
+        _this.___$Deser_$1_FI = result;
+        value = result;
+      }
+      return value;
+    },
+    get$$$3() {
+      var t1, result, _this = this,
+        value = _this.___$Deser_$3_FI;
+      if (value === $) {
+        t1 = _this.get$$$0();
+        value = _this.___$Deser_$2_FI;
+        if (value === $) {
+          result = A.ConverterExt_get_converter(_this).value$1$0(type$.Object);
+          _this.___$Deser_$2_FI !== $ && A.throwLateFieldADI("$2");
+          _this.___$Deser_$2_FI = result;
+          value = result;
+        }
+        result = A.ConverterExt_get_converter(_this).nmap$2$2$kcast$vcast(t1, value, type$.String, type$.Object);
+        _this.___$Deser_$3_FI !== $ && A.throwLateFieldADI("$3");
+        _this.___$Deser_$3_FI = result;
+        value = result;
+      }
+      return value;
+    },
+    $$0$1(arg0) {
+      return this.get$$$0().call$1(arg0);
+    },
+    $$1$1(arg0) {
+      return this.get$$$1().call$1(arg0);
+    },
+    $$3$1(arg0) {
+      return this.get$$$3().call$1(arg0);
     }
   };
   A.LogEvent.prototype = {};
@@ -10798,7 +13549,7 @@
       } else if (A._isTransferable(js))
         A._asInt(this.transfer.push(js));
     },
-    $signature: 9
+    $signature: 8
   };
   A.$jsify_closure0.prototype = {
     call$1(dart) {
@@ -11018,7 +13769,7 @@
       t1.toString;
       return this._this.processRequest$1(A.WorkerRequest_constructor_from(t1));
     },
-    $signature: 40
+    $signature: 35
   };
   A.InternalLogger.prototype = {};
   A._NoLogOutput.prototype = {
@@ -11357,13 +14108,13 @@
     call$1(k) {
       return A._asInt(k) <= 0;
     },
-    $signature: 27
+    $signature: 29
   };
   A.WorkerRunner_connect_closure.prototype = {
     call$1($event) {
       return this.logger.call$1(type$.OutputEvent._as($event).origin);
     },
-    $signature: 28
+    $signature: 30
   };
   A.WorkerRunner_connect_closure0.prototype = {
     call$0() {
@@ -11375,7 +14126,7 @@
     call$0() {
       return new A.CancelationTokenReference(this.token.get$id(), new A._AsyncCompleter(new A._Future($.Zone__current, type$._Future_SquadronCanceledException), type$._AsyncCompleter_SquadronCanceledException), true);
     },
-    $signature: 29
+    $signature: 31
   };
   A.CastConverter.prototype = {
     value$1$0($T) {
@@ -11403,7 +14154,7 @@
       $V._eval$1("0(@)?")._as(vcast);
       t1 = J.getInterceptor$(kcast);
       if (t1.$eq(kcast, A.instantiate1(A.converter_Converter_identity$closure(), $K)) && J.$eq$(vcast, A.instantiate1(A.converter_Converter_identity$closure(), $V)))
-        return new A.ContextAwareConverter_nmap_closure(_this, _this._converter.nmap$2$0($K, $V), $K, $V);
+        return new A.ContextAwareConverter_nmap_closure(_this, _this._context_aware_converter$_converter.nmap$2$0($K, $V), $K, $V);
       else if (t1.$eq(kcast, A.instantiate1(A.converter_Converter_identity$closure(), $K)))
         return new A.ContextAwareConverter_nmap_closure0(_this, A.Converter_allowNull(vcast, $V), $K, $V);
       else
@@ -11553,21 +14304,21 @@
   };
   A.LazyInPlaceMap.prototype = {
     get$entries() {
-      var t1 = this._data.get$keys(),
+      var t1 = this._lazy_in_place_map$_data.get$keys(),
         t2 = this.$ti;
       t1 = t1.cast$1$0(t1, t2._precomputed1);
       return t1.map$1$1(t1, new A.LazyInPlaceMap_entries_closure(this), t2._eval$1("MapEntry<1,2>"));
     },
     get$isEmpty(_) {
-      var t1 = this._data;
+      var t1 = this._lazy_in_place_map$_data;
       return t1.get$isEmpty(t1);
     },
     get$keys() {
-      var t1 = this._data.get$keys();
+      var t1 = this._lazy_in_place_map$_data.get$keys();
       return t1.cast$1$0(t1, this.$ti._precomputed1);
     },
     get$length(_) {
-      var t1 = this._data;
+      var t1 = this._lazy_in_place_map$_data;
       return t1.get$length(t1);
     },
     $index(_, key) {
@@ -11577,7 +14328,7 @@
       var t1 = this.$ti;
       t1._precomputed1._as(key);
       t1._rest[1]._as(value);
-      this._data.$indexSet(0, key, value);
+      this._lazy_in_place_map$_data.$indexSet(0, key, value);
       return value;
     },
     cast$2$0(_, $RK, $RV) {
@@ -11587,7 +14338,7 @@
       var t2, t3, k, t4,
         t1 = this.$ti;
       t1._eval$1("~(1,2)")._as(action);
-      for (t2 = this._data.get$keys(), t2 = t2.get$iterator(t2), t3 = t1._precomputed1, t1 = t1._rest[1]; t2.moveNext$0();) {
+      for (t2 = this._lazy_in_place_map$_data.get$keys(), t2 = t2.get$iterator(t2), t3 = t1._precomputed1, t1 = t1._rest[1]; t2.moveNext$0();) {
         k = t2.get$current();
         t3._as(k);
         t4 = this._lazy_in_place_map$_get$1(k);
@@ -11599,7 +14350,7 @@
         t1 = this.$ti;
       t1._bind$1($K2)._bind$1($V2)._eval$1("MapEntry<1,2>(3,4)")._as(convert);
       r = A.LinkedHashMap_LinkedHashMap$_empty($K2, $V2);
-      t2 = this._data.get$keys();
+      t2 = this._lazy_in_place_map$_data.get$keys();
       keys = t2.toList$0(t2);
       for (i = keys.length - 1, t2 = t1._precomputed1, t1 = t1._rest[1]; i >= 0; --i) {
         if (!(i < keys.length))
@@ -11618,11 +14369,11 @@
     },
     toString$0(_) {
       this._forceCast$0();
-      return this._data.toString$0(0);
+      return this._lazy_in_place_map$_data.toString$0(0);
     },
     _forceCast$0() {
       var i,
-        t1 = this._data,
+        t1 = this._lazy_in_place_map$_data,
         t2 = t1.get$keys(),
         keys = t2.toList$0(t2);
       for (i = keys.length - 1; i >= 0; --i) {
@@ -11634,7 +14385,7 @@
     },
     _lazy_in_place_map$_get$1(key) {
       var _this = this,
-        t1 = _this._data,
+        t1 = _this._lazy_in_place_map$_data,
         v = t1.$index(0, key);
       if (v != null && !_this.$ti._rest[1]._is(v)) {
         v = _this._vcast.call$1(v);
@@ -11680,7 +14431,7 @@
       type$.CanceledException._as(e);
       return A.SquadronCanceledException_SquadronCanceledException$from(this.tokenId, e, e.get$stackTrace());
     },
-    $signature: 30
+    $signature: 32
   };
   A.SquadronCanceledExceptions.prototype = {
     get$message() {
@@ -11706,13 +14457,13 @@
     call$1(e) {
       return type$.SquadronCanceledException._as(e).get$message();
     },
-    $signature: 31
+    $signature: 33
   };
   A.SquadronCanceledExceptions_serialize_closure.prototype = {
     call$1(e) {
       return type$.SquadronCanceledException._as(e).serialize$0();
     },
-    $signature: 32
+    $signature: 34
   };
   A.SquadronError.prototype = {
     serialize$0() {
@@ -11797,40 +14548,40 @@
       _instance_1_u = hunkHelpers._instance_1u,
       _static = hunkHelpers.installStaticTearOff,
       _static_2 = hunkHelpers._static_2;
-    _static_1(A, "async__AsyncRun__scheduleImmediateJsOverride$closure", "_AsyncRun__scheduleImmediateJsOverride", 3);
-    _static_1(A, "async__AsyncRun__scheduleImmediateWithSetImmediate$closure", "_AsyncRun__scheduleImmediateWithSetImmediate", 3);
-    _static_1(A, "async__AsyncRun__scheduleImmediateWithTimer$closure", "_AsyncRun__scheduleImmediateWithTimer", 3);
+    _static_1(A, "async__AsyncRun__scheduleImmediateJsOverride$closure", "_AsyncRun__scheduleImmediateJsOverride", 4);
+    _static_1(A, "async__AsyncRun__scheduleImmediateWithSetImmediate$closure", "_AsyncRun__scheduleImmediateWithSetImmediate", 4);
+    _static_1(A, "async__AsyncRun__scheduleImmediateWithTimer$closure", "_AsyncRun__scheduleImmediateWithTimer", 4);
     _static_0(A, "async___startMicrotaskLoop$closure", "_startMicrotaskLoop", 0);
-    _static_1(A, "collection___defaultHashCode$closure", "_defaultHashCode", 34);
-    _static_1(A, "convert___defaultToEncodable$closure", "_defaultToEncodable", 8);
-    _static_1(A, "decompress_service__$DecompressServiceInitializer$closure", "$DecompressServiceInitializer", 35);
+    _static_1(A, "collection___defaultHashCode$closure", "_defaultHashCode", 36);
+    _static_1(A, "convert___defaultToEncodable$closure", "_defaultToEncodable", 11);
+    _static_1(A, "decompress_service__$DecompressServiceInitializer$closure", "$DecompressServiceInitializer", 37);
     _static_1(A, "_patch___toJSStr$closure", "_toJSStr", 1);
     _static_1(A, "_patch___toJSBool$closure", "_toJSBool", 1);
     _static_1(A, "_patch___toJSNum$closure", "_toJSNum", 1);
     _static_1(A, "_patch___toJSBigInt$closure", "_toJSBigInt", 1);
     _static_1(A, "_patch___toJSDate$closure", "_toJSDate", 1);
-    _static_1(A, "_patch___noRegistration$closure", "_noRegistration", 9);
+    _static_1(A, "_patch___noRegistration$closure", "_noRegistration", 8);
     var _;
-    _instance_1_u(_ = A._WebWorkerChannel.prototype, "get$reply", "reply$1", 2);
-    _instance_1_u(_, "get$inspectAndReply", "inspectAndReply$1", 2);
-    _instance_1_u(_, "get$log", "log$1", 25);
+    _instance_1_u(_ = A._WebWorkerChannel.prototype, "get$reply", "reply$1", 3);
+    _instance_1_u(_, "get$inspectAndReply", "inspectAndReply$1", 3);
+    _instance_1_u(_, "get$log", "log$1", 26);
     _static(A, "converter_Converter_identity$closure", 1, null, ["call$1$1", "call$1"], ["Converter_identity", function(x) {
       return A.Converter_identity(x, type$.dynamic);
-    }], 36, 0);
+    }], 38, 0);
     _static(A, "converter_Converter__castMap$closure", 1, null, ["call$2$1", "call$1"], ["Converter__castMap", function(x) {
       var t1 = type$.dynamic;
       return A.Converter__castMap(x, t1, t1);
-    }], 37, 0);
-    _static_1(A, "squadron_canceled_exception__SquadronCanceledExceptionExt_deserialize$closure", "SquadronCanceledExceptionExt_deserialize", 38);
-    _static_0(A, "clock__systemTime$closure", "systemTime", 39);
-    _static_2(A, "_platform__isSameInstance$closure", "isSameInstance", 26);
+    }], 39, 0);
+    _static_1(A, "squadron_canceled_exception__SquadronCanceledExceptionExt_deserialize$closure", "SquadronCanceledExceptionExt_deserialize", 40);
+    _static_0(A, "clock__systemTime$closure", "systemTime", 41);
+    _static_2(A, "_platform__isSameInstance$closure", "isSameInstance", 28);
   })();
   (function inheritance() {
     var _mixin = hunkHelpers.mixin,
       _inherit = hunkHelpers.inherit,
       _inheritMany = hunkHelpers.inheritMany;
     _inherit(A.Object, null);
-    _inheritMany(A.Object, [A.JS_CONST, J.Interceptor, A.SafeToStringHook, J.ArrayIterator, A.Iterable, A.CastIterator, A.MapBase, A.Closure, A.Error, A.SentinelValue, A.ListIterator, A.MappedIterator, A.WhereIterator, A.EmptyIterator, A.FixedLengthListMixin, A.TypeErrorDecoder, A.NullThrownFromJavaScriptException, A.ExceptionAndStackTrace, A._StackTrace, A.LinkedHashMapCell, A.LinkedHashMapKeyIterator, A.LinkedHashMapEntryIterator, A.JSSyntaxRegExp, A._MatchImplementation, A._Cell, A._UnmodifiableNativeByteBufferView, A.Rti, A._FunctionParameters, A._Type, A._TimerImpl, A._AsyncAwaitCompleter, A.AsyncError, A._Completer, A._FutureListener, A._Future, A._AsyncCallbackEntry, A._StreamIterator, A._Zone, A._HashMapKeyIterator, A.SetBase, A._LinkedHashSetCell, A._LinkedHashSetIterator, A.ListBase, A.Converter, A._Base64Decoder, A.Codec, A._JsonStringifier, A._JsonPrettyPrintMixin, A._Utf8Decoder, A._BigIntImpl, A.DateTime, A.Duration, A._Enum, A.OutOfMemoryError, A.StackOverflowError, A._Exception, A.FormatException, A.IntegerDivisionByZeroException, A.MapEntry, A.Null, A._StringStackTrace, A.StringBuffer, A.NullRejectionException, A.ZLibDecoderBase, A.HuffmanTable, A.Inflate, A.InputStream, A.OutputStream, A.CancelationToken, A.Clock, A.DecompressService, A.MarshalingContext, A.LogEvent, A.LogFilter, A.LogOutput, A.LogPrinter, A.Logger, A.OutputEvent, A._WebWorkerChannel, A.WorkerRunner, A.Converter0, A.LazyInPlaceMap, A.SerializationContext, A.SquadronException, A.CancelationTokenReference]);
+    _inheritMany(A.Object, [A.JS_CONST, J.Interceptor, A.SafeToStringHook, J.ArrayIterator, A.Iterable, A.CastIterator, A.MapBase, A.Closure, A.Error, A.SentinelValue, A.ListIterator, A.MappedIterator, A.WhereIterator, A.EmptyIterator, A.FixedLengthListMixin, A.TypeErrorDecoder, A.NullThrownFromJavaScriptException, A.ExceptionAndStackTrace, A._StackTrace, A.LinkedHashMapCell, A.LinkedHashMapKeyIterator, A.LinkedHashMapEntryIterator, A.JSSyntaxRegExp, A._MatchImplementation, A._Cell, A._UnmodifiableNativeByteBufferView, A.Rti, A._FunctionParameters, A._Type, A._TimerImpl, A._AsyncAwaitCompleter, A.AsyncError, A._Completer, A._FutureListener, A._Future, A._AsyncCallbackEntry, A._StreamIterator, A._Zone, A._HashMapKeyIterator, A.SetBase, A._LinkedHashSetCell, A._LinkedHashSetIterator, A.ListBase, A.Converter, A._Base64Decoder, A.Codec, A._JsonStringifier, A._JsonPrettyPrintMixin, A._Utf8Encoder, A._Utf8Decoder, A._BigIntImpl, A.DateTime, A.Duration, A._Enum, A.OutOfMemoryError, A.StackOverflowError, A._Exception, A.FormatException, A.IntegerDivisionByZeroException, A.MapEntry, A.Null, A._StringStackTrace, A.StringBuffer, A.NullRejectionException, A.ZLibDecoderBase, A.ZLibEncoderBase, A.HuffmanTable, A.Deflate, A._DeflaterConfig, A._HuffmanTree, A._StaticTree, A.Inflate, A.InputStream, A.OutputStream, A.CancelationToken, A.Clock, A.DecompressService, A.MarshalingContext, A.LogEvent, A.LogFilter, A.LogOutput, A.LogPrinter, A.Logger, A.OutputEvent, A._WebWorkerChannel, A.WorkerRunner, A.Converter0, A.LazyInPlaceMap, A.SerializationContext, A.SquadronException, A.CancelationTokenReference]);
     _inheritMany(J.Interceptor, [J.JSBool, J.JSNull, J.JavaScriptObject, J.JavaScriptBigInt, J.JavaScriptSymbol, J.JSNumber, J.JSString]);
     _inheritMany(J.JavaScriptObject, [J.LegacyJavaScriptObject, J.JSArray, A.NativeByteBuffer, A.NativeTypedData]);
     _inheritMany(J.LegacyJavaScriptObject, [J.PlainJavaScriptObject, J.UnknownJavaScriptObject, J.JavaScriptFunction]);
@@ -11843,7 +14594,7 @@
     _inherit(A._CastListBase, A.__CastListBase__CastIterableBase_ListMixin);
     _inherit(A.CastList, A._CastListBase);
     _inheritMany(A.MapBase, [A.CastMap, A.JsLinkedHashMap, A._HashMap, A._JsonMap]);
-    _inheritMany(A.Closure, [A.Closure2Args, A.CastMap_entries_closure, A.Instantiation, A.Closure0Args, A.TearOffClosure, A.initHooks_closure, A.initHooks_closure1, A._AsyncRun__initializeScheduleImmediate_internalCallback, A._AsyncRun__initializeScheduleImmediate_closure, A._awaitOnObject_closure, A.Future_wait_closure, A._Future__propagateToListeners_handleWhenCompleteCallback_closure, A._CustomHashMap_closure, A.MapBase_entries_closure, A._BigIntImpl_hashCode_finish, A.jsify__convert, A.promiseToFuture_closure, A.promiseToFuture_closure0, A.dartify_convert, A.InputStream_readString_codesToString, A._extension_0__$getOperations_closure, A._extension_0__$getOperations_closure0, A.bootstrap_closure0, A.bootstrap_closure, A.$jsify_closure, A.$jsify_closure0, A.$dartify_closure, A.JsWorkerRunnerExt_get_handle_closure, A.WorkerRunner__checkOperations_closure, A.WorkerRunner_connect_closure, A.ContextAwareConverter_value_closure, A.ContextAwareConverter_nmap_closure, A.ContextAwareConverter_nmap_closure0, A.ContextAwareConverter_nmap_closure1, A.ContextAwareConverter_nmap__closure, A.Converter__mapMap_closure, A.Converter_allowNull_closure, A.LazyInPlaceMap_entries_closure, A.SquadronCanceledException_SquadronCanceledException$from_closure, A.SquadronCanceledExceptions_message_closure, A.SquadronCanceledExceptions_serialize_closure]);
+    _inheritMany(A.Closure, [A.Closure2Args, A.CastMap_entries_closure, A.Instantiation, A.Closure0Args, A.TearOffClosure, A.initHooks_closure, A.initHooks_closure1, A._AsyncRun__initializeScheduleImmediate_internalCallback, A._AsyncRun__initializeScheduleImmediate_closure, A._awaitOnObject_closure, A.Future_wait_closure, A._Future__propagateToListeners_handleWhenCompleteCallback_closure, A._CustomHashMap_closure, A.MapBase_entries_closure, A._BigIntImpl_hashCode_finish, A.jsify__convert, A.promiseToFuture_closure, A.promiseToFuture_closure0, A.dartify_convert, A.InputStream_readString_codesToString, A._extension_0__$getOperations_closure, A._extension_0__$getOperations_closure0, A._extension_0__$getOperations_closure1, A._extension_0__$getOperations_closure2, A._extension_0__$getOperations_closure3, A._extension_0__$getOperations_closure4, A._extension_0__$getOperations_closure5, A._extension_0__$getOperations_closure6, A.bootstrap_closure0, A.bootstrap_closure, A.$jsify_closure, A.$jsify_closure0, A.$dartify_closure, A.JsWorkerRunnerExt_get_handle_closure, A.WorkerRunner__checkOperations_closure, A.WorkerRunner_connect_closure, A.ContextAwareConverter_value_closure, A.ContextAwareConverter_nmap_closure, A.ContextAwareConverter_nmap_closure0, A.ContextAwareConverter_nmap_closure1, A.ContextAwareConverter_nmap__closure, A.Converter__mapMap_closure, A.Converter_allowNull_closure, A.LazyInPlaceMap_entries_closure, A.SquadronCanceledException_SquadronCanceledException$from_closure, A.SquadronCanceledExceptions_message_closure, A.SquadronCanceledExceptions_serialize_closure]);
     _inheritMany(A.Closure2Args, [A.CastMap_forEach_closure, A.initHooks_closure0, A._awaitOnObject_closure0, A._wrapJsFunctionForAsync_closure, A.Future_wait_handleError, A._Future__propagateToListeners_handleWhenCompleteCallback_closure0, A.MapBase_mapToString_closure, A._JsonStringifier_writeMap_closure, A._JsonPrettyPrintMixin_writeMap_closure, A._BigIntImpl_hashCode_combine, A.Converter__mapMap__closure]);
     _inheritMany(A.Error, [A.LateError, A.TypeError, A.JsNoSuchMethodError, A.UnknownJsTypeError, A.RuntimeError, A._Error, A.JsonUnsupportedObjectError, A.AssertionError, A.ArgumentError, A.UnsupportedError, A.UnimplementedError, A.StateError, A.ConcurrentModificationError]);
     _inheritMany(A.EfficientLengthIterable, [A.ListIterable, A.EmptyIterable, A.LinkedHashMapKeysIterable, A.LinkedHashMapEntriesIterable, A._HashMapKeyIterable]);
@@ -11867,15 +14618,17 @@
     _inheritMany(A._HashMap, [A._IdentityHashMap, A._CustomHashMap]);
     _inherit(A._SetBase, A.SetBase);
     _inherit(A._LinkedHashSet, A._SetBase);
-    _inheritMany(A.Converter, [A.Base64Decoder, A.JsonEncoder, A.JsonDecoder, A.Utf8Decoder]);
+    _inheritMany(A.Converter, [A.Base64Decoder, A.JsonEncoder, A.JsonDecoder, A.Utf8Encoder, A.Utf8Decoder]);
+    _inheritMany(A.Codec, [A.Encoding, A.JsonCodec]);
     _inherit(A.JsonCyclicError, A.JsonUnsupportedObjectError);
-    _inherit(A.JsonCodec, A.Codec);
     _inherit(A._JsonStringStringifier, A._JsonStringifier);
     _inherit(A.__JsonStringStringifierPretty__JsonStringStringifier__JsonPrettyPrintMixin, A._JsonStringStringifier);
     _inherit(A._JsonStringStringifierPretty, A.__JsonStringStringifierPretty__JsonStringStringifier__JsonPrettyPrintMixin);
+    _inherit(A.Utf8Codec, A.Encoding);
     _inheritMany(A.ArgumentError, [A.RangeError, A.IndexError]);
     _inheritMany(A.ZLibDecoderBase, [A._GZipDecoder, A._ZLibDecoder]);
-    _inheritMany(A._Enum, [A.ByteOrder, A.Level]);
+    _inherit(A._GZipEncoder, A.ZLibEncoderBase);
+    _inheritMany(A._Enum, [A._DeflateFlushMode, A.ByteOrder, A.Level]);
     _inherit(A.InputMemoryStream, A.InputStream);
     _inherit(A.OutputMemoryStream, A.OutputStream);
     _inherit(A._$DecompressService$WorkerService, A.DecompressService);
@@ -11900,12 +14653,12 @@
     typeUniverse: {eC: new Map(), tR: {}, eT: {}, tPV: {}, sEA: []},
     mangledGlobalNames: {int: "int", double: "double", num: "num", String: "String", bool: "bool", Null: "Null", List: "List", Object: "Object", Map: "Map", JSObject: "JSObject"},
     mangledNames: {},
-    types: ["~()", "Object?(Object?)", "~(@)", "~(~())", "~(Object?,Object?)", "String()", "@()", "Null(@)", "@(@)", "~(Object?)", "Null()", "@(String)", "Null(@,StackTrace)", "~(int,@)", "~(Object,StackTrace)", "Null(Object,StackTrace)", "bool(Object?)", "int(int,int)", "int(int)", "Null(~())", "String(List<int>)", "Future<~>(List<@>)", "Future<Map<String,@>>(List<@>)", "~(WorkerRunner)", "Null(JSObject)", "~(LogEvent)", "bool(Object,Object)", "bool(int)", "~(OutputEvent)", "CancelationTokenReference()", "SquadronCanceledException(CanceledException)", "String(SquadronCanceledException)", "List<@>(SquadronCanceledException)", "@(@,String)", "int(Object?)", "WorkerService(List<@>)", "0^(@)<Object?>", "Map<0^,1^>(@)<Object?,Object?>", "SquadronCanceledException?(List<@>?)", "DateTime()", "~(JSObject)"],
+    types: ["~()", "Object?(Object?)", "Future<Uint8List>(List<@>)", "~(@)", "~(~())", "String()", "~(Object?,Object?)", "Null()", "~(Object?)", "@()", "Null(@)", "@(@)", "bool(Object?)", "Null(Object,StackTrace)", "~(Object,StackTrace)", "int(int,int)", "int(int)", "~(int,@)", "String(List<int>)", "Null(~())", "Future<String>(List<@>)", "Null(@,StackTrace)", "Future<Map<String,@>>(List<@>)", "~(WorkerRunner)", "Null(JSObject)", "@(String)", "~(LogEvent)", "@(@,String)", "bool(Object,Object)", "bool(int)", "~(OutputEvent)", "CancelationTokenReference()", "SquadronCanceledException(CanceledException)", "String(SquadronCanceledException)", "List<@>(SquadronCanceledException)", "~(JSObject)", "int(Object?)", "WorkerService(List<@>)", "0^(@)<Object?>", "Map<0^,1^>(@)<Object?,Object?>", "SquadronCanceledException?(List<@>?)", "DateTime()", "Future<~>(List<@>)"],
     interceptorsByTag: null,
     leafTags: null,
     arrayRti: Symbol("$ti")
   };
-  A._Universe_addRules(init.typeUniverse, JSON.parse('{"JavaScriptFunction":"LegacyJavaScriptObject","PlainJavaScriptObject":"LegacyJavaScriptObject","UnknownJavaScriptObject":"LegacyJavaScriptObject","NativeArrayBuffer":"NativeByteBuffer","JSArray":{"List":["1"],"EfficientLengthIterable":["1"],"JSObject":[],"Iterable":["1"]},"JSBool":{"bool":[],"TrustedGetRuntimeType":[]},"JSNull":{"Null":[],"TrustedGetRuntimeType":[]},"JavaScriptObject":{"JSObject":[]},"LegacyJavaScriptObject":{"JSObject":[]},"JSArraySafeToStringHook":{"SafeToStringHook":[]},"JSUnmodifiableArray":{"JSArray":["1"],"List":["1"],"EfficientLengthIterable":["1"],"JSObject":[],"Iterable":["1"]},"ArrayIterator":{"Iterator":["1"]},"JSNumber":{"double":[],"num":[]},"JSInt":{"double":[],"int":[],"num":[],"TrustedGetRuntimeType":[]},"JSNumNotInt":{"double":[],"num":[],"TrustedGetRuntimeType":[]},"JSString":{"String":[],"TrustedGetRuntimeType":[]},"_CastIterableBase":{"Iterable":["2"]},"CastIterator":{"Iterator":["2"]},"CastIterable":{"_CastIterableBase":["1","2"],"Iterable":["2"],"Iterable.E":"2"},"_EfficientLengthCastIterable":{"CastIterable":["1","2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"_CastListBase":{"ListBase":["2"],"List":["2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"]},"CastList":{"_CastListBase":["1","2"],"ListBase":["2"],"List":["2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"ListBase.E":"2","Iterable.E":"2"},"CastMap":{"MapBase":["3","4"],"Map":["3","4"],"MapBase.K":"3","MapBase.V":"4"},"LateError":{"Error":[]},"EfficientLengthIterable":{"Iterable":["1"]},"ListIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"SubListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"ListIterable.E":"1","Iterable.E":"1"},"ListIterator":{"Iterator":["1"]},"MappedIterable":{"Iterable":["2"],"Iterable.E":"2"},"EfficientLengthMappedIterable":{"MappedIterable":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"MappedIterator":{"Iterator":["2"]},"MappedListIterable":{"ListIterable":["2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"ListIterable.E":"2","Iterable.E":"2"},"WhereIterable":{"Iterable":["1"],"Iterable.E":"1"},"WhereIterator":{"Iterator":["1"]},"EmptyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"EmptyIterator":{"Iterator":["1"]},"ReversedListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"ListIterable.E":"1","Iterable.E":"1"},"Instantiation":{"Closure":[],"Function":[]},"Instantiation1":{"Closure":[],"Function":[]},"Instantiation2":{"Closure":[],"Function":[]},"NullError":{"TypeError":[],"Error":[]},"JsNoSuchMethodError":{"Error":[]},"UnknownJsTypeError":{"Error":[]},"_StackTrace":{"StackTrace":[]},"Closure":{"Function":[]},"Closure0Args":{"Closure":[],"Function":[]},"Closure2Args":{"Closure":[],"Function":[]},"TearOffClosure":{"Closure":[],"Function":[]},"StaticClosure":{"Closure":[],"Function":[]},"BoundClosure":{"Closure":[],"Function":[]},"RuntimeError":{"Error":[]},"JsLinkedHashMap":{"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"LinkedHashMapKeysIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"LinkedHashMapKeyIterator":{"Iterator":["1"]},"LinkedHashMapEntriesIterable":{"EfficientLengthIterable":["MapEntry<1,2>"],"Iterable":["MapEntry<1,2>"],"Iterable.E":"MapEntry<1,2>"},"LinkedHashMapEntryIterator":{"Iterator":["MapEntry<1,2>"]},"JSSyntaxRegExp":{"RegExp":[]},"NativeByteBuffer":{"JSObject":[],"ByteBuffer":[],"TrustedGetRuntimeType":[]},"NativeTypedData":{"JSObject":[],"TypedData":[]},"_UnmodifiableNativeByteBufferView":{"ByteBuffer":[]},"NativeByteData":{"ByteData":[],"JSObject":[],"TypedData":[],"TrustedGetRuntimeType":[]},"NativeTypedArray":{"JavaScriptIndexingBehavior":["1"],"JSObject":[],"TypedData":[]},"NativeTypedArrayOfDouble":{"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"]},"NativeTypedArrayOfInt":{"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"]},"NativeFloat32List":{"Float32List":[],"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double"},"NativeFloat64List":{"Float64List":[],"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double"},"NativeInt16List":{"Int16List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeInt32List":{"Int32List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeInt8List":{"Int8List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint16List":{"Uint16List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint32List":{"Uint32List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint8ClampedList":{"Uint8ClampedList":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint8List":{"Uint8List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"_Error":{"Error":[]},"_TypeError":{"TypeError":[],"Error":[]},"_AsyncAwaitCompleter":{"Completer":["1"]},"AsyncError":{"Error":[]},"_Completer":{"Completer":["1"]},"_AsyncCompleter":{"_Completer":["1"],"Completer":["1"]},"_Future":{"Future":["1"]},"_Zone":{"Zone":[]},"_RootZone":{"_Zone":[],"Zone":[]},"_HashMap":{"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_IdentityHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_CustomHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_HashMapKeyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"_HashMapKeyIterator":{"Iterator":["1"]},"_LinkedHashSet":{"_SetBase":["1"],"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_LinkedHashSetIterator":{"Iterator":["1"]},"MapBase":{"Map":["1","2"]},"SetBase":{"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_SetBase":{"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_JsonMap":{"MapBase":["String","@"],"Map":["String","@"],"MapBase.K":"String","MapBase.V":"@"},"_JsonMapKeyIterable":{"ListIterable":["String"],"EfficientLengthIterable":["String"],"Iterable":["String"],"ListIterable.E":"String","Iterable.E":"String"},"JsonUnsupportedObjectError":{"Error":[]},"JsonCyclicError":{"Error":[]},"JsonCodec":{"Codec":["Object?","String"]},"double":{"num":[]},"int":{"num":[]},"List":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"_BigIntImpl":{"BigInt":[]},"AssertionError":{"Error":[]},"TypeError":{"Error":[]},"ArgumentError":{"Error":[]},"RangeError":{"Error":[]},"IndexError":{"Error":[]},"UnsupportedError":{"Error":[]},"UnimplementedError":{"Error":[]},"StateError":{"Error":[]},"ConcurrentModificationError":{"Error":[]},"OutOfMemoryError":{"Error":[]},"StackOverflowError":{"Error":[]},"IntegerDivisionByZeroException":{"Error":[]},"_StringStackTrace":{"StackTrace":[]},"StringBuffer":{"StringSink":[]},"InputMemoryStream":{"InputStream":[]},"OutputMemoryStream":{"OutputStream":[]},"_$DecompressService$WorkerService":{"WorkerService":[]},"_WebWorkerChannel":{"WorkerChannel":[]},"InternalLogger":{"Logger":[]},"_NoLogOutput":{"LogOutput":[]},"_DummyPrinter":{"LogPrinter":[]},"_LogAllFilter":{"LogFilter":[]},"CastConverter":{"Converter0":[]},"ContextAwareConverter":{"Converter0":[]},"LazyInPlaceMap":{"Map":["1","2"]},"SquadronCanceledException":{"SquadronException":[],"CanceledException":[]},"SquadronCanceledExceptions":{"SquadronCanceledException":[],"SquadronException":[],"CanceledException":[]},"SquadronError":{"SquadronException":[]},"SquadronTimeoutException":{"SquadronCanceledException":[],"SquadronException":[],"CanceledException":[]},"WorkerException":{"SquadronException":[]},"CancelationTokenReference":{"SquadronCancelationToken":[],"CancelationToken":[]},"SquadronCancelationToken":{"CancelationToken":[]},"ByteData":{"TypedData":[]},"Int8List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint8List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint8ClampedList":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Int16List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint16List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Int32List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint32List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Float32List":{"List":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"]},"Float64List":{"List":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"]}}'));
+  A._Universe_addRules(init.typeUniverse, JSON.parse('{"JavaScriptFunction":"LegacyJavaScriptObject","PlainJavaScriptObject":"LegacyJavaScriptObject","UnknownJavaScriptObject":"LegacyJavaScriptObject","NativeArrayBuffer":"NativeByteBuffer","JSArray":{"List":["1"],"EfficientLengthIterable":["1"],"JSObject":[],"Iterable":["1"]},"JSBool":{"bool":[],"TrustedGetRuntimeType":[]},"JSNull":{"Null":[],"TrustedGetRuntimeType":[]},"JavaScriptObject":{"JSObject":[]},"LegacyJavaScriptObject":{"JSObject":[]},"JSArraySafeToStringHook":{"SafeToStringHook":[]},"JSUnmodifiableArray":{"JSArray":["1"],"List":["1"],"EfficientLengthIterable":["1"],"JSObject":[],"Iterable":["1"]},"ArrayIterator":{"Iterator":["1"]},"JSNumber":{"double":[],"num":[]},"JSInt":{"double":[],"int":[],"num":[],"TrustedGetRuntimeType":[]},"JSNumNotInt":{"double":[],"num":[],"TrustedGetRuntimeType":[]},"JSString":{"String":[],"TrustedGetRuntimeType":[]},"_CastIterableBase":{"Iterable":["2"]},"CastIterator":{"Iterator":["2"]},"CastIterable":{"_CastIterableBase":["1","2"],"Iterable":["2"],"Iterable.E":"2"},"_EfficientLengthCastIterable":{"CastIterable":["1","2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"_CastListBase":{"ListBase":["2"],"List":["2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"]},"CastList":{"_CastListBase":["1","2"],"ListBase":["2"],"List":["2"],"_CastIterableBase":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"ListBase.E":"2","Iterable.E":"2"},"CastMap":{"MapBase":["3","4"],"Map":["3","4"],"MapBase.K":"3","MapBase.V":"4"},"LateError":{"Error":[]},"EfficientLengthIterable":{"Iterable":["1"]},"ListIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"SubListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"ListIterable.E":"1","Iterable.E":"1"},"ListIterator":{"Iterator":["1"]},"MappedIterable":{"Iterable":["2"],"Iterable.E":"2"},"EfficientLengthMappedIterable":{"MappedIterable":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"MappedIterator":{"Iterator":["2"]},"MappedListIterable":{"ListIterable":["2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"ListIterable.E":"2","Iterable.E":"2"},"WhereIterable":{"Iterable":["1"],"Iterable.E":"1"},"WhereIterator":{"Iterator":["1"]},"EmptyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"EmptyIterator":{"Iterator":["1"]},"ReversedListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"ListIterable.E":"1","Iterable.E":"1"},"Instantiation":{"Closure":[],"Function":[]},"Instantiation1":{"Closure":[],"Function":[]},"Instantiation2":{"Closure":[],"Function":[]},"NullError":{"TypeError":[],"Error":[]},"JsNoSuchMethodError":{"Error":[]},"UnknownJsTypeError":{"Error":[]},"_StackTrace":{"StackTrace":[]},"Closure":{"Function":[]},"Closure0Args":{"Closure":[],"Function":[]},"Closure2Args":{"Closure":[],"Function":[]},"TearOffClosure":{"Closure":[],"Function":[]},"StaticClosure":{"Closure":[],"Function":[]},"BoundClosure":{"Closure":[],"Function":[]},"RuntimeError":{"Error":[]},"JsLinkedHashMap":{"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"LinkedHashMapKeysIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"LinkedHashMapKeyIterator":{"Iterator":["1"]},"LinkedHashMapEntriesIterable":{"EfficientLengthIterable":["MapEntry<1,2>"],"Iterable":["MapEntry<1,2>"],"Iterable.E":"MapEntry<1,2>"},"LinkedHashMapEntryIterator":{"Iterator":["MapEntry<1,2>"]},"JSSyntaxRegExp":{"RegExp":[]},"NativeByteBuffer":{"JSObject":[],"ByteBuffer":[],"TrustedGetRuntimeType":[]},"NativeTypedData":{"JSObject":[],"TypedData":[]},"_UnmodifiableNativeByteBufferView":{"ByteBuffer":[]},"NativeByteData":{"ByteData":[],"JSObject":[],"TypedData":[],"TrustedGetRuntimeType":[]},"NativeTypedArray":{"JavaScriptIndexingBehavior":["1"],"JSObject":[],"TypedData":[]},"NativeTypedArrayOfDouble":{"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"]},"NativeTypedArrayOfInt":{"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"]},"NativeFloat32List":{"Float32List":[],"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double"},"NativeFloat64List":{"Float64List":[],"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"JSObject":[],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double"},"NativeInt16List":{"Int16List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeInt32List":{"Int32List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeInt8List":{"Int8List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint16List":{"Uint16List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint32List":{"Uint32List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint8ClampedList":{"Uint8ClampedList":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint8List":{"Uint8List":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"JSObject":[],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"_Error":{"Error":[]},"_TypeError":{"TypeError":[],"Error":[]},"_AsyncAwaitCompleter":{"Completer":["1"]},"AsyncError":{"Error":[]},"_Completer":{"Completer":["1"]},"_AsyncCompleter":{"_Completer":["1"],"Completer":["1"]},"_Future":{"Future":["1"]},"_Zone":{"Zone":[]},"_RootZone":{"_Zone":[],"Zone":[]},"_HashMap":{"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_IdentityHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_CustomHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"HashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_HashMapKeyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"_HashMapKeyIterator":{"Iterator":["1"]},"_LinkedHashSet":{"_SetBase":["1"],"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_LinkedHashSetIterator":{"Iterator":["1"]},"MapBase":{"Map":["1","2"]},"SetBase":{"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_SetBase":{"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_JsonMap":{"MapBase":["String","@"],"Map":["String","@"],"MapBase.K":"String","MapBase.V":"@"},"_JsonMapKeyIterable":{"ListIterable":["String"],"EfficientLengthIterable":["String"],"Iterable":["String"],"ListIterable.E":"String","Iterable.E":"String"},"Encoding":{"Codec":["String","List<int>"]},"JsonUnsupportedObjectError":{"Error":[]},"JsonCyclicError":{"Error":[]},"JsonCodec":{"Codec":["Object?","String"]},"Utf8Codec":{"Codec":["String","List<int>"]},"double":{"num":[]},"int":{"num":[]},"List":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"_BigIntImpl":{"BigInt":[]},"AssertionError":{"Error":[]},"TypeError":{"Error":[]},"ArgumentError":{"Error":[]},"RangeError":{"Error":[]},"IndexError":{"Error":[]},"UnsupportedError":{"Error":[]},"UnimplementedError":{"Error":[]},"StateError":{"Error":[]},"ConcurrentModificationError":{"Error":[]},"OutOfMemoryError":{"Error":[]},"StackOverflowError":{"Error":[]},"IntegerDivisionByZeroException":{"Error":[]},"_StringStackTrace":{"StackTrace":[]},"StringBuffer":{"StringSink":[]},"InputMemoryStream":{"InputStream":[]},"OutputMemoryStream":{"OutputStream":[]},"_$DecompressService$WorkerService":{"WorkerService":[]},"_WebWorkerChannel":{"WorkerChannel":[]},"InternalLogger":{"Logger":[]},"_NoLogOutput":{"LogOutput":[]},"_DummyPrinter":{"LogPrinter":[]},"_LogAllFilter":{"LogFilter":[]},"CastConverter":{"Converter0":[]},"ContextAwareConverter":{"Converter0":[]},"LazyInPlaceMap":{"Map":["1","2"]},"SquadronCanceledException":{"SquadronException":[],"CanceledException":[]},"SquadronCanceledExceptions":{"SquadronCanceledException":[],"SquadronException":[],"CanceledException":[]},"SquadronError":{"SquadronException":[]},"SquadronTimeoutException":{"SquadronCanceledException":[],"SquadronException":[],"CanceledException":[]},"WorkerException":{"SquadronException":[]},"CancelationTokenReference":{"SquadronCancelationToken":[],"CancelationToken":[]},"SquadronCancelationToken":{"CancelationToken":[]},"ByteData":{"TypedData":[]},"Int8List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint8List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint8ClampedList":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Int16List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint16List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Int32List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Uint32List":{"List":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"]},"Float32List":{"List":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"]},"Float64List":{"List":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"]}}'));
   A._Universe_addErasedTypes(init.typeUniverse, JSON.parse('{"__CastListBase__CastIterableBase_ListMixin":2,"NativeTypedArray":1,"Converter":2}'));
   var string$ = {
     Error_: "Error handler must accept one Object or one Object and a StackTrace as arguments, and return a value of the returned future's type"
@@ -12033,6 +14786,7 @@
     B.JSString_methods = J.JSString.prototype;
     B.JavaScriptFunction_methods = J.JavaScriptFunction.prototype;
     B.JavaScriptObject_methods = J.JavaScriptObject.prototype;
+    B.NativeUint16List_methods = A.NativeUint16List.prototype;
     B.NativeUint8List_methods = A.NativeUint8List.prototype;
     B.PlainJavaScriptObject_methods = J.PlainJavaScriptObject.prototype;
     B.UnknownJavaScriptObject_methods = J.UnknownJavaScriptObject.prototype;
@@ -12171,7 +14925,10 @@
     B.C_JsonCodec = new A.JsonCodec();
     B.C_OutOfMemoryError = new A.OutOfMemoryError();
     B.C_SentinelValue = new A.SentinelValue();
+    B.C_Utf8Codec = new A.Utf8Codec();
+    B.C_Utf8Encoder = new A.Utf8Encoder();
     B.C__GZipDecoder = new A._GZipDecoder();
+    B.C__GZipEncoder = new A._GZipEncoder();
     B.C__RootZone = new A._RootZone();
     B.C__ZLibDecoder = new A._ZLibDecoder();
     B.JsonDecoder_null = new A.JsonDecoder(null);
@@ -12181,10 +14938,19 @@
     B.Level_1000_2_trace = new A.Level(1000, 2, "trace");
     B.Level_5000_6_error = new A.Level(5000, 6, "error");
     B.Level_9999_9_nothing = new A.Level(9999, 9, "nothing");
+    B.List_1eA = makeConstList([0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0], type$.JSArray_int);
+    B.List_2Xs = makeConstList([0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 16, 20, 24, 28, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 0], type$.JSArray_int);
+    B.List_2gL = makeConstList([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7], type$.JSArray_int);
     B.List_4i6 = makeConstList([""], type$.JSArray_String);
+    B.List_972 = makeConstList([0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 128, 192, 256, 384, 512, 768, 1024, 1536, 2048, 3072, 4096, 6144, 8192, 12288, 16384, 24576], type$.JSArray_int);
     B.List_AC1 = makeConstList([5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5], type$.JSArray_int);
+    B.List_BSx = makeConstList([0, 1, 2, 3, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 0, 0, 16, 17, 18, 18, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29, 29], type$.JSArray_int);
+    B.List_GYx = makeConstList([0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18, 18, 19, 19, 19, 19, 19, 19, 19, 19, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 28], type$.JSArray_int);
     B.List_HmF = makeConstList([0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13], type$.JSArray_int);
+    B.List_LCt = makeConstList([12, 8, 140, 8, 76, 8, 204, 8, 44, 8, 172, 8, 108, 8, 236, 8, 28, 8, 156, 8, 92, 8, 220, 8, 60, 8, 188, 8, 124, 8, 252, 8, 2, 8, 130, 8, 66, 8, 194, 8, 34, 8, 162, 8, 98, 8, 226, 8, 18, 8, 146, 8, 82, 8, 210, 8, 50, 8, 178, 8, 114, 8, 242, 8, 10, 8, 138, 8, 74, 8, 202, 8, 42, 8, 170, 8, 106, 8, 234, 8, 26, 8, 154, 8, 90, 8, 218, 8, 58, 8, 186, 8, 122, 8, 250, 8, 6, 8, 134, 8, 70, 8, 198, 8, 38, 8, 166, 8, 102, 8, 230, 8, 22, 8, 150, 8, 86, 8, 214, 8, 54, 8, 182, 8, 118, 8, 246, 8, 14, 8, 142, 8, 78, 8, 206, 8, 46, 8, 174, 8, 110, 8, 238, 8, 30, 8, 158, 8, 94, 8, 222, 8, 62, 8, 190, 8, 126, 8, 254, 8, 1, 8, 129, 8, 65, 8, 193, 8, 33, 8, 161, 8, 97, 8, 225, 8, 17, 8, 145, 8, 81, 8, 209, 8, 49, 8, 177, 8, 113, 8, 241, 8, 9, 8, 137, 8, 73, 8, 201, 8, 41, 8, 169, 8, 105, 8, 233, 8, 25, 8, 153, 8, 89, 8, 217, 8, 57, 8, 185, 8, 121, 8, 249, 8, 5, 8, 133, 8, 69, 8, 197, 8, 37, 8, 165, 8, 101, 8, 229, 8, 21, 8, 149, 8, 85, 8, 213, 8, 53, 8, 181, 8, 117, 8, 245, 8, 13, 8, 141, 8, 77, 8, 205, 8, 45, 8, 173, 8, 109, 8, 237, 8, 29, 8, 157, 8, 93, 8, 221, 8, 61, 8, 189, 8, 125, 8, 253, 8, 19, 9, 275, 9, 147, 9, 403, 9, 83, 9, 339, 9, 211, 9, 467, 9, 51, 9, 307, 9, 179, 9, 435, 9, 115, 9, 371, 9, 243, 9, 499, 9, 11, 9, 267, 9, 139, 9, 395, 9, 75, 9, 331, 9, 203, 9, 459, 9, 43, 9, 299, 9, 171, 9, 427, 9, 107, 9, 363, 9, 235, 9, 491, 9, 27, 9, 283, 9, 155, 9, 411, 9, 91, 9, 347, 9, 219, 9, 475, 9, 59, 9, 315, 9, 187, 9, 443, 9, 123, 9, 379, 9, 251, 9, 507, 9, 7, 9, 263, 9, 135, 9, 391, 9, 71, 9, 327, 9, 199, 9, 455, 9, 39, 9, 295, 9, 167, 9, 423, 9, 103, 9, 359, 9, 231, 9, 487, 9, 23, 9, 279, 9, 151, 9, 407, 9, 87, 9, 343, 9, 215, 9, 471, 9, 55, 9, 311, 9, 183, 9, 439, 9, 119, 9, 375, 9, 247, 9, 503, 9, 15, 9, 271, 9, 143, 9, 399, 9, 79, 9, 335, 9, 207, 9, 463, 9, 47, 9, 303, 9, 175, 9, 431, 9, 111, 9, 367, 9, 239, 9, 495, 9, 31, 9, 287, 9, 159, 9, 415, 9, 95, 9, 351, 9, 223, 9, 479, 9, 63, 9, 319, 9, 191, 9, 447, 9, 127, 9, 383, 9, 255, 9, 511, 9, 0, 7, 64, 7, 32, 7, 96, 7, 16, 7, 80, 7, 48, 7, 112, 7, 8, 7, 72, 7, 40, 7, 104, 7, 24, 7, 88, 7, 56, 7, 120, 7, 4, 7, 68, 7, 36, 7, 100, 7, 20, 7, 84, 7, 52, 7, 116, 7, 3, 8, 131, 8, 67, 8, 195, 8, 35, 8, 163, 8, 99, 8, 227, 8], type$.JSArray_int);
+    B.List_LJO = makeConstList([0, 5, 16, 5, 8, 5, 24, 5, 4, 5, 20, 5, 12, 5, 28, 5, 2, 5, 18, 5, 10, 5, 26, 5, 6, 5, 22, 5, 14, 5, 30, 5, 1, 5, 17, 5, 9, 5, 25, 5, 5, 5, 21, 5, 13, 5, 29, 5, 3, 5, 19, 5, 11, 5, 27, 5, 7, 5, 23, 5], type$.JSArray_int);
     B.List_empty = makeConstList([], type$.JSArray_dynamic);
+    B.List_kC8 = makeConstList([0, 1996959894, 3993919788, 2567524794, 124634137, 1886057615, 3915621685, 2657392035, 249268274, 2044508324, 3772115230, 2547177864, 162941995, 2125561021, 3887607047, 2428444049, 498536548, 1789927666, 4089016648, 2227061214, 450548861, 1843258603, 4107580753, 2211677639, 325883990, 1684777152, 4251122042, 2321926636, 335633487, 1661365465, 4195302755, 2366115317, 997073096, 1281953886, 3579855332, 2724688242, 1006888145, 1258607687, 3524101629, 2768942443, 901097722, 1119000684, 3686517206, 2898065728, 853044451, 1172266101, 3705015759, 2882616665, 651767980, 1373503546, 3369554304, 3218104598, 565507253, 1454621731, 3485111705, 3099436303, 671266974, 1594198024, 3322730930, 2970347812, 795835527, 1483230225, 3244367275, 3060149565, 1994146192, 31158534, 2563907772, 4023717930, 1907459465, 112637215, 2680153253, 3904427059, 2013776290, 251722036, 2517215374, 3775830040, 2137656763, 141376813, 2439277719, 3865271297, 1802195444, 476864866, 2238001368, 4066508878, 1812370925, 453092731, 2181625025, 4111451223, 1706088902, 314042704, 2344532202, 4240017532, 1658658271, 366619977, 2362670323, 4224994405, 1303535960, 984961486, 2747007092, 3569037538, 1256170817, 1037604311, 2765210733, 3554079995, 1131014506, 879679996, 2909243462, 3663771856, 1141124467, 855842277, 2852801631, 3708648649, 1342533948, 654459306, 3188396048, 3373015174, 1466479909, 544179635, 3110523913, 3462522015, 1591671054, 702138776, 2966460450, 3352799412, 1504918807, 783551873, 3082640443, 3233442989, 3988292384, 2596254646, 62317068, 1957810842, 3939845945, 2647816111, 81470997, 1943803523, 3814918930, 2489596804, 225274430, 2053790376, 3826175755, 2466906013, 167816743, 2097651377, 4027552580, 2265490386, 503444072, 1762050814, 4150417245, 2154129355, 426522225, 1852507879, 4275313526, 2312317920, 282753626, 1742555852, 4189708143, 2394877945, 397917763, 1622183637, 3604390888, 2714866558, 953729732, 1340076626, 3518719985, 2797360999, 1068828381, 1219638859, 3624741850, 2936675148, 906185462, 1090812512, 3747672003, 2825379669, 829329135, 1181335161, 3412177804, 3160834842, 628085408, 1382605366, 3423369109, 3138078467, 570562233, 1426400815, 3317316542, 2998733608, 733239954, 1555261956, 3268935591, 3050360625, 752459403, 1541320221, 2607071920, 3965973030, 1969922972, 40735498, 2617837225, 3943577151, 1913087877, 83908371, 2512341634, 3803740692, 2075208622, 213261112, 2463272603, 3855990285, 2094854071, 198958881, 2262029012, 4057260610, 1759359992, 534414190, 2176718541, 4139329115, 1873836001, 414664567, 2282248934, 4279200368, 1711684554, 285281116, 2405801727, 4167216745, 1634467795, 376229701, 2685067896, 3608007406, 1308918612, 956543938, 2808555105, 3495958263, 1231636301, 1047427035, 2932959818, 3654703836, 1088359270, 936918000, 2847714899, 3736837829, 1202900863, 817233897, 3183342108, 3401237130, 1404277552, 615818150, 3134207493, 3453421203, 1423857449, 601450431, 3009837614, 3294710456, 1567103746, 711928724, 3020668471, 3272380065, 1510334235, 755167117], type$.JSArray_int);
     B.List_lln = makeConstList([16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15], type$.JSArray_int);
     B.List_oeK = makeConstList([3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258], type$.JSArray_int);
     B.List_pIG = makeConstList([1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577], type$.JSArray_int);
@@ -12207,6 +14973,10 @@
     B.Type_int_T7V = A.typeLiteral("int");
     B.Type_num_LZa = A.typeLiteral("num");
     B.Utf8Decoder_false = new A.Utf8Decoder(false);
+    B._DeflateFlushMode_0 = new A._DeflateFlushMode(0, "none");
+    B._DeflateFlushMode_1 = new A._DeflateFlushMode(1, "partial");
+    B._DeflateFlushMode_2 = new A._DeflateFlushMode(2, "full");
+    B._DeflateFlushMode_3 = new A._DeflateFlushMode(3, "finish");
     B._StringStackTrace_OdL = new A._StringStackTrace("");
   })();
   (function staticFields() {
@@ -12234,6 +15004,7 @@
     $._BigIntImpl____lastQuoRemUsed = A._Cell$named("_lastQuoRemUsed");
     $._BigIntImpl____lastRemUsed = A._Cell$named("_lastRemUsed");
     $._BigIntImpl____lastRem_nsh = A._Cell$named("_lastRem_nsh");
+    $.Deflate____config = A._Cell$named("_config");
     $.Logger__logCallbacks = A.LinkedHashSet_LinkedHashSet$_empty(A.findType("~(LogEvent)"));
     $.Logger__outputCallbacks = A.LinkedHashSet_LinkedHashSet$_empty(A.findType("~(OutputEvent)"));
   })();
@@ -12298,6 +15069,9 @@
     _lazyFinal($, "_BigIntImpl__bigInt10000", "$get$_BigIntImpl__bigInt10000", () => A._BigIntImpl__BigIntImpl$_fromInt(10000));
     _lazy($, "_BigIntImpl__parseRE", "$get$_BigIntImpl__parseRE", () => A.RegExp_RegExp("^\\s*([+-]?)((0x[a-f0-9]+)|(\\d+)|([a-z0-9]+))\\s*$", false));
     _lazyFinal($, "_hashSeed", "$get$_hashSeed", () => A.objectHashCode(B.Type_Object_A4p));
+    _lazyFinal($, "_StaticTree_staticLDesc", "$get$_StaticTree_staticLDesc", () => A._StaticTree$(B.List_LCt, B.List_1eA, 257, 286, 15));
+    _lazyFinal($, "_StaticTree_staticDDesc", "$get$_StaticTree_staticDDesc", () => A._StaticTree$(B.List_LJO, B.List_HmF, 0, 30, 15));
+    _lazyFinal($, "_StaticTree_staticBlDesc", "$get$_StaticTree_staticBlDesc", () => A._StaticTree$(null, B.List_2gL, 0, 19, 7));
     _lazyFinal($, "Inflate__fixedLiteralLengthTable", "$get$Inflate__fixedLiteralLengthTable", () => A.HuffmanTable$(B.List_w2t));
     _lazyFinal($, "Inflate__fixedDistanceTable", "$get$Inflate__fixedDistanceTable", () => A.HuffmanTable$(B.List_AC1));
     _lazyFinal($, "_clockKey", "$get$_clockKey", () => new A.Object());
