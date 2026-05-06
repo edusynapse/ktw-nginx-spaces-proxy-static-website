@@ -1029,7 +1029,6 @@ class CompiledApp {
       _2289: (a, l) => a.length = l,
       _2290: (a, i) => a[i],
       _2291: (a, i, v) => a[i] = v,
-      _2292: (a, t) => a.concat(t),
       _2293: o => {
         if (o instanceof ArrayBuffer) return 0;
         if (globalThis.SharedArrayBuffer !== undefined &&

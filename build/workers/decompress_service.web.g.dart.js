@@ -400,12 +400,12 @@
         return a0 != null && receiver === a0;
       return J.getInterceptor$(receiver).$eq(receiver, a0);
     },
-    $index$asx(receiver, a0) {
+    $index$ax(receiver, a0) {
       if (typeof a0 === "number")
-        if (Array.isArray(receiver) || typeof receiver == "string" || A.isJsIndexable(receiver, receiver[init.dispatchPropertyName]))
+        if (Array.isArray(receiver) || A.isJsIndexable(receiver, receiver[init.dispatchPropertyName]))
           if (a0 >>> 0 === a0 && a0 < receiver.length)
             return receiver[a0];
-      return J.getInterceptor$asx(receiver).$index(receiver, a0);
+      return J.getInterceptor$ax(receiver).$index(receiver, a0);
     },
     $indexSet$ax(receiver, a0, a1) {
       return J.getInterceptor$ax(receiver).$indexSet(receiver, a0, a1);
@@ -3739,6 +3739,9 @@
     _CustomHashMap$(_equals, _hashCode, validKey, $K, $V) {
       return new A._CustomHashMap(_equals, _hashCode, new A._CustomHashMap_closure($K), $K._eval$1("@<0>")._bind$1($V)._eval$1("_CustomHashMap<1,2>"));
     },
+    LinkedHashMap_LinkedHashMap($K, $V) {
+      return new A.JsLinkedHashMap($K._eval$1("@<0>")._bind$1($V)._eval$1("JsLinkedHashMap<1,2>"));
+    },
     LinkedHashMap_LinkedHashMap$_literal(keyValuePairs, $K, $V) {
       return $K._eval$1("@<0>")._bind$1($V)._eval$1("LinkedHashMap<1,2>")._as(A.fillLiteralMap(keyValuePairs, new A.JsLinkedHashMap($K._eval$1("@<0>")._bind$1($V)._eval$1("JsLinkedHashMap<1,2>"))));
     },
@@ -3761,6 +3764,11 @@
     },
     _defaultHashCode(a) {
       return J.get$hashCode$(a);
+    },
+    LinkedHashMap_LinkedHashMap$from(other, $K, $V) {
+      var result = A.LinkedHashMap_LinkedHashMap($K, $V);
+      other.forEach$1(0, new A.LinkedHashMap_LinkedHashMap$from_closure(result, $K, $V));
+      return result;
     },
     MapBase_mapToString(m) {
       var result, t1;
@@ -3831,6 +3839,11 @@
       _._modifications = t1;
       _._collection$_current = _._cell = null;
       _.$ti = t2;
+    },
+    LinkedHashMap_LinkedHashMap$from_closure: function LinkedHashMap_LinkedHashMap$from_closure(t0, t1, t2) {
+      this.result = t0;
+      this.K = t1;
+      this.V = t2;
     },
     ListBase: function ListBase() {
     },
@@ -5716,7 +5729,7 @@
       type$.nullable_List_dynamic._as(props);
       if (props == null)
         return null;
-      t1 = J.getInterceptor$asx(props);
+      t1 = J.getInterceptor$ax(props);
       switch (t1.$index(props, 0)) {
         case "$C":
           return A.SquadronCanceledException$(A._asString(t1.$index(props, 1)), A._asString(t1.$index(props, 2)), A.SquadronException_loadStackTrace(A._asStringQ(t1.$index(props, 3))));
@@ -5742,7 +5755,7 @@
       return t1;
     },
     SquadronCanceledExceptionsExt_deserialize(props) {
-      var t1 = J.getInterceptor$asx(props);
+      var t1 = J.getInterceptor$ax(props);
       if (!J.$eq$(t1.$index(props, 0), "$C*"))
         return null;
       return A.SquadronCanceledExceptions$(A._asString(t1.$index(props, 1)), type$.Iterable_SquadronCanceledException._as(J.map$1$ax(t1.$index(props, 2), A.squadron_canceled_exception__SquadronCanceledExceptionExt_deserialize$closure())));
@@ -5801,7 +5814,7 @@
     },
     SquadronTimeoutExceptionExt_deserialize(props) {
       var t2, microSecs, t3, t4, _null = null,
-        t1 = J.getInterceptor$asx(props);
+        t1 = J.getInterceptor$ax(props);
       if (!J.$eq$(t1.$index(props, 0), "$T"))
         return _null;
       t2 = A._asNumQ(t1.$index(props, 4));
@@ -5846,7 +5859,7 @@
       var t1, id, ex, token;
       if (props == null)
         return null;
-      t1 = J.getInterceptor$asx(props);
+      t1 = J.getInterceptor$ax(props);
       id = t1.$index(props, 0);
       ex = A.SquadronCanceledExceptionExt_deserialize(type$.nullable_List_dynamic._as(t1.$index(props, 1)));
       A._asString(id);
@@ -5953,6 +5966,11 @@
     main() {
       A.bootstrap(A.decompress_service__$DecompressServiceInitializer$closure(), null);
     },
+    stringDynamicMapOf(value) {
+      var t1 = type$.String,
+        t2 = type$.dynamic;
+      return type$.Map_dynamic_dynamic._is(value) ? A.LinkedHashMap_LinkedHashMap$from(value, t1, t2) : A.LinkedHashMap_LinkedHashMap$_empty(t1, t2);
+    },
     isSameInstance(a, b) {
       var t1;
       A._asObject(a);
@@ -5980,7 +5998,7 @@
     },
     WorkerRequest_unwrapInPlace(_this, logger) {
       var t2,
-        t1 = J.getInterceptor$asx(_this),
+        t1 = J.getInterceptor$ax(_this),
         ts = A.Timestamp_from(t1.$index(_this, 0));
       if (ts != null)
         t1.$indexSet(_this, 0, 1000 * Date.now() - ts);
@@ -6189,7 +6207,6 @@
       return receiver.length;
     },
     $index(receiver, index) {
-      A._asInt(index);
       if (!(index >= 0 && index < receiver.length))
         throw A.wrapException(A.diagnoseIndexError(receiver, index));
       return receiver[index];
@@ -6327,9 +6344,6 @@
       factor = Math.pow(2, floorLog2);
       scaled = absolute < 1 ? absolute / factor : factor / absolute;
       return ((scaled * 9007199254740992 | 0) + (scaled * 3542243181176521 | 0)) * 599197 + floorLog2 * 1259 & 536870911;
-    },
-    $add(receiver, other) {
-      return receiver + other;
     },
     $mod(receiver, other) {
       var result = receiver % other;
@@ -6469,12 +6483,6 @@
     get$length(receiver) {
       return receiver.length;
     },
-    $index(receiver, index) {
-      A._asInt(index);
-      if (!(index.$ge(0, 0) && index.$lt(0, receiver.length)))
-        throw A.wrapException(A.diagnoseIndexError(receiver, index));
-      return receiver[index];
-    },
     $isTrustedGetRuntimeType: 1,
     $isString: 1
   };
@@ -6518,7 +6526,7 @@
   A._EfficientLengthCastIterable.prototype = {$isEfficientLengthIterable: 1};
   A._CastListBase.prototype = {
     $index(_, index) {
-      return this.$ti._rest[1]._as(J.$index$asx(this._source, A._asInt(index)));
+      return this.$ti._rest[1]._as(J.$index$ax(this._source, index));
     },
     $indexSet(_, index, value) {
       var t1 = this.$ti;
@@ -7064,7 +7072,7 @@
       return bucket[index].hashMapCellValue;
     },
     $indexSet(_, key, value) {
-      var strings, nums, rest, hash, bucket, index, _this = this,
+      var strings, nums, _this = this,
         t1 = A._instanceType(_this);
       t1._precomputed1._as(key);
       t1._rest[1]._as(value);
@@ -7074,21 +7082,27 @@
       } else if (typeof key == "number" && (key & 0x3fffffff) === key) {
         nums = _this.__js_helper$_nums;
         _this.__js_helper$_addHashTableEntry$3(nums == null ? _this.__js_helper$_nums = _this._newHashTable$0() : nums, key, value);
-      } else {
-        rest = _this.__js_helper$_rest;
-        if (rest == null)
-          rest = _this.__js_helper$_rest = _this._newHashTable$0();
-        hash = _this.internalComputeHashCode$1(key);
-        bucket = rest[hash];
-        if (bucket == null)
-          rest[hash] = [_this._newLinkedCell$2(key, value)];
-        else {
-          index = _this.internalFindBucketIndex$2(bucket, key);
-          if (index >= 0)
-            bucket[index].hashMapCellValue = value;
-          else
-            bucket.push(_this._newLinkedCell$2(key, value));
-        }
+      } else
+        _this.internalSet$2(key, value);
+    },
+    internalSet$2(key, value) {
+      var rest, hash, bucket, index, _this = this,
+        t1 = A._instanceType(_this);
+      t1._precomputed1._as(key);
+      t1._rest[1]._as(value);
+      rest = _this.__js_helper$_rest;
+      if (rest == null)
+        rest = _this.__js_helper$_rest = _this._newHashTable$0();
+      hash = _this.internalComputeHashCode$1(key);
+      bucket = rest[hash];
+      if (bucket == null)
+        rest[hash] = [_this._newLinkedCell$2(key, value)];
+      else {
+        index = _this.internalFindBucketIndex$2(bucket, key);
+        if (index >= 0)
+          bucket[index].hashMapCellValue = value;
+        else
+          bucket.push(_this._newLinkedCell$2(key, value));
       }
     },
     putIfAbsent$2(key, ifAbsent) {
@@ -7294,19 +7308,19 @@
     call$1(o) {
       return this.getTag(o);
     },
-    $signature: 11
+    $signature: 8
   };
   A.initHooks_closure0.prototype = {
     call$2(o, tag) {
       return this.getUnknownTag(o, tag);
     },
-    $signature: 27
+    $signature: 21
   };
   A.initHooks_closure1.prototype = {
     call$1(tag) {
       return this.prototypeForTag(A._asString(tag));
     },
-    $signature: 25
+    $signature: 20
   };
   A.JSSyntaxRegExp.prototype = {
     toString$0(_) {
@@ -7320,16 +7334,7 @@
     },
     $isRegExp: 1
   };
-  A._MatchImplementation.prototype = {
-    $index(_, index) {
-      var t1;
-      A._asInt(index);
-      t1 = this._match;
-      if (!(index < t1.length))
-        return A.ioore(t1, index);
-      return t1[index];
-    }
-  };
+  A._MatchImplementation.prototype = {};
   A._Cell.prototype = {
     _readLocal$0() {
       var t1 = this._value;
@@ -7402,7 +7407,6 @@
   };
   A.NativeTypedArrayOfDouble.prototype = {
     $index(receiver, index) {
-      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -7468,7 +7472,6 @@
       return B.Type_Int16List_s5h;
     },
     $index(receiver, index) {
-      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -7480,7 +7483,6 @@
       return B.Type_Int32List_O8Z;
     },
     $index(receiver, index) {
-      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -7492,7 +7494,6 @@
       return B.Type_Int8List_rFV;
     },
     $index(receiver, index) {
-      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -7504,7 +7505,6 @@
       return B.Type_Uint16List_kmP;
     },
     $index(receiver, index) {
-      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -7516,7 +7516,6 @@
       return B.Type_Uint32List_kmP;
     },
     $index(receiver, index) {
-      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -7531,7 +7530,6 @@
       return receiver.length;
     },
     $index(receiver, index) {
-      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -7546,7 +7544,6 @@
       return receiver.length;
     },
     $index(receiver, index) {
-      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -7659,13 +7656,13 @@
     call$2(error, stackTrace) {
       this.bodyFunction.call$2(1, new A.ExceptionAndStackTrace(error, type$.StackTrace._as(stackTrace)));
     },
-    $signature: 21
+    $signature: 14
   };
   A._wrapJsFunctionForAsync_closure.prototype = {
     call$2(errorCode, result) {
       this.$protected(A._asInt(errorCode), result);
     },
-    $signature: 17
+    $signature: 15
   };
   A.AsyncError.prototype = {
     toString$0(_) {
@@ -7697,7 +7694,7 @@
         _this._future._completeErrorObject$1(new A.AsyncError(t2, t1));
       }
     },
-    $signature: 14
+    $signature: 18
   };
   A.Future_wait_closure.prototype = {
     call$1(value) {
@@ -8014,7 +8011,7 @@
       type$.StackTrace._as(s);
       this.joinedResult._completeErrorObject$1(new A.AsyncError(e, s));
     },
-    $signature: 13
+    $signature: 26
   };
   A._Future__propagateToListeners_handleValueCallback.prototype = {
     call$0() {
@@ -8093,9 +8090,6 @@
     },
     bindCallbackGuarded$1(f) {
       return new A._RootZone_bindCallbackGuarded_closure(this, type$.void_Function._as(f));
-    },
-    $index(_, key) {
-      return null;
     },
     run$1$1(f, $R) {
       $R._eval$1("0()")._as(f);
@@ -8354,7 +8348,7 @@
     call$1(v) {
       return this.K._is(v);
     },
-    $signature: 12
+    $signature: 31
   };
   A._HashMapKeyIterable.prototype = {
     get$length(_) {
@@ -8533,6 +8527,12 @@
     },
     $isIterator: 1
   };
+  A.LinkedHashMap_LinkedHashMap$from_closure.prototype = {
+    call$2(k, v) {
+      this.result.$indexSet(0, this.K._as(k), this.V._as(v));
+    },
+    $signature: 13
+  };
   A.ListBase.prototype = {
     get$iterator(receiver) {
       return new A.ListIterator(receiver, this.get$length(receiver), A.instanceType(receiver)._eval$1("ListIterator<ListBase.E>"));
@@ -8671,7 +8671,7 @@
       t2 = A.S(v);
       t1._contents += t2;
     },
-    $signature: 6
+    $signature: 4
   };
   A.SetBase.prototype = {
     get$isEmpty(_) {
@@ -9150,7 +9150,7 @@
       B.JSArray_methods.$indexSet(t1, t2.i++, key);
       B.JSArray_methods.$indexSet(t1, t2.i++, value);
     },
-    $signature: 6
+    $signature: 4
   };
   A._JsonPrettyPrintMixin.prototype = {
     writeList$1(list) {
@@ -9218,7 +9218,7 @@
       B.JSArray_methods.$indexSet(t1, t2.i++, key);
       B.JSArray_methods.$indexSet(t1, t2.i++, value);
     },
-    $signature: 6
+    $signature: 4
   };
   A._JsonStringStringifier.prototype = {
     get$_partialResult() {
@@ -9878,7 +9878,7 @@
       hash = hash + ((hash & 524287) << 10) & 536870911;
       return hash ^ hash >>> 6;
     },
-    $signature: 15
+    $signature: 16
   };
   A._BigIntImpl_hashCode_finish.prototype = {
     call$1(hash) {
@@ -9886,7 +9886,7 @@
       hash ^= hash >>> 11;
       return hash + ((hash & 16383) << 15) & 536870911;
     },
-    $signature: 16
+    $signature: 17
   };
   A.DateTime.prototype = {
     $eq(_, other) {
@@ -10330,7 +10330,7 @@
         dartObject = [];
         t1.$indexSet(0, o, dartObject);
         $length = A._asInt(o.length);
-        for (t1 = J.getInterceptor$asx(l), i = 0; i < $length; ++i)
+        for (t1 = J.getInterceptor$ax(l), i = 0; i < $length; ++i)
           dartObject.push(this.call$1(t1.$index(l, i)));
         return dartObject;
       }
@@ -12556,16 +12556,6 @@
       var t1 = this.buffer;
       return t1 == null ? 0 : t1.length - this._position;
     },
-    $index(_, index) {
-      var t1, t2;
-      A._asInt(index);
-      t1 = this.buffer;
-      t1.toString;
-      t2 = B.JSInt_methods.$add(this._position, index);
-      if (!(t2 >= 0 && t2 < t1.length))
-        return A.ioore(t1, t2);
-      return t1[t2];
-    },
     subset$2$length$position($length, position) {
       var t1 = this.buffer;
       if (t1 == null)
@@ -12654,7 +12644,7 @@
         return t1;
       }
     },
-    $signature: 18
+    $signature: 12
   };
   A.OutputMemoryStream.prototype = {
     getBytes$0() {
@@ -12770,10 +12760,10 @@
             case 0:
               // Function start
               try {
-                responseJson = B.C_JsonCodec.decode$2$reviver(A._asString(serialized.$index(0, "body")), null);
-                compressFlag = J.$index$asx(responseJson, "compressed");
+                responseJson = A.stringDynamicMapOf(B.C_JsonCodec.decode$2$reviver(A._asString(serialized.$index(0, "body")), null));
+                compressFlag = J.$index$ax(responseJson, "compressed");
                 if (J.$eq$(compressFlag, true) || J.$eq$(compressFlag, "true")) {
-                  base64Body = J.$index$asx(responseJson, "body");
+                  base64Body = J.$index$ax(responseJson, "body");
                   if (base64Body != null && typeof base64Body == "string") {
                     compressedBytes = B.C_Base64Decoder.convert$1(base64Body);
                     decompressedBytes = B.C__GZipDecoder.decodeBytes$2$verify(type$.List_int._as(compressedBytes), false);
@@ -12911,7 +12901,7 @@
     extractFontBytesFromResponse$1(responseBody) {
       var $async$goto = 0,
         $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
-        $async$returnValue, decoded;
+        $async$returnValue, decoded, t1;
       var $async$extractFontBytesFromResponse$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
         if ($async$errorCode === 1)
           return A._asyncRethrow($async$result, $async$completer);
@@ -12919,8 +12909,9 @@
           switch ($async$goto) {
             case 0:
               // Function start
-              decoded = B.C_JsonCodec.decode$2$reviver(responseBody, null);
-              if (!type$.Map_dynamic_dynamic._is(decoded) || typeof decoded.$index(0, "body") != "string")
+              decoded = A.stringDynamicMapOf(B.C_JsonCodec.decode$2$reviver(responseBody, null));
+              t1 = decoded.$index(0, "body");
+              if (typeof t1 != "string")
                 throw A.wrapException(A.StateError$("Invalid font response body"));
               $async$returnValue = new Uint8Array(A._ensureNativeList(B.C_Base64Decoder.convert$1(A._asString(decoded.$index(0, "body")))));
               // goto return
@@ -12971,7 +12962,7 @@
               $async$handler = 3;
               $$dsr = A._$Deser$(false);
               $async$goto = 6;
-              return A._asyncAwait($async$self._this.base64DecodeBytes$1($$dsr.$$0$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+              return A._asyncAwait($async$self._this.base64DecodeBytes$1($$dsr.$$0$1(J.$index$ax(type$.List_dynamic._as(J.$index$ax($$req, 3)), 0))), $async$call$1);
             case 6:
               // returning from await.
               $$res = $async$result;
@@ -13027,7 +13018,7 @@
               $async$handler = 3;
               $$dsr = A._$Deser$(false);
               $async$goto = 6;
-              return A._asyncAwait($async$self._this.extractFontBytesFromResponse$1($$dsr.$$0$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+              return A._asyncAwait($async$self._this.extractFontBytesFromResponse$1($$dsr.$$0$1(J.$index$ax(type$.List_dynamic._as(J.$index$ax($$req, 3)), 0))), $async$call$1);
             case 6:
               // returning from await.
               $$res = $async$result;
@@ -13083,7 +13074,7 @@
               $async$handler = 3;
               $$dsr = A._$Deser$(false);
               $async$goto = 6;
-              return A._asyncAwait($async$self._this.gzipDecodeBytes$1($$dsr.$$1$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+              return A._asyncAwait($async$self._this.gzipDecodeBytes$1($$dsr.$$1$1(J.$index$ax(type$.List_dynamic._as(J.$index$ax($$req, 3)), 0))), $async$call$1);
             case 6:
               // returning from await.
               $$res = $async$result;
@@ -13139,7 +13130,7 @@
               $async$handler = 3;
               $$dsr = A._$Deser$(false);
               $async$goto = 6;
-              return A._asyncAwait($async$self._this.gzipDecodeToText$1($$dsr.$$1$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+              return A._asyncAwait($async$self._this.gzipDecodeToText$1($$dsr.$$1$1(J.$index$ax(type$.List_dynamic._as(J.$index$ax($$req, 3)), 0))), $async$call$1);
             case 6:
               // returning from await.
               $$res = $async$result;
@@ -13172,7 +13163,7 @@
       });
       return A._asyncStartSync($async$call$1, $async$completer);
     },
-    $signature: 20
+    $signature: 36
   };
   A._extension_0__$getOperations_closure3.prototype = {
     call$1($$req) {
@@ -13195,7 +13186,7 @@
               $async$handler = 3;
               $$dsr = A._$Deser$(false);
               $async$goto = 6;
-              return A._asyncAwait($async$self._this.gzipEncodeBytes$1($$dsr.$$1$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+              return A._asyncAwait($async$self._this.gzipEncodeBytes$1($$dsr.$$1$1(J.$index$ax(type$.List_dynamic._as(J.$index$ax($$req, 3)), 0))), $async$call$1);
             case 6:
               // returning from await.
               $$res = $async$result;
@@ -13251,7 +13242,7 @@
               $async$handler = 3;
               $$dsr = A._$Deser$(false);
               $async$goto = 6;
-              return A._asyncAwait($async$self._this.gzipEncodeText$1($$dsr.$$0$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+              return A._asyncAwait($async$self._this.gzipEncodeText$1($$dsr.$$0$1(J.$index$ax(type$.List_dynamic._as(J.$index$ax($$req, 3)), 0))), $async$call$1);
             case 6:
               // returning from await.
               $$res = $async$result;
@@ -13290,7 +13281,7 @@
     call$1($$req) {
       return this._this.noop$0();
     },
-    $signature: 42
+    $signature: 22
   };
   A._extension_0__$getOperations_closure6.prototype = {
     call$1($$req) {
@@ -13313,7 +13304,7 @@
               $async$handler = 3;
               $$dsr = A._$Deser$(false);
               $async$goto = 6;
-              return A._asyncAwait($async$self._this.processResponse$1($$dsr.$$3$1(J.$index$asx(type$.List_dynamic._as(J.$index$asx($$req, 3)), 0))), $async$call$1);
+              return A._asyncAwait($async$self._this.processResponse$1($$dsr.$$3$1(J.$index$ax(type$.List_dynamic._as(J.$index$ax($$req, 3)), 0))), $async$call$1);
             case 6:
               // returning from await.
               $$res = $async$result;
@@ -13346,7 +13337,7 @@
       });
       return A._asyncStartSync($async$call$1, $async$completer);
     },
-    $signature: 22
+    $signature: 23
   };
   A._$DecompressService$WorkerService.prototype = {$isWorkerService: 1};
   A._$Deser.prototype = {
@@ -13516,7 +13507,7 @@
       A._asJSObject(t1.port2).close();
       A._asJSObject(init.G.self).close();
     },
-    $signature: 23
+    $signature: 24
   };
   A.bootstrap_closure.prototype = {
     call$1(e) {
@@ -13529,7 +13520,7 @@
       t3.toString;
       t2.connect$3(A.WorkerRequest_constructor_from(t3), A._asJSObject(t1.port2), this.initializer);
     },
-    $signature: 24
+    $signature: 25
   };
   A.$jsify_closure.prototype = {
     call$1(js) {
@@ -13549,7 +13540,7 @@
       } else if (A._isTransferable(js))
         A._asInt(this.transfer.push(js));
     },
-    $signature: 8
+    $signature: 11
   };
   A.$jsify_closure0.prototype = {
     call$1(dart) {
@@ -13769,7 +13760,7 @@
       t1.toString;
       return this._this.processRequest$1(A.WorkerRequest_constructor_from(t1));
     },
-    $signature: 35
+    $signature: 29
   };
   A.InternalLogger.prototype = {};
   A._NoLogOutput.prototype = {
@@ -13806,7 +13797,7 @@
               channel = A._Cell$named("channel");
               $async$handler = 3;
               A.WorkerRequest_unwrapInPlace(startRequest, $async$self.internalLogger);
-              t1 = J.getInterceptor$asx(startRequest);
+              t1 = J.getInterceptor$ax(startRequest);
               t2 = type$.nullable_WorkerChannel._as(t1.$index(startRequest, 1));
               channel.set$finalLocalValue(t2);
               if (channel._readLocal$0() == null) {
@@ -13899,7 +13890,7 @@
               channel = null;
               $async$handler = 4;
               A.WorkerRequest_unwrapInPlace(request, $async$self.internalLogger);
-              t1 = J.getInterceptor$asx(request);
+              t1 = J.getInterceptor$ax(request);
               t2 = type$.nullable_WorkerChannel;
               channel = t2._as(t1.$index(request, 1));
               if (A._asInt(t1.$index(request, 2)) === -4) {
@@ -14039,7 +14030,7 @@
               st = A.getTraceFromException($async$exception);
               if (channel != null) {
                 t1 = channel;
-                t2 = A._asInt(J.$index$asx(request, 2));
+                t2 = A._asInt(J.$index$ax(request, 2));
                 ex = A.SquadronException_from(A._asObject(ex), type$.nullable_StackTrace._as(st), t2);
                 t1._postResponse$1([1000 * Date.now(), null, ex, null, null]);
               } else
@@ -14108,13 +14099,13 @@
     call$1(k) {
       return A._asInt(k) <= 0;
     },
-    $signature: 29
+    $signature: 30
   };
   A.WorkerRunner_connect_closure.prototype = {
     call$1($event) {
       return this.logger.call$1(type$.OutputEvent._as($event).origin);
     },
-    $signature: 30
+    $signature: 43
   };
   A.WorkerRunner_connect_closure0.prototype = {
     call$0() {
@@ -14126,7 +14117,7 @@
     call$0() {
       return new A.CancelationTokenReference(this.token.get$id(), new A._AsyncCompleter(new A._Future($.Zone__current, type$._Future_SquadronCanceledException), type$._AsyncCompleter_SquadronCanceledException), true);
     },
-    $signature: 31
+    $signature: 32
   };
   A.CastConverter.prototype = {
     value$1$0($T) {
@@ -14431,7 +14422,7 @@
       type$.CanceledException._as(e);
       return A.SquadronCanceledException_SquadronCanceledException$from(this.tokenId, e, e.get$stackTrace());
     },
-    $signature: 32
+    $signature: 33
   };
   A.SquadronCanceledExceptions.prototype = {
     get$message() {
@@ -14457,13 +14448,13 @@
     call$1(e) {
       return type$.SquadronCanceledException._as(e).get$message();
     },
-    $signature: 33
+    $signature: 34
   };
   A.SquadronCanceledExceptions_serialize_closure.prototype = {
     call$1(e) {
       return type$.SquadronCanceledException._as(e).serialize$0();
     },
-    $signature: 34
+    $signature: 35
   };
   A.SquadronError.prototype = {
     serialize$0() {
@@ -14548,32 +14539,32 @@
       _instance_1_u = hunkHelpers._instance_1u,
       _static = hunkHelpers.installStaticTearOff,
       _static_2 = hunkHelpers._static_2;
-    _static_1(A, "async__AsyncRun__scheduleImmediateJsOverride$closure", "_AsyncRun__scheduleImmediateJsOverride", 4);
-    _static_1(A, "async__AsyncRun__scheduleImmediateWithSetImmediate$closure", "_AsyncRun__scheduleImmediateWithSetImmediate", 4);
-    _static_1(A, "async__AsyncRun__scheduleImmediateWithTimer$closure", "_AsyncRun__scheduleImmediateWithTimer", 4);
+    _static_1(A, "async__AsyncRun__scheduleImmediateJsOverride$closure", "_AsyncRun__scheduleImmediateJsOverride", 6);
+    _static_1(A, "async__AsyncRun__scheduleImmediateWithSetImmediate$closure", "_AsyncRun__scheduleImmediateWithSetImmediate", 6);
+    _static_1(A, "async__AsyncRun__scheduleImmediateWithTimer$closure", "_AsyncRun__scheduleImmediateWithTimer", 6);
     _static_0(A, "async___startMicrotaskLoop$closure", "_startMicrotaskLoop", 0);
-    _static_1(A, "collection___defaultHashCode$closure", "_defaultHashCode", 36);
-    _static_1(A, "convert___defaultToEncodable$closure", "_defaultToEncodable", 11);
-    _static_1(A, "decompress_service__$DecompressServiceInitializer$closure", "$DecompressServiceInitializer", 37);
+    _static_1(A, "collection___defaultHashCode$closure", "_defaultHashCode", 37);
+    _static_1(A, "convert___defaultToEncodable$closure", "_defaultToEncodable", 8);
+    _static_1(A, "decompress_service__$DecompressServiceInitializer$closure", "$DecompressServiceInitializer", 38);
     _static_1(A, "_patch___toJSStr$closure", "_toJSStr", 1);
     _static_1(A, "_patch___toJSBool$closure", "_toJSBool", 1);
     _static_1(A, "_patch___toJSNum$closure", "_toJSNum", 1);
     _static_1(A, "_patch___toJSBigInt$closure", "_toJSBigInt", 1);
     _static_1(A, "_patch___toJSDate$closure", "_toJSDate", 1);
-    _static_1(A, "_patch___noRegistration$closure", "_noRegistration", 8);
+    _static_1(A, "_patch___noRegistration$closure", "_noRegistration", 11);
     var _;
     _instance_1_u(_ = A._WebWorkerChannel.prototype, "get$reply", "reply$1", 3);
     _instance_1_u(_, "get$inspectAndReply", "inspectAndReply$1", 3);
-    _instance_1_u(_, "get$log", "log$1", 26);
+    _instance_1_u(_, "get$log", "log$1", 27);
     _static(A, "converter_Converter_identity$closure", 1, null, ["call$1$1", "call$1"], ["Converter_identity", function(x) {
       return A.Converter_identity(x, type$.dynamic);
-    }], 38, 0);
+    }], 39, 0);
     _static(A, "converter_Converter__castMap$closure", 1, null, ["call$2$1", "call$1"], ["Converter__castMap", function(x) {
       var t1 = type$.dynamic;
       return A.Converter__castMap(x, t1, t1);
-    }], 39, 0);
-    _static_1(A, "squadron_canceled_exception__SquadronCanceledExceptionExt_deserialize$closure", "SquadronCanceledExceptionExt_deserialize", 40);
-    _static_0(A, "clock__systemTime$closure", "systemTime", 41);
+    }], 40, 0);
+    _static_1(A, "squadron_canceled_exception__SquadronCanceledExceptionExt_deserialize$closure", "SquadronCanceledExceptionExt_deserialize", 41);
+    _static_0(A, "clock__systemTime$closure", "systemTime", 42);
     _static_2(A, "_platform__isSameInstance$closure", "isSameInstance", 28);
   })();
   (function inheritance() {
@@ -14595,7 +14586,7 @@
     _inherit(A.CastList, A._CastListBase);
     _inheritMany(A.MapBase, [A.CastMap, A.JsLinkedHashMap, A._HashMap, A._JsonMap]);
     _inheritMany(A.Closure, [A.Closure2Args, A.CastMap_entries_closure, A.Instantiation, A.Closure0Args, A.TearOffClosure, A.initHooks_closure, A.initHooks_closure1, A._AsyncRun__initializeScheduleImmediate_internalCallback, A._AsyncRun__initializeScheduleImmediate_closure, A._awaitOnObject_closure, A.Future_wait_closure, A._Future__propagateToListeners_handleWhenCompleteCallback_closure, A._CustomHashMap_closure, A.MapBase_entries_closure, A._BigIntImpl_hashCode_finish, A.jsify__convert, A.promiseToFuture_closure, A.promiseToFuture_closure0, A.dartify_convert, A.InputStream_readString_codesToString, A._extension_0__$getOperations_closure, A._extension_0__$getOperations_closure0, A._extension_0__$getOperations_closure1, A._extension_0__$getOperations_closure2, A._extension_0__$getOperations_closure3, A._extension_0__$getOperations_closure4, A._extension_0__$getOperations_closure5, A._extension_0__$getOperations_closure6, A.bootstrap_closure0, A.bootstrap_closure, A.$jsify_closure, A.$jsify_closure0, A.$dartify_closure, A.JsWorkerRunnerExt_get_handle_closure, A.WorkerRunner__checkOperations_closure, A.WorkerRunner_connect_closure, A.ContextAwareConverter_value_closure, A.ContextAwareConverter_nmap_closure, A.ContextAwareConverter_nmap_closure0, A.ContextAwareConverter_nmap_closure1, A.ContextAwareConverter_nmap__closure, A.Converter__mapMap_closure, A.Converter_allowNull_closure, A.LazyInPlaceMap_entries_closure, A.SquadronCanceledException_SquadronCanceledException$from_closure, A.SquadronCanceledExceptions_message_closure, A.SquadronCanceledExceptions_serialize_closure]);
-    _inheritMany(A.Closure2Args, [A.CastMap_forEach_closure, A.initHooks_closure0, A._awaitOnObject_closure0, A._wrapJsFunctionForAsync_closure, A.Future_wait_handleError, A._Future__propagateToListeners_handleWhenCompleteCallback_closure0, A.MapBase_mapToString_closure, A._JsonStringifier_writeMap_closure, A._JsonPrettyPrintMixin_writeMap_closure, A._BigIntImpl_hashCode_combine, A.Converter__mapMap__closure]);
+    _inheritMany(A.Closure2Args, [A.CastMap_forEach_closure, A.initHooks_closure0, A._awaitOnObject_closure0, A._wrapJsFunctionForAsync_closure, A.Future_wait_handleError, A._Future__propagateToListeners_handleWhenCompleteCallback_closure0, A.LinkedHashMap_LinkedHashMap$from_closure, A.MapBase_mapToString_closure, A._JsonStringifier_writeMap_closure, A._JsonPrettyPrintMixin_writeMap_closure, A._BigIntImpl_hashCode_combine, A.Converter__mapMap__closure]);
     _inheritMany(A.Error, [A.LateError, A.TypeError, A.JsNoSuchMethodError, A.UnknownJsTypeError, A.RuntimeError, A._Error, A.JsonUnsupportedObjectError, A.AssertionError, A.ArgumentError, A.UnsupportedError, A.UnimplementedError, A.StateError, A.ConcurrentModificationError]);
     _inheritMany(A.EfficientLengthIterable, [A.ListIterable, A.EmptyIterable, A.LinkedHashMapKeysIterable, A.LinkedHashMapEntriesIterable, A._HashMapKeyIterable]);
     _inheritMany(A.ListIterable, [A.SubListIterable, A.MappedListIterable, A.ReversedListIterable, A._JsonMapKeyIterable]);
@@ -14653,7 +14644,7 @@
     typeUniverse: {eC: new Map(), tR: {}, eT: {}, tPV: {}, sEA: []},
     mangledGlobalNames: {int: "int", double: "double", num: "num", String: "String", bool: "bool", Null: "Null", List: "List", Object: "Object", Map: "Map", JSObject: "JSObject"},
     mangledNames: {},
-    types: ["~()", "Object?(Object?)", "Future<Uint8List>(List<@>)", "~(@)", "~(~())", "String()", "~(Object?,Object?)", "Null()", "~(Object?)", "@()", "Null(@)", "@(@)", "bool(Object?)", "Null(Object,StackTrace)", "~(Object,StackTrace)", "int(int,int)", "int(int)", "~(int,@)", "String(List<int>)", "Null(~())", "Future<String>(List<@>)", "Null(@,StackTrace)", "Future<Map<String,@>>(List<@>)", "~(WorkerRunner)", "Null(JSObject)", "@(String)", "~(LogEvent)", "@(@,String)", "bool(Object,Object)", "bool(int)", "~(OutputEvent)", "CancelationTokenReference()", "SquadronCanceledException(CanceledException)", "String(SquadronCanceledException)", "List<@>(SquadronCanceledException)", "~(JSObject)", "int(Object?)", "WorkerService(List<@>)", "0^(@)<Object?>", "Map<0^,1^>(@)<Object?,Object?>", "SquadronCanceledException?(List<@>?)", "DateTime()", "Future<~>(List<@>)"],
+    types: ["~()", "Object?(Object?)", "Future<Uint8List>(List<@>)", "~(@)", "~(Object?,Object?)", "String()", "~(~())", "Null()", "@(@)", "@()", "Null(@)", "~(Object?)", "String(List<int>)", "~(@,@)", "Null(@,StackTrace)", "~(int,@)", "int(int,int)", "int(int)", "~(Object,StackTrace)", "Null(~())", "@(String)", "@(@,String)", "Future<~>(List<@>)", "Future<Map<String,@>>(List<@>)", "~(WorkerRunner)", "Null(JSObject)", "Null(Object,StackTrace)", "~(LogEvent)", "bool(Object,Object)", "~(JSObject)", "bool(int)", "bool(Object?)", "CancelationTokenReference()", "SquadronCanceledException(CanceledException)", "String(SquadronCanceledException)", "List<@>(SquadronCanceledException)", "Future<String>(List<@>)", "int(Object?)", "WorkerService(List<@>)", "0^(@)<Object?>", "Map<0^,1^>(@)<Object?,Object?>", "SquadronCanceledException?(List<@>?)", "DateTime()", "~(OutputEvent)"],
     interceptorsByTag: null,
     leafTags: null,
     arrayRti: Symbol("$ti")
