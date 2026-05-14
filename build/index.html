@@ -41,78 +41,25 @@
   <!-- Preconnects (cuts handshake time) -->
   <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
   <link rel="dns-prefetch" href="//checkout.razorpay.com">
-  <!-- ★ NEW: preconnect for the CDN hosting latest.tzf -->
   <link rel="preconnect" href="https://cdn.knowtowin.com" crossorigin>
   <link rel="dns-prefetch" href="//cdn.knowtowin.com">
-  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="//www.gstatic.com">
   <link rel="preconnect" href="https://firebaseinstallations.googleapis.com" crossorigin>
   <link rel="dns-prefetch" href="//firebaseinstallations.googleapis.com">
 
-  <!-- Preload your WASM worker artifacts -->
-  <link rel="preload" href="workers/cache_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
-  <link rel="preload" href="workers/decompress_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
-  <link rel="preload" href="workers/language_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
-  <link rel="preload" href="workers/session_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
-  <link rel="preload" href="workers/timeduri_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
-  <link rel="preload" href="workers/usb_auth_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
+  <!-- Workers needed before login interactive only: timeduri (appdetails) + language -->
+  <link rel="preload" href="workers/timeduri_service.web.g.dart.wasm" as="fetch" type="application/wasm">
+  <link rel="preload" href="workers/language_service.web.g.dart.wasm" as="fetch" type="application/wasm">
 
-  <!-- ★ NEW: preload the tzf that stalls initialization -->
+  <!-- tzf from own CDN — preload to warm HTTP cache before Dart init -->
+  <link rel="preload" href="https://cdn.knowtowin.com/appdata/latest.tzf" as="fetch" crossorigin="anonymous">
 
-  <!-- after -->
-  <!-- change preload to anonymous (or just delete this line entirely) -->
-  <link rel="preload"
-        href="https://cdn.knowtowin.com/appdata/latest.tzf"
-        as="fetch"
-        crossorigin="anonymous">
-
-  <!-- Preload your JS worker artifacts (disabled by you) -->
-  <!--
-  <link rel="preload" href="workers/cache_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  <link rel="preload" href="workers/decompress_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  <link rel="preload" href="workers/language_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  <link rel="preload" href="workers/session_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  <link rel="preload" href="workers/timeduri_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  <link rel="preload" href="workers/usb_auth_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  -->
+  <!-- Login page images (default theme only) -->
   <link rel="preload" href="/assets/assets/theme/default/svg/background.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/background.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/background.webp" as="image">
-  <link rel="preload" href="/assets/assets/session_shared.webp" as="image">
-  <link rel="preload" href="/assets/assets/session_personal.webp" as="image">
-  <link rel="preload" href="/assets/assets/session_safe.webp" as="image">
-  <link rel="preload" href="/assets/assets/sleeping.webp" as="image">
-  <link rel="preload" href="/assets/assets/awake.webp" as="image">
-  <link rel="preload" href="/assets/assets/ship.webp" as="image">
-  <link rel="preload" href="/assets/assets/turnstile_error.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/default/svg/pageBackgroundTile.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/default/svg/appbarBackground.png" as="image">
   <link rel="preload" href="/icons/loader.gif" as="image">
   <link rel="preload" href="/assets/assets/language.webp" as="image">
   <link rel="preload" href="/assets/assets/logo.png" as="image">
-
-  <link rel="preload" href="/assets/assets/theme/default/svg/pageBackgroundTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/pageBackgroundTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/pageBackgroundTile.webp" as="image">
-
-  <link rel="preload" href="/assets/assets/theme/default/svg/cardBackgroundTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/cardBackgroundTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/cardBackgroundTile.webp" as="image">
-
-  <link rel="preload" href="/assets/assets/theme/default/svg/filterSectionBackgroundTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/filterSectionBackgroundTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/filterSectionBackgroundTile.webp" as="image">
-
-  <link rel="preload" href="/assets/assets/theme/default/svg/popupBackgroundImageTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/popupBackgroundImageTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/popupBackgroundImageTile.webp" as="image">
-
-
-  <link rel="preload" href="/assets/assets/theme/default/svg/forgot.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/forgot.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/forgot.webp" as="image">
-
-  <link rel="preload" href="/assets/assets/theme/default/svg/appbarBackground.png" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/appbarBackground.png" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/appbarBackground.png" as="image">
 
 
   <style>
@@ -184,14 +131,14 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "205033101" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
+    const serviceWorkerVersion = "1684527040" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
   </script>
 
-  <!-- ★ NEW: warm the tzf into the HTTP cache (mirrors typical fetch options) -->
+  <!-- Warm tzf into HTTP cache before Dart init fetches it -->
   <script>
     (function warmTZF(){
       const url = 'https://cdn.knowtowin.com/appdata/latest.tzf';
-      fetch(url, { mode: 'cors', credentials: 'omit', cache: 'force-cache' }).catch(()=>{});
+      fetch(url, { cache: 'force-cache', credentials: 'omit' }).catch(()=>{});
     })();
   </script>
   <!-- Strip version-y query params immediately to keep deep links clean -->
