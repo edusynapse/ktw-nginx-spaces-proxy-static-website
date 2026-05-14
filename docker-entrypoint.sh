@@ -23,19 +23,30 @@ versionize_index() {
 
   log "Versionizing assets in $file with ?version=${ver}"
 
+  # --- canvasKitBaseUrl in flutter_bootstrap.js ----------------
+  # (DISABLED: breaking Flutter's internal path joining which results in ?version=.../skwasm.js)
+  # bootstrap_js="$(dirname "$file")/flutter_bootstrap.js"
+  # if [ -f "$bootstrap_js" ]; then
+  #   sed -r -i \
+  #     's|(canvasKitBaseUrl:[[:space:]]*"/canvaskit/)(")|\1?version='"$ver"'\2|g' \
+  #     "$bootstrap_js"
+  #   log "Versionized canvasKitBaseUrl in $bootstrap_js"
+  # fi
+
   # --- <link rel="preload" href="..."> -------------------------
+  # (DISABLED: Mangling preloads causes them to mismatch actual fetches, leading to browser warnings)
   # workers (absolute or relative)
-  sed -r -i \
-    's|(rel="preload"[^>]*href=")(/?workers/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
-    "$file"
+  # sed -r -i \
+  #   's|(rel="preload"[^>]*href=")(/?workers/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
+  #   "$file"
   # assets
-  sed -r -i \
-    's|(rel="preload"[^>]*href=")(/?assets/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
-    "$file"
+  # sed -r -i \
+  #   's|(rel="preload"[^>]*href=")(/?assets/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
+  #   "$file"
   # icons
-  sed -r -i \
-    's|(rel="preload"[^>]*href=")(/?icons/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
-    "$file"
+  # sed -r -i \
+  #   's|(rel="preload"[^>]*href=")(/?icons/[^"?#+]+)(["#])|\1\2?version='"$ver"'\3|g' \
+  #   "$file"
 
   # --- <img src="..."> -----------------------------------------
   sed -r -i \

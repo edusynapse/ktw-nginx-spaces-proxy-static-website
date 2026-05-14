@@ -258,6 +258,13 @@ http {
       try_files $uri =404;
     }
 
+    # CanvasKit: self-hosted, 7-day TTL (not immutable — no version param in path)
+    location ^~ /canvaskit/ {
+      add_header Cache-Control "public, max-age=604800" always;
+      add_header Vary "Accept-Encoding" always;
+      try_files $uri =404;
+    }
+
     # Font Awesome name-encoded redirects FIRST
     location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
       add_header Cache-Control "private, no-store" always;
@@ -370,6 +377,13 @@ http {
       try_files $uri =404;
     }
 
+    # CanvasKit: self-hosted, 7-day TTL (not immutable — no version param in path)
+    location ^~ /canvaskit/ {
+      add_header Cache-Control "public, max-age=604800" always;
+      add_header Vary "Accept-Encoding" always;
+      try_files $uri =404;
+    }
+
     location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
       add_header Cache-Control "private, no-store" always;
       return 302 /Font%20Awesome%207%20$1.otf?$canon_qs_dev;
@@ -446,6 +460,13 @@ http {
     location ^~ /.well-known/ {
       default_type application/json;
       add_header Cache-Control "public, max-age=3600" always;
+      try_files $uri =404;
+    }
+
+    # CanvasKit: self-hosted, 7-day TTL (not immutable — no version param in path)
+    location ^~ /canvaskit/ {
+      add_header Cache-Control "public, max-age=604800" always;
+      add_header Vary "Accept-Encoding" always;
       try_files $uri =404;
     }
 
