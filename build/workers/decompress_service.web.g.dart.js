@@ -12901,7 +12901,7 @@
     extractFontBytesFromResponse$1(responseBody) {
       var $async$goto = 0,
         $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
-        $async$returnValue, decoded, t1;
+        $async$returnValue, decoded;
       var $async$extractFontBytesFromResponse$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
         if ($async$errorCode === 1)
           return A._asyncRethrow($async$result, $async$completer);
@@ -12910,8 +12910,7 @@
             case 0:
               // Function start
               decoded = A.stringDynamicMapOf(B.C_JsonCodec.decode$2$reviver(responseBody, null));
-              t1 = decoded.$index(0, "body");
-              if (typeof t1 != "string")
+              if (typeof decoded.$index(0, "body") != "string")
                 throw A.wrapException(A.StateError$("Invalid font response body"));
               $async$returnValue = new Uint8Array(A._ensureNativeList(B.C_Base64Decoder.convert$1(A._asString(decoded.$index(0, "body")))));
               // goto return
