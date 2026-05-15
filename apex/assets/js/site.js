@@ -183,4 +183,117 @@
   } else if (revealEls.length) {
     revealEls.forEach((el) => el.classList.add("is-visible"));
   }
+
+  /* ---- App warmup prefetch ---- */
+  const warmupLog = (message) => {
+    console.info(`[KTT warmup] ${message}`);
+  };
+
+  const supportsWasmGc = () => {
+    try {
+      return WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 95, 1, 120, 0]));
+    } catch (_) {
+      return false;
+    }
+  };
+
+  const hasWebGl = () => {
+    try {
+      const canvas = document.createElement("canvas");
+      return Boolean(canvas.getContext("webgl2") || canvas.getContext("webgl"));
+    } catch (_) {
+      return false;
+    }
+  };
+
+  const hasChromiumBreakIterators = () =>
+    typeof Intl !== "undefined" &&
+    typeof Intl.v8BreakIterator !== "undefined" &&
+    typeof Intl.Segmenter !== "undefined";
+
+  const hasImageCodecs = () => typeof ImageDecoder !== "undefined";
+
+  const queuePrefetch = (url, as, type) => {
+    const link = document.createElement("link");
+    link.rel = "prefetch";
+    link.href = url;
+    link.crossOrigin = "anonymous";
+    if (as) link.as = as;
+    if (type) link.type = type;
+    document.head.appendChild(link);
+    warmupLog(`queued: ${url}`);
+  };
+
+  const runAppWarmup = () => {
+    const storageKey = "ktw-app-warmup-prefetch-v1";
+
+    try {
+      if (window.sessionStorage?.getItem(storageKey) === "1") {
+        warmupLog("skipped: already queued");
+        return;
+      }
+    } catch (_) {
+      /* sessionStorage can be unavailable in hardened privacy modes. */
+    }
+
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (connection?.saveData === true) {
+      warmupLog("skipped: save-data enabled");
+      return;
+    }
+
+    const effectiveType = String(connection?.effectiveType || "").toLowerCase();
+    if (effectiveType === "slow-2g" || effectiveType === "2g") {
+      warmupLog(`skipped: slow connection ${effectiveType}`);
+      return;
+    }
+
+    if (!supportsWasmGc()) {
+      warmupLog("skipped: wasm gc unsupported");
+      return;
+    }
+
+    if (!hasWebGl()) {
+      warmupLog("skipped: webgl unavailable");
+      return;
+    }
+
+    try {
+      window.sessionStorage?.setItem(storageKey, "1");
+    } catch (_) {
+      /* Best-effort duplicate suppression only. */
+    }
+
+    const appOrigin = "https://app.knowtowin.com";
+    const engineVariant = hasImageCodecs() && hasChromiumBreakIterators() ? "skwasm" : "skwasm_heavy";
+    const targets = [
+      { url: `${appOrigin}/main.dart.wasm`, as: "fetch", type: "application/wasm" },
+      { url: `${appOrigin}/canvaskit/${engineVariant}.js`, as: "script" },
+      { url: `${appOrigin}/canvaskit/${engineVariant}.wasm`, as: "fetch", type: "application/wasm" },
+      { url: `${appOrigin}/workers/language_service.web.g.dart.wasm`, as: "fetch", type: "application/wasm" },
+      { url: `${appOrigin}/workers/timeduri_service.web.g.dart.wasm`, as: "fetch", type: "application/wasm" }
+    ];
+
+    targets.forEach((target) => queuePrefetch(target.url, target.as, target.type));
+    warmupLog(`complete queue count=${targets.length}`);
+  };
+
+  const scheduleAppWarmup = () => {
+    const scheduleIdle = () => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(runAppWarmup, { timeout: 4000 });
+        return;
+      }
+      window.setTimeout(runAppWarmup, 2000);
+    };
+
+    if (document.readyState === "complete") {
+      scheduleIdle();
+      return;
+    }
+
+    window.addEventListener("load", scheduleIdle, { once: true });
+  };
+
+  scheduleAppWarmup();
 })();
