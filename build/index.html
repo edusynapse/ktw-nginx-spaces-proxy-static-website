@@ -131,14 +131,14 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "2201097068" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
+    const serviceWorkerVersion = "1654149816" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
   </script>
 
   <!-- Warm tzf into HTTP cache before Dart init fetches it -->
   <script>
     (function warmTZF(){
       const url = 'https://cdn.knowtowin.com/appdata/latest.tzf';
-      fetch(url, { cache: 'force-cache', credentials: 'omit' }).catch(()=>{});
+      fetch(url, { cache: 'force-cache', credentials: 'same-origin' }).catch(()=>{});
     })();
   </script>
   <!-- Strip version-y query params immediately to keep deep links clean -->
