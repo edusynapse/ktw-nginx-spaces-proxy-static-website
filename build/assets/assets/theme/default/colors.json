@@ -68,5 +68,18 @@
   "globalTapThrottleIntervalMs": 800,
   "globalTapThrottleMode": "throttle",
 
-  "forgotFunnyImage": "forgot.webp"
+  "forgotFunnyImage": "forgot.webp",
+  "errorColor": "#C62828",
+  "onErrorColor": "#FFFFFF",
+  "warningColor": "#BF360A",
+  "onWarningColor": "#FFFFFF",
+  "successColor": "#1B5E20",
+  "onSuccessColor": "#FFFFFF",
+  "infoColor": "#1565C0",
+  "onInfoColor": "#FFFFFF",
+  "disabledColor": "#E0E0E0",
+  "onDisabledColor": "#424242",
+  "linkColor": "#1565C0",
+  "dangerButtonBackground": "#C62828",
+  "dangerButtonText": "#FFFFFF"
 }

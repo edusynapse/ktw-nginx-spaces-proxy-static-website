@@ -131,7 +131,7 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "897631788" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
+    const serviceWorkerVersion = "3753213528" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
   </script>
 
   <!-- Warm tzf into HTTP cache before Dart init fetches it -->
@@ -175,7 +175,11 @@
           : null;
         console.log('[ver-check] server=', serverVer, 'stored=', storedVer, 'htmlSWV=', swv);
 
-        const mismatch = (storedVer && storedVer !== serverVer) || (swv && swv !== serverVer);
+        // NOTE: `swv` (Flutter's numeric serviceWorkerVersion) is logged for diagnostics only.
+        // It must NOT gate the refresh: serverVer is the app build-info string, so `swv !== serverVer`
+        // is permanently true and caused an infinite clear-caches/reload loop. The buildHash-based
+        // `storedVer !== serverVer` already detects every new build.
+        const mismatch = (storedVer && storedVer !== serverVer);
 
         if (mismatch) {
           console.log('[ver-refresh] New version detected. Clearing SW + caches, reloading with cache-buster…');

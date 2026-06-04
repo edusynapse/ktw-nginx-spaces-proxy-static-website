@@ -101,8 +101,8 @@ file:///home/surajitray/.pub-cache/hosted/pub.dev/logger-2.7.0/lib/src/printers/
 file:///home/surajitray/.pub-cache/hosted/pub.dev/logger-2.7.0/lib/src/printers/pretty_printer.dart
 file:///home/surajitray/.pub-cache/hosted/pub.dev/logger-2.7.0/lib/src/printers/simple_printer.dart
 file:///home/surajitray/.pub-cache/hosted/pub.dev/logger-2.7.0/lib/web.dart
-file:///home/surajitray/.pub-cache/hosted/pub.dev/meta-1.17.0/lib/meta.dart
-file:///home/surajitray/.pub-cache/hosted/pub.dev/meta-1.17.0/lib/meta_meta.dart
+file:///home/surajitray/.pub-cache/hosted/pub.dev/meta-1.18.0/lib/meta.dart
+file:///home/surajitray/.pub-cache/hosted/pub.dev/meta-1.18.0/lib/meta_meta.dart
 file:///home/surajitray/.pub-cache/hosted/pub.dev/squadron-7.4.3/lib/squadron.dart
 file:///home/surajitray/.pub-cache/hosted/pub.dev/squadron-7.4.3/lib/src/_impl/web/_bootstrapper.dart
 file:///home/surajitray/.pub-cache/hosted/pub.dev/squadron-7.4.3/lib/src/_impl/web/_channel.dart
@@ -437,6 +437,7 @@ org-dartlang-sdk:///lib/_internal/js_runtime/lib/synced/invocation_mirror_consta
 org-dartlang-sdk:///lib/_internal/js_runtime/lib/typed_data_patch.dart
 org-dartlang-sdk:///lib/_internal/js_shared/lib/convert_utf_patch.dart
 org-dartlang-sdk:///lib/_internal/js_shared/lib/date_time_patch.dart
+org-dartlang-sdk:///lib/_internal/js_shared/lib/http_patch.dart
 org-dartlang-sdk:///lib/_internal/js_shared/lib/js_interop_patch.dart
 org-dartlang-sdk:///lib/_internal/js_shared/lib/js_interop_unsafe_patch.dart
 org-dartlang-sdk:///lib/_internal/js_shared/lib/js_types.dart
@@ -554,7 +555,6 @@ org-dartlang-sdk:///lib/internal/iterable.dart
 org-dartlang-sdk:///lib/internal/linked_list.dart
 org-dartlang-sdk:///lib/internal/list.dart
 org-dartlang-sdk:///lib/internal/patch.dart
-org-dartlang-sdk:///lib/internal/print.dart
 org-dartlang-sdk:///lib/internal/sort.dart
 org-dartlang-sdk:///lib/internal/symbol.dart
 org-dartlang-sdk:///lib/io/common.dart
