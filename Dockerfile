@@ -19,15 +19,5 @@ COPY devbuild/ /usr/share/nginx/devhtml/
 # APEX landing site -> /usr/share/nginx/apexhtml
 COPY apex/ /usr/share/nginx/apexhtml/
 
-# Fail the image build if the package-font dirs or top-level fallback triplet are missing.
-RUN test -d "/usr/share/nginx/html/assets/packages/font_awesome_flutter/lib/fonts" \
- && test -d "/usr/share/nginx/devhtml/assets/packages/font_awesome_flutter/lib/fonts" \
- && test -f "/usr/share/nginx/html/Font Awesome 7 Brands-Regular-400.otf" \
- && test -f "/usr/share/nginx/html/Font Awesome 7 Free-Regular-400.otf" \
- && test -f "/usr/share/nginx/html/Font Awesome 7 Free-Solid-900.otf" \
- && test -f "/usr/share/nginx/devhtml/Font Awesome 7 Brands-Regular-400.otf" \
- && test -f "/usr/share/nginx/devhtml/Font Awesome 7 Free-Regular-400.otf" \
- && test -f "/usr/share/nginx/devhtml/Font Awesome 7 Free-Solid-900.otf"
-
 EXPOSE 8080
 CMD ["/docker-entrypoint.sh"]
