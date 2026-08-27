@@ -489,9 +489,14 @@ http {
     resolver 8.8.8.8 1.1.1.1 valid=30s;
 
     location / {
-      limit_except GET HEAD {
-        add_header Allow "GET, HEAD" always;
-        return 405;
+      # Official contexts: add_header = http/server/location/if-in-location
+      # (https://nginx.org/en/docs/http/ngx_http_headers_module.html).
+      # limit_except inner block is for access/auth only
+      # (https://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except);
+      # deny is valid there (https://nginx.org/en/docs/http/ngx_http_access_module.html).
+      # GET implies HEAD. deny all → 403, not 405.
+      limit_except GET {
+        deny all;
       }
       add_header Allow "GET, HEAD" always;
       add_header Content-Security-Policy "default-src 'none'; script-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' https://cdn.knowtowin.com; connect-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'; frame-ancestors https://app.knowtowin.com https://devapp.knowtowin.com;" always;
@@ -533,9 +538,8 @@ http {
     resolver 8.8.8.8 1.1.1.1 valid=30s;
 
     location / {
-      limit_except GET HEAD {
-        add_header Allow "GET, HEAD" always;
-        return 405;
+      limit_except GET {
+        deny all;
       }
       add_header Allow "GET, HEAD" always;
       add_header Content-Security-Policy "default-src 'none'; script-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' https://devcdn.knowtowin.com; connect-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'; frame-ancestors https://app.knowtowin.com https://devapp.knowtowin.com;" always;
