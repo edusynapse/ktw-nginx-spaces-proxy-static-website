@@ -15,7 +15,7 @@ http {
   gzip on;
   gzip_types text/plain text/css application/json application/javascript application/wasm text/xml application/xml application/xml+rss text/javascript;
 
-  error_log  /var/log/nginx/error.log debug;
+  error_log  /var/log/nginx/error.log warn;
   access_log /var/log/nginx/access.log;
 
   # ───────── Canonical version handling (separate for PROD/DEV) ─────────
@@ -59,16 +59,20 @@ http {
     index index.html;
 
     location = / {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files /index.html =404;
     }
 
     location = /index.html {
+      if ($request_uri = /index.html) { return 301 /; }
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files $uri =404;
     }
 
     location = /support {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files /support.html =404;
     }
@@ -78,11 +82,13 @@ http {
     }
 
     location = /support.html {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files $uri =404;
     }
 
     location = /jobs {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files /jobs.html =404;
     }
@@ -92,11 +98,13 @@ http {
     }
 
     location = /jobs.html {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files $uri =404;
     }
 
     location = /app {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files /app.html =404;
     }
@@ -106,11 +114,13 @@ http {
     }
 
     location = /app.html {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files $uri =404;
     }
 
     location = /services {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files /services.html =404;
     }
@@ -120,11 +130,13 @@ http {
     }
 
     location = /services.html {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files $uri =404;
     }
 
     location = /partners {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files /partners.html =404;
     }
@@ -134,11 +146,13 @@ http {
     }
 
     location = /partners.html {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files $uri =404;
     }
 
     location = /downloads {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files /downloads.html =404;
     }
@@ -148,26 +162,31 @@ http {
     }
 
     location = /downloads.html {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files $uri =404;
     }
 
-    location ~ ^/(index|support|app|services|partners|downloads)_[A-Z][A-Z]\.html$ {
+    location ~ ^/(index|support|jobs|app|services|partners|downloads)_[A-Z][A-Z]\.html$ {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=600, must-revalidate" always;
       try_files $uri =404;
     }
 
     location = /robots.txt {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       try_files $uri =404;
     }
 
     location = /sitemap.xml {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       try_files $uri =404;
     }
 
     location = /humans.txt {
+      include /etc/nginx/snippets/apex_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       try_files $uri =404;
     }
@@ -190,118 +209,135 @@ http {
     add_header X-Robots-Tag "noindex, nofollow" always;
     add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
     add_header Cross-Origin-Embedder-Policy credentialless always;
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy strict-origin-when-cross-origin always;
+
+    error_page 418 = @redir_prod;
 
     root  /usr/share/nginx/html;
     index index.html;
 
-    # Force fresh + canonical version for the entrypoint bundle
+    location @redir_prod {
+      include /etc/nginx/snippets/app_prod_headers.conf;
+      add_header Cache-Control "private, no-store" always;
+      return 302 $redir_url_prod;
+    }
+
     location = /main.dart.mjs {
-      # If version is missing or mismatched, redirect to canonical ?version=<server>
-      if ($need_vredir_prod) {
-        add_header Cache-Control "private, no-store" always;
-        return 302 $uri?$canon_qs_prod;
-      }
-
-      # Never cache the “entrypoint” so clients/CDNs re-fetch and follow the redirect
+      if ($need_vredir_prod) { return 418; }
+      include /etc/nginx/snippets/app_prod_headers.conf;
       add_header Cache-Control "no-store, must-revalidate" always;
-      expires -1;
-
       try_files $uri =404;
     }
 
-
-    # App shell must not be cached
     location = /index.html {
-      # Canonicalize only when user requested /index.html directly (internal SPA fallback keeps original $request_uri)
       if ($request_uri = /index.html) { return 301 /; }
-
-      add_header X-Robots-Tag "noindex, nofollow" always;
-      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
-      add_header Cross-Origin-Embedder-Policy credentialless always;
+      include /etc/nginx/snippets/app_prod_headers.conf;
       add_header Cache-Control "no-store, must-revalidate" always;
       add_header Pragma "no-cache" always;
       add_header Expires "0" always;
       try_files $uri =404;
     }
-    location = /flutter_bootstrap.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /manifest.json { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /flutter_bootstrap.js {
+      include /etc/nginx/snippets/app_prod_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+    location = /manifest.json {
+      include /etc/nginx/snippets/app_prod_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
 
-    # App hosts are not crawl-canonical.
     location = /robots.txt {
       default_type text/plain;
+      include /etc/nginx/snippets/app_prod_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       return 200 "User-agent: *\nDisallow: /\n";
     }
     location = /sitemap.xml {
+      include /etc/nginx/snippets/app_prod_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       return 404;
     }
     location = /sitemap-index.xml {
+      include /etc/nginx/snippets/app_prod_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       return 404;
     }
 
-    # Service workers: no-store, no redirect
-    location = /flutter_service_worker.js { add_header X-Robots-Tag "noindex, nofollow" always; add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /sw-offline.js            { add_header X-Robots-Tag "noindex, nofollow" always; add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /firebase-messaging-sw.js { add_header X-Robots-Tag "noindex, nofollow" always; add_header Service-Worker-Allowed "/" always; add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /sw-kill.js               { add_header X-Robots-Tag "noindex, nofollow" always; add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /flutter_service_worker.js {
+      include /etc/nginx/snippets/app_prod_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+    location = /sw-offline.js {
+      include /etc/nginx/snippets/app_prod_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+    location = /firebase-messaging-sw.js {
+      include /etc/nginx/snippets/app_prod_headers.conf;
+      add_header Service-Worker-Allowed "/" always;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+    location = /sw-kill.js {
+      include /etc/nginx/snippets/app_prod_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
 
-    # /__app_version – returned from env (or swap to file alias if preferred)
-    location = /__app_version { default_type text/plain; add_header X-Robots-Tag "noindex, nofollow" always; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION_PROD"; }
-    # file-based alternative:
-    # location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; alias /usr/share/nginx/html/__app_version; }
+    location = /__app_version {
+      default_type text/plain;
+      include /etc/nginx/snippets/app_prod_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      return 200 "$APP_VERSION_PROD";
+    }
 
     location ^~ /.well-known/ {
       default_type application/json;
+      include /etc/nginx/snippets/app_prod_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       try_files $uri =404;
     }
 
-    # CanvasKit: self-hosted, 7-day TTL (not immutable — no version param in path)
     location ^~ /canvaskit/ {
+      include /etc/nginx/snippets/app_prod_headers.conf;
       add_header Cache-Control "public, max-age=604800" always;
       add_header Vary "Accept-Encoding" always;
       try_files $uri =404;
     }
 
-    # Font Awesome name-encoded redirects FIRST
     location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
+      include /etc/nginx/snippets/app_prod_headers.conf;
       add_header Cache-Control "private, no-store" always;
       return 302 /Font%20Awesome%207%20$1.otf?$canon_qs_prod;
     }
 
-    # Static assets → enforce canonical ?version then cache forever
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($need_vredir_prod) {
-        add_header Cache-Control "private, no-store" always;
-        return 302 $redir_url_prod;
-      }
+      if ($need_vredir_prod) { return 418; }
+      include /etc/nginx/snippets/app_prod_headers.conf;
       add_header Cache-Control "public, max-age=31536000, immutable" always;
-      expires 1y;
       try_files $uri =404;
     }
 
-    # One-tap hard refresh
     location = /__force_update__ {
       default_type text/plain;
-      add_header X-Robots-Tag "noindex, nofollow" always;
+      include /etc/nginx/snippets/app_prod_headers.conf;
       add_header Clear-Site-Data "\"cache\", \"storage\"" always;
       return 200 "ok\n";
     }
 
-    # SPA fallback (ALL app routes) → no-store
     location / {
       try_files $uri $uri/ /index.html;
-      add_header X-Robots-Tag "noindex, nofollow" always;
+      include /etc/nginx/snippets/app_prod_headers.conf;
       add_header Cache-Control "no-store, must-revalidate" always;
-      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
-      add_header Cross-Origin-Embedder-Policy credentialless always;
     }
   }
 
   ########################################################################
-  # DEV
+  # DEV APP
   ########################################################################
   server {
     listen 8080;
@@ -310,103 +346,221 @@ http {
     absolute_redirect off;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
     add_header X-App-Version $APP_VERSION_DEV always;
-
-    # Prevent accidental indexing of the dev host
     add_header X-Robots-Tag "noindex, nofollow" always;
-
     add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
     add_header Cross-Origin-Embedder-Policy credentialless always;
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy strict-origin-when-cross-origin always;
+
+    error_page 418 = @redir_dev;
 
     root  /usr/share/nginx/devhtml;
     index index.html;
 
-    # Force fresh + canonical version for the entrypoint bundle
+    location @redir_dev {
+      include /etc/nginx/snippets/app_dev_headers.conf;
+      add_header Cache-Control "private, no-store" always;
+      return 302 $redir_url_dev;
+    }
+
     location = /main.dart.mjs {
-      # If version is missing or mismatched, redirect to canonical ?version=<server>
-      if ($need_vredir_dev) {
-        add_header Cache-Control "private, no-store" always;
-        return 302 $uri?$canon_qs_dev;
-      }
-
-      # Never cache the “entrypoint” so clients/CDNs re-fetch and follow the redirect
+      if ($need_vredir_dev) { return 418; }
+      include /etc/nginx/snippets/app_dev_headers.conf;
       add_header Cache-Control "no-store, must-revalidate" always;
-      expires -1;
-
       try_files $uri =404;
     }
 
     location = /index.html {
       if ($request_uri = /index.html) { return 301 /; }
-      add_header X-Robots-Tag "noindex, nofollow" always;
-      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
-      add_header Cross-Origin-Embedder-Policy credentialless always;
+      include /etc/nginx/snippets/app_dev_headers.conf;
       add_header Cache-Control "no-store, must-revalidate" always;
       add_header Pragma "no-cache" always;
       add_header Expires "0" always;
       try_files $uri =404;
     }
-    location = /flutter_bootstrap.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /manifest.json { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /flutter_bootstrap.js {
+      include /etc/nginx/snippets/app_dev_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+    location = /manifest.json {
+      include /etc/nginx/snippets/app_dev_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
 
     location = /robots.txt {
       default_type text/plain;
+      include /etc/nginx/snippets/app_dev_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       return 200 "User-agent: *\nDisallow: /\n";
     }
     location = /sitemap.xml {
+      include /etc/nginx/snippets/app_dev_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       return 404;
     }
     location = /sitemap-index.xml {
+      include /etc/nginx/snippets/app_dev_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       return 404;
     }
 
-    location = /flutter_service_worker.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /sw-offline.js            { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /firebase-messaging-sw.js { add_header Service-Worker-Allowed "/" always; add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /sw-kill.js               { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /flutter_service_worker.js {
+      include /etc/nginx/snippets/app_dev_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+    location = /sw-offline.js {
+      include /etc/nginx/snippets/app_dev_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+    location = /firebase-messaging-sw.js {
+      include /etc/nginx/snippets/app_dev_headers.conf;
+      add_header Service-Worker-Allowed "/" always;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+    location = /sw-kill.js {
+      include /etc/nginx/snippets/app_dev_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
 
-    location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION_DEV"; }
-    # file-based alternative:
-    # location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; alias /usr/share/nginx/devhtml/__app_version; }
+    location = /__app_version {
+      default_type text/plain;
+      include /etc/nginx/snippets/app_dev_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      return 200 "$APP_VERSION_DEV";
+    }
 
     location ^~ /.well-known/ {
       default_type application/json;
+      include /etc/nginx/snippets/app_dev_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       try_files $uri =404;
     }
 
-    # CanvasKit: self-hosted, 7-day TTL (not immutable — no version param in path)
     location ^~ /canvaskit/ {
+      include /etc/nginx/snippets/app_dev_headers.conf;
       add_header Cache-Control "public, max-age=604800" always;
       add_header Vary "Accept-Encoding" always;
       try_files $uri =404;
     }
 
     location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
+      include /etc/nginx/snippets/app_dev_headers.conf;
       add_header Cache-Control "private, no-store" always;
       return 302 /Font%20Awesome%207%20$1.otf?$canon_qs_dev;
     }
 
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($need_vredir_dev) {
-        add_header Cache-Control "private, no-store" always;
-        return 302 $redir_url_dev;
-      }
+      if ($need_vredir_dev) { return 418; }
+      include /etc/nginx/snippets/app_dev_headers.conf;
       add_header Cache-Control "public, max-age=31536000, immutable" always;
-      expires 1y;
       try_files $uri =404;
     }
 
-    location = /__force_update__ { default_type text/plain; add_header Clear-Site-Data "\"cache\", \"storage\"" always; return 200 "ok\n"; }
+    location = /__force_update__ {
+      default_type text/plain;
+      include /etc/nginx/snippets/app_dev_headers.conf;
+      add_header Clear-Site-Data "\"cache\", \"storage\"" always;
+      return 200 "ok\n";
+    }
 
     location / {
       try_files $uri $uri/ /index.html;
-      add_header X-Robots-Tag "noindex, nofollow" always;
+      include /etc/nginx/snippets/app_dev_headers.conf;
       add_header Cache-Control "no-store, must-revalidate" always;
-      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
-      add_header Cross-Origin-Embedder-Policy credentialless always;
+    }
+  }
+
+  ########################################################################
+  # SPONSOR LANDING — production CDN
+  # Beacon img-src extra hosts: none at first ship.
+  # Adding an approved collect host: edit this CSP, rebuild, redeploy. Not a runtime setting.
+  ########################################################################
+  server {
+    listen 8080;
+    server_name sponsorpages.knowtowin.com;
+
+    absolute_redirect off;
+    resolver 8.8.8.8 1.1.1.1 valid=30s;
+
+    location / {
+      limit_except GET HEAD {
+        add_header Allow "GET, HEAD" always;
+        return 405;
+      }
+      add_header Allow "GET, HEAD" always;
+      add_header Content-Security-Policy "default-src 'none'; script-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' https://cdn.knowtowin.com; connect-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'; frame-ancestors https://app.knowtowin.com https://devapp.knowtowin.com;" always;
+      add_header X-Content-Type-Options "nosniff" always;
+      add_header Referrer-Policy "no-referrer" always;
+      add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+      add_header Strict-Transport-Security "max-age=31536000" always;
+      add_header X-Robots-Tag "noindex, nofollow" always;
+
+      set $landing_cdn "https://cdn.knowtowin.com";
+      proxy_pass $landing_cdn/sponsor_landing$uri;
+      proxy_ssl_server_name on;
+      proxy_ssl_name cdn.knowtowin.com;
+      proxy_ssl_verify on;
+      proxy_ssl_verify_depth 3;
+      proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+      proxy_set_header Host cdn.knowtowin.com;
+      proxy_set_header Cookie "";
+      proxy_set_header Authorization "";
+      proxy_pass_request_body off;
+      proxy_hide_header Content-Security-Policy;
+      proxy_hide_header Content-Security-Policy-Report-Only;
+      proxy_hide_header X-Frame-Options;
+      proxy_hide_header Set-Cookie;
+      proxy_hide_header Strict-Transport-Security;
+    }
+  }
+
+  ########################################################################
+  # SPONSOR LANDING — development CDN
+  # Beacon img-src extra hosts: none at first ship.
+  # Adding an approved collect host: edit this CSP, rebuild, redeploy. Not a runtime setting.
+  ########################################################################
+  server {
+    listen 8080;
+    server_name devsponsorpages.knowtowin.com;
+
+    absolute_redirect off;
+    resolver 8.8.8.8 1.1.1.1 valid=30s;
+
+    location / {
+      limit_except GET HEAD {
+        add_header Allow "GET, HEAD" always;
+        return 405;
+      }
+      add_header Allow "GET, HEAD" always;
+      add_header Content-Security-Policy "default-src 'none'; script-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' https://devcdn.knowtowin.com; connect-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'; frame-ancestors https://app.knowtowin.com https://devapp.knowtowin.com;" always;
+      add_header X-Content-Type-Options "nosniff" always;
+      add_header Referrer-Policy "no-referrer" always;
+      add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+      add_header Strict-Transport-Security "max-age=31536000" always;
+      add_header X-Robots-Tag "noindex, nofollow" always;
+
+      set $landing_cdn "https://devcdn.knowtowin.com";
+      proxy_pass $landing_cdn/sponsor_landing$uri;
+      proxy_ssl_server_name on;
+      proxy_ssl_name devcdn.knowtowin.com;
+      proxy_ssl_verify on;
+      proxy_ssl_verify_depth 3;
+      proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+      proxy_set_header Host devcdn.knowtowin.com;
+      proxy_set_header Cookie "";
+      proxy_set_header Authorization "";
+      proxy_pass_request_body off;
+      proxy_hide_header Content-Security-Policy;
+      proxy_hide_header Content-Security-Policy-Report-Only;
+      proxy_hide_header X-Frame-Options;
+      proxy_hide_header Set-Cookie;
+      proxy_hide_header Strict-Transport-Security;
     }
   }
 
@@ -419,79 +573,132 @@ http {
 
     absolute_redirect off;
     add_header X-App-Version $APP_VERSION_PROD always;
-
     add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
     add_header Cross-Origin-Embedder-Policy credentialless always;
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy strict-origin-when-cross-origin always;
+
+    error_page 418 = @redir_local;
 
     root /usr/share/nginx/html;
     index index.html;
 
+    location @redir_local {
+      include /etc/nginx/snippets/localhost_headers.conf;
+      add_header Cache-Control "private, no-store" always;
+      return 302 $redir_url_prod;
+    }
+
+    location = /main.dart.mjs {
+      if ($need_vredir_prod) { return 418; }
+      include /etc/nginx/snippets/localhost_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+
     location = /index.html {
       if ($request_uri = /index.html) { return 301 /; }
+      include /etc/nginx/snippets/localhost_headers.conf;
       add_header Cache-Control "no-store, must-revalidate" always;
       add_header Pragma "no-cache" always;
       add_header Expires "0" always;
       try_files $uri =404;
     }
-    location = /flutter_bootstrap.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /manifest.json { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /flutter_bootstrap.js {
+      include /etc/nginx/snippets/localhost_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+    location = /manifest.json {
+      include /etc/nginx/snippets/localhost_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
 
     location = /robots.txt {
       default_type text/plain;
+      include /etc/nginx/snippets/localhost_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       return 200 "User-agent: *\nDisallow: /\n";
     }
     location = /sitemap.xml {
+      include /etc/nginx/snippets/localhost_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       return 404;
     }
     location = /sitemap-index.xml {
+      include /etc/nginx/snippets/localhost_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       return 404;
     }
 
-    location = /flutter_service_worker.js { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /sw-offline.js            { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /firebase-messaging-sw.js { add_header Service-Worker-Allowed "/" always; add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
-    location = /sw-kill.js               { add_header Cache-Control "no-store, must-revalidate" always; expires -1; try_files $uri =404; }
+    location = /flutter_service_worker.js {
+      include /etc/nginx/snippets/localhost_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+    location = /sw-offline.js {
+      include /etc/nginx/snippets/localhost_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+    location = /firebase-messaging-sw.js {
+      include /etc/nginx/snippets/localhost_headers.conf;
+      add_header Service-Worker-Allowed "/" always;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
+    location = /sw-kill.js {
+      include /etc/nginx/snippets/localhost_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      try_files $uri =404;
+    }
 
-    location = /__app_version { default_type text/plain; add_header Cache-Control "no-store, must-revalidate" always; return 200 "$APP_VERSION_PROD"; }
+    location = /__app_version {
+      default_type text/plain;
+      include /etc/nginx/snippets/localhost_headers.conf;
+      add_header Cache-Control "no-store, must-revalidate" always;
+      return 200 "$APP_VERSION_PROD";
+    }
 
     location ^~ /.well-known/ {
       default_type application/json;
+      include /etc/nginx/snippets/localhost_headers.conf;
       add_header Cache-Control "public, max-age=3600" always;
       try_files $uri =404;
     }
 
-    # CanvasKit: self-hosted, 7-day TTL (not immutable — no version param in path)
     location ^~ /canvaskit/ {
+      include /etc/nginx/snippets/localhost_headers.conf;
       add_header Cache-Control "public, max-age=604800" always;
       add_header Vary "Accept-Encoding" always;
       try_files $uri =404;
     }
 
     location ~* ^/assets/packages/font_awesome_flutter/lib/fonts/Font(?:%20|%2520)Awesome(?:%20|%2520)7(?:%20|%2520)(Brands-Regular-400|Free-Regular-400|Free-Solid-900)\.otf$ {
+      include /etc/nginx/snippets/localhost_headers.conf;
       add_header Cache-Control "private, no-store" always;
       return 302 /Font%20Awesome%207%20$1.otf?$canon_qs_prod;
     }
 
     location ~* \.(?:mjs|js|css|png|jpg|jpeg|gif|ico|svg|webp|wasm|otf|woff2?|ttf|json)$ {
-      if ($need_vredir_prod) {
-        add_header Cache-Control "private, no-store" always;
-        return 302 $uri?$canon_qs_prod;
-      }
+      if ($need_vredir_prod) { return 418; }
+      include /etc/nginx/snippets/localhost_headers.conf;
       add_header Cache-Control "public, max-age=31536000, immutable" always;
-      expires 1y;
       try_files $uri =404;
     }
 
-    location = /__force_update__ { default_type text/plain; add_header Clear-Site-Data "\"cache\", \"storage\"" always; return 200 "ok\n"; }
+    location = /__force_update__ {
+      default_type text/plain;
+      include /etc/nginx/snippets/localhost_headers.conf;
+      add_header Clear-Site-Data "\"cache\", \"storage\"" always;
+      return 200 "ok\n";
+    }
 
     location / {
       try_files $uri $uri/ /index.html;
+      include /etc/nginx/snippets/localhost_headers.conf;
       add_header Cache-Control "no-store, must-revalidate" always;
-      add_header Cross-Origin-Opener-Policy same-origin-allow-popups always;
-      add_header Cross-Origin-Embedder-Policy credentialless always;
     }
   }
 }

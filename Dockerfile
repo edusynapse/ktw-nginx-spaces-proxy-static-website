@@ -4,11 +4,12 @@ FROM nginx:alpine-slim
 ARG APP_VERSION=dev
 ENV APP_VERSION=${APP_VERSION}
 
-# Ensure envsubst is available for template rendering
-RUN apk add --no-cache gettext
+# envsubst for templates; CA bundle for proxy_ssl_verify on landing hosts
+RUN apk add --no-cache gettext ca-certificates
 
-# Copy our templated nginx config + entrypoint
+# Copy our templated nginx config + header snippets + entrypoint
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
+COPY snippets/ /etc/nginx/snippets/
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 

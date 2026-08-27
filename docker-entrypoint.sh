@@ -99,10 +99,22 @@ log "Resolved  DEV version: $APP_VERSION_DEV  (source: $SRC_DEV)"
 versionize_index "$APP_VERSION_PROD" "$PROD_INDEX"
 versionize_index "$APP_VERSION_DEV"  "$DEV_INDEX"
 
-# Render nginx from template
+# Render header snippets then the main template
+for tmpl in /etc/nginx/snippets/*.conf.template; do
+  [ -f "$tmpl" ] || continue
+  out="${tmpl%.template}"
+  envsubst '$APP_VERSION_PROD $APP_VERSION_DEV' < "$tmpl" > "$out"
+  log "Rendered snippet: $out"
+done
+
 envsubst '$APP_VERSION_PROD $APP_VERSION_DEV' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
 log "Nginx config rendered. Grepping version usage:"
 grep -n 'APP_VERSION_' /etc/nginx/nginx.conf || true
+
+if ! nginx -t; then
+  log "nginx -t failed"
+  exit 1
+fi
 
 exec nginx -g 'daemon off;'
