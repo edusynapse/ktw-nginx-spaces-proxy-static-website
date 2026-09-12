@@ -34,7 +34,7 @@ addEventListener("message", eventListener);
 if (!window._flutter) {
   window._flutter = {};
 }
-_flutter.buildConfig = {"engineRevision":"c416acfeb8126e097f758c664aaa3da929e27da0","builds":[{"compileTarget":"dart2wasm","renderer":"skwasm","mainWasmPath":"main.dart.wasm","jsSupportRuntimePath":"main.dart.mjs"},{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"}]};
+_flutter.buildConfig = {"engineRevision":"a4ce257c68517c1410f4b48ac9852ab5642a3f8d","builds":[{"compileTarget":"dart2wasm","renderer":"skwasm","mainWasmPath":"main.dart.wasm","jsSupportRuntimePath":"main.dart.mjs"},{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"}]};
 
 
 (function () {
@@ -42,6 +42,112 @@ _flutter.buildConfig = {"engineRevision":"c416acfeb8126e097f758c664aaa3da929e27d
   const textEl = document.getElementById('loading-text');
   const progressEl = document.getElementById('progress');
   const barEl = document.getElementById('progress-bar');
+  const BYTES_PER_MIB = 1048576;
+  const flutterLoaderConfig = {
+    canvasKitBaseUrl: "/canvaskit/",
+  };
+
+  function readMetaBytes(name) {
+    try {
+      const node = document.querySelector(`meta[name="${name}"]`);
+      const value = Number.parseInt(node && node.getAttribute('content'), 10);
+      return Number.isSafeInteger(value) && value > 0 ? value : 0;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  function supportsFlutterWasm() {
+    // Keep this probe aligned with the feature probe in Flutter's generated
+    // flutter.js.
+    try {
+      if (!window.WebAssembly || typeof WebAssembly.validate !== 'function') {
+        return false;
+      }
+      return WebAssembly.validate(new Uint8Array([
+        0, 97, 115, 109, 1, 0, 0, 0,
+        1, 5, 1, 95, 1, 120, 0,
+      ]));
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function flutterBrowserEngine() {
+    try {
+      const vendor = String(navigator.vendor || '');
+      const userAgent = String(navigator.userAgent || '');
+      if (vendor === 'Google Inc.' || userAgent.includes('Edg/')) return 'blink';
+      if (vendor === 'Apple Computer, Inc.') return 'webkit';
+      if (vendor === '' && userAgent.includes('Firefox')) return 'gecko';
+      return 'unknown';
+    } catch (_) {
+      return 'unknown';
+    }
+  }
+
+  function supportsFlutterWebGL() {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1;
+      canvas.height = 1;
+      return canvas.getContext('webgl2') !== null ||
+        canvas.getContext('webgl') !== null;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function selectFlutterBuild() {
+    try {
+      const builds = window._flutter && window._flutter.buildConfig &&
+        window._flutter.buildConfig.builds;
+      if (!Array.isArray(builds)) return null;
+
+      const engine = flutterBrowserEngine();
+      const defaultWasmAllowList = {
+        blink: true,
+        gecko: false,
+        webkit: false,
+        unknown: false,
+      };
+      const configuredAllowList = flutterLoaderConfig.wasmAllowList;
+      const wasmAllowed = configuredAllowList &&
+          typeof configuredAllowList[engine] === 'boolean'
+        ? configuredAllowList[engine]
+        : defaultWasmAllowList[engine];
+      const wasmGcSupported = supportsFlutterWasm();
+      const skwasmSupported = wasmGcSupported && supportsFlutterWebGL() &&
+        wasmAllowed;
+
+      return builds.find((build) => {
+        if (!build) return false;
+        if (build.compileTarget === 'dart2wasm' && !wasmGcSupported) {
+          return false;
+        }
+        if (flutterLoaderConfig.renderer &&
+            flutterLoaderConfig.renderer !== build.renderer) {
+          return false;
+        }
+        if (build.renderer === 'skwasm' && !skwasmSupported) {
+          return false;
+        }
+        return true;
+      }) || null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  const __ktwTotals = {
+    'main.dart.wasm': readMetaBytes('ktw-main-wasm-bytes'),
+    'main.dart.js': readMetaBytes('ktw-main-js-bytes'),
+  };
+  const __ktwSelectedBuild = selectFlutterBuild();
+  const __ktwPrimaryId = __ktwSelectedBuild &&
+    __ktwSelectedBuild.compileTarget === 'dart2wasm'
+    ? 'main.dart.wasm'
+    : 'main.dart.js';
 
   function setText(msg) {
     if (textEl && typeof msg === 'string') textEl.textContent = msg;
@@ -51,15 +157,56 @@ _flutter.buildConfig = {"engineRevision":"c416acfeb8126e097f758c664aaa3da929e27d
     const clamped = Math.max(0, Math.min(100, pct|0));
     if (barEl) barEl.style.width = clamped + '%';
     if (progressEl) progressEl.setAttribute('aria-valuenow', String(clamped));
+    if (progressEl && msg) progressEl.setAttribute('aria-valuetext', msg);
     if (msg) setText(msg);
+  }
+
+  function formatDownloadLabel(loaded, total, done) {
+    const loadedMib = (Math.max(0, loaded) / BYTES_PER_MIB).toFixed(1);
+    if (total > 0) {
+      const totalMib = (total / BYTES_PER_MIB).toFixed(1);
+      const fraction = Math.max(0, Math.min(1, loaded / total));
+      const percent = Math.floor(fraction * 100);
+      return done
+        ? `Download complete — ${totalMib} MiB (100%)`
+        : `Downloading app… ${loadedMib} / ${totalMib} MiB (${percent}%)`;
+    }
+    return done
+      ? `Download complete — ${loadedMib} MiB`
+      : `Downloading app… ${loadedMib} MiB (total unavailable)`;
+  }
+
+  let realDownloadStarted = false;
+
+  function publishDownloadProgress(id, loaded, total, done) {
+    if (id !== __ktwPrimaryId) return;
+
+    realDownloadStarted = true;
+    const expectedTotal = __ktwTotals[id] || total || 0;
+    const safeLoaded = Math.max(0, Number(loaded) || 0);
+    const safeTotal = Math.max(0, Number(expectedTotal) || 0);
+    const fraction = safeTotal > 0
+      ? Math.max(0, Math.min(1, safeLoaded / safeTotal))
+      : 0;
+    const BASE = 40;
+    const MAX = 69;
+    const pct = safeTotal > 0
+      ? BASE + Math.floor(fraction * (MAX - BASE))
+      : BASE;
+
+    setProgress(
+      done ? MAX : pct,
+      formatDownloadLabel(safeLoaded, safeTotal, done),
+    );
   }
 
   // Gentle fake progress while we wait for real init signals.
   let fake = 8;
-  setProgress(fake, 'Downloading engine…');
+  const initialTotal = __ktwTotals[__ktwPrimaryId] || 0;
+  setProgress(fake, formatDownloadLabel(0, initialTotal, false));
   const tick = setInterval(() => {
     // ★ lowered fake ceiling so REAL downloads visibly start at 40%
-    if (fake < 38) {
+    if (!realDownloadStarted && fake < 38) {
       fake += 1;
       setProgress(fake);
     }
@@ -78,10 +225,11 @@ _flutter.buildConfig = {"engineRevision":"c416acfeb8126e097f758c664aaa3da929e27d
 
   window.addEventListener('flutter-first-frame', removeLoader, { once: true });
 
-  // --- Progress aggregator (main wasm + worker wasm) --------------------------
+  // --- Progress aggregator (selected primary entrypoint only) -----------------
   const __ktwAgg = {
     items: new Map(),   // id -> { loaded, total, done }
     update(id, loaded, total, done) {
+      if (id !== __ktwPrimaryId) return;
       const prev = this.items.get(id) || { loaded: 0, total: 0, done: false };
       const cur = {
         loaded: Math.max(loaded || 0, prev.loaded || 0),
@@ -89,38 +237,7 @@ _flutter.buildConfig = {"engineRevision":"c416acfeb8126e097f758c664aaa3da929e27d
         done: !!done || prev.done
       };
       this.items.set(id, cur);
-
-      // Sum bytes; if any total unknown (0), show "unknown-total" style
-      let sumLoaded = 0, sumTotal = 0, allTotalsKnown = true, allDone = true;
-      for (const v of this.items.values()) {
-        sumLoaded += v.loaded || 0;
-        if (v.total && v.total > 0) sumTotal += v.total;
-        else allTotalsKnown = false;
-        if (!v.done) allDone = false;
-      }
-
-      // ★ Map download span to 40%..69% so real downloads start at 40%
-      const BASE = 40;
-      const MAX = 69;
-      const RANGE = MAX - BASE; // 29
-
-      let pct, label;
-      if (allTotalsKnown && sumTotal > 0) {
-        const frac = Math.min(1, sumLoaded / sumTotal);
-        pct = BASE + Math.floor(frac * RANGE);
-        label = `Downloading engine… ${(sumLoaded/1048576).toFixed(1)} / ${(sumTotal/1048576).toFixed(1)} MB`;
-      } else {
-        // unknown total: grow slowly from 40 up to ~60
-        const approx = Math.min(RANGE - 10, Math.floor(Math.log2(sumLoaded + 1)));
-        pct = BASE + approx;
-        label = `Downloading engine… ${(sumLoaded/1048576).toFixed(1)} MB`;
-      }
-
-      setProgress(pct, label);
-
-      if (allDone) {
-        setProgress(MAX, 'Download complete');
-      }
+      publishDownloadProgress(id, cur.loaded, cur.total, cur.done);
     }
   };
   // ---------------------------------------------------------------------------
@@ -130,6 +247,7 @@ _flutter.buildConfig = {"engineRevision":"c416acfeb8126e097f758c664aaa3da929e27d
     if (!('fetch' in window) || !('ReadableStream' in window)) return;
 
     const origFetch = window.fetch.bind(window);
+
     const matchWasm = (u) => {
       try {
         const url = typeof u === 'string' ? new URL(u, location.href)
@@ -147,7 +265,11 @@ _flutter.buildConfig = {"engineRevision":"c416acfeb8126e097f758c664aaa3da929e27d
       // If we can't stream, just pass it through.
       if (!res.ok || !res.body) return res;
 
-      const total = Number(res.headers.get('content-length')) || 0;
+      // Content-Length can describe compressed bytes or be unavailable. The
+      // build-generated raw artifact size is the matching denominator for the
+      // decoded stream chunks counted below.
+      const total = __ktwTotals['main.dart.wasm'] ||
+        Number(res.headers.get('content-length')) || 0;
       let loaded = 0;
 
       const reader = res.body.getReader();
@@ -185,6 +307,116 @@ _flutter.buildConfig = {"engineRevision":"c416acfeb8126e097f758c664aaa3da929e27d
       });
     };
   })();
+
+  // --- JavaScript fallback progress bridge -----------------------------------
+  // Flutter loads main.dart.js with a script tag, which has no byte-progress
+  // event. Prefetch it through fetch, count the decoded stream, then replace
+  // Flutter's one script tag with a Blob URL so the network transfer happens
+  // only once while Flutter's normal entrypoint callback remains intact.
+  function isMainJsScript(node) {
+    if (!node || node.nodeType !== 1 ||
+        String(node.tagName || '').toUpperCase() !== 'SCRIPT') {
+      return false;
+    }
+    try {
+      const raw = node.getAttribute('src') || node.src || '';
+      const url = new URL(raw, document.baseURI);
+      return /\/main\.dart\.js(?:$|\?)/.test(url.pathname + url.search);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function installMainJsBlobBridge(blobURL) {
+    const nativeAppend = Element.prototype.append;
+    const nativeAppendChild = Node.prototype.appendChild;
+    let restored = false;
+
+    const restore = () => {
+      if (restored) return;
+      restored = true;
+      Element.prototype.append = nativeAppend;
+      Node.prototype.appendChild = nativeAppendChild;
+    };
+
+    const replaceNode = (node) => {
+      if (!isMainJsScript(node)) return false;
+      node.src = blobURL;
+      const revoke = () => {
+        try { URL.revokeObjectURL(blobURL); } catch (_) {}
+      };
+      node.addEventListener('load', revoke, { once: true });
+      node.addEventListener('error', revoke, { once: true });
+      setTimeout(revoke, 120000);
+      return true;
+    };
+
+    Element.prototype.append = function(...nodes) {
+      let replaced = false;
+      try {
+        const mapped = nodes.map((node) => {
+          if (!replaced && replaceNode(node)) replaced = true;
+          return node;
+        });
+        return nativeAppend.apply(this, mapped);
+      } finally {
+        if (replaced) restore();
+      }
+    };
+
+    Node.prototype.appendChild = function(node) {
+      const replaced = replaceNode(node);
+      try {
+        return nativeAppendChild.call(this, node);
+      } finally {
+        if (replaced) restore();
+      }
+    };
+  }
+
+  async function prefetchJavaScriptFallback() {
+    if (__ktwPrimaryId !== 'main.dart.js' || typeof window.fetch !== 'function') {
+      return;
+    }
+
+    const total = __ktwTotals['main.dart.js'];
+    if (!total) {
+      console.warn('[ktw-loader] main.dart.js total metadata is unavailable');
+      return;
+    }
+
+    const entrypointUrl = new URL('main.dart.js', document.baseURI).toString();
+    const response = await window.fetch(entrypointUrl, {
+      cache: 'default',
+      credentials: 'same-origin',
+    });
+    if (!response.ok) {
+      throw new Error(`main.dart.js prefetch failed with HTTP ${response.status}`);
+    }
+
+    const chunks = [];
+    let loaded = 0;
+    if (response.body && typeof response.body.getReader === 'function') {
+      const reader = response.body.getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (!value) continue;
+        chunks.push(value);
+        loaded += value.byteLength;
+        __ktwAgg.update('main.dart.js', loaded, total, false);
+      }
+    } else {
+      chunks.push(new Uint8Array(await response.arrayBuffer()));
+      loaded = chunks[0].byteLength;
+    }
+
+    __ktwAgg.update('main.dart.js', loaded, total, true);
+    const blobURL = URL.createObjectURL(new Blob(chunks, {
+      type: 'application/javascript',
+    }));
+    installMainJsBlobBridge(blobURL);
+  }
 
   // --- Worker wrapper to capture workers' .wasm progress ----------------------
   (function installWorkerWasmProgressBridge() {
@@ -280,38 +512,48 @@ _flutter.buildConfig = {"engineRevision":"c416acfeb8126e097f758c664aaa3da929e27d
   })();
   // ---------------------------------------------------------------------------
 
-  // Hook progress into your loader UI (now aggregates multiple ids).
+  // Hook progress into your loader UI for the selected primary entrypoint.
   window.addEventListener('ktw-wasm-progress', (e) => {
     const d = (e && e.detail) || {};
-    const id = d.id || 'main.dart.wasm';
+    const id = d.id || __ktwPrimaryId;
     const loaded = Number(d.loaded) || 0;
     const total = Number(d.total) || 0;
     const done = !!d.done;
     __ktwAgg.update(id, loaded, total, done);
   });
 
-  _flutter.loader.load({
-    config: {
-      canvasKitBaseUrl: "/canvaskit/",
-    },
-    onEntrypointLoaded: async function (engineInitializer) {
-      clearInterval(tick);
-      // ★ keep the "init" step starting right after download completes (70%)
-      setProgress(70, 'Initializing engine…');
-
-      const appRunner = await engineInitializer.initializeEngine();
-
-      setProgress(85, 'Starting app…');
-      await appRunner.runApp();
-
-      // In case the first-frame event was missed for any reason, fall back.
-      setTimeout(() => {
-        if (loadingEl && loadingEl.parentNode) removeLoader();
-      }, 4000);
+  async function launchFlutter() {
+    try {
+      await prefetchJavaScriptFallback();
+    } catch (error) {
+      // The fallback is an observability enhancement. Flutter must still be
+      // allowed to load through its native path if prefetching is unavailable.
+      console.warn('[ktw-loader] JavaScript fallback progress unavailable:', error);
     }
-  }).catch((error) => {
-    console.error('Flutter load failed:', error);
-    setText('Failed to load the app.');
-    setProgress(100);
-  });
+
+    _flutter.loader.load({
+      config: flutterLoaderConfig,
+      onEntrypointLoaded: async function (engineInitializer) {
+        clearInterval(tick);
+        // ★ keep the "init" step starting right after download completes (70%)
+        setProgress(70, 'Initializing engine…');
+
+        const appRunner = await engineInitializer.initializeEngine();
+
+        setProgress(85, 'Starting app…');
+        await appRunner.runApp();
+
+        // In case the first-frame event was missed for any reason, fall back.
+        setTimeout(() => {
+          if (loadingEl && loadingEl.parentNode) removeLoader();
+        }, 4000);
+      }
+    }).catch((error) => {
+      console.error('Flutter load failed:', error);
+      setText('Failed to load the app.');
+      setProgress(100, 'Failed to load the app.');
+    });
+  }
+
+  launchFlutter();
 })();

@@ -1,0 +1,293 @@
+{
+  "files": {
+    "themes/children/sounds/alertDialog.wav": {
+      "bytes": 414076,
+      "mime": "audio/wav",
+      "sha256": "7323c6ced9605a9b8a406cd088550d06d1a39dc8d37c9abfe52b536482468ad5"
+    },
+    "themes/children/sounds/buttonClick.wav": {
+      "bytes": 19838,
+      "mime": "audio/wav",
+      "sha256": "751fea465c06316185464f3f9fe1d6469fa25daec8a734bfeb1e7720202f1252"
+    },
+    "themes/children/sounds/cancelClick.wav": {
+      "bytes": 562828,
+      "mime": "audio/wav",
+      "sha256": "d007b79c7feda43d99da74b80242fb1bf072a70df6f8e296177d8a031d0dcb11"
+    },
+    "themes/children/sounds/coinDrop.wav": {
+      "bytes": 20218,
+      "mime": "audio/wav",
+      "sha256": "d322c455edbf4220161dcc1f6f642e82c246fe1870f2bdbcc118cadba6232e8b"
+    },
+    "themes/children/sounds/end_voice_input.wav": {
+      "bytes": 40782,
+      "mime": "audio/wav",
+      "sha256": "c4b5c52d132bfaf4a39f7539d2971c6d91d529a9322dac00a91a7958435397c5"
+    },
+    "themes/children/sounds/fireworks.wav": {
+      "bytes": 221190,
+      "mime": "audio/wav",
+      "sha256": "cc612baa083a4a11517054010f4a49e714e72d6e343980165fd5ab2fa217afdb"
+    },
+    "themes/children/sounds/gameOver.wav": {
+      "bytes": 589586,
+      "mime": "audio/wav",
+      "sha256": "5d5271c68ef86a815c3ee3cc34f090ea3292db795933ebaa1aece856651f06df"
+    },
+    "themes/children/sounds/notification.wav": {
+      "bytes": 234556,
+      "mime": "audio/wav",
+      "sha256": "2ef811b3c3466fbf27a2769d08012c4f72f699d611cbbd9ba89af136c6e10786"
+    },
+    "themes/children/sounds/rightAnswer.wav": {
+      "bytes": 434512,
+      "mime": "audio/wav",
+      "sha256": "5e04055330c1b9a89a132e34c6b23fa473e16dd40f0f8866a1268c0250055d38"
+    },
+    "themes/children/sounds/start_voice_input.wav": {
+      "bytes": 58446,
+      "mime": "audio/wav",
+      "sha256": "58fcf99cdc58711698724c86c992738133b92f6fc8bd6a8044e0afd3b62f83e5"
+    },
+    "themes/children/sounds/swish.wav": {
+      "bytes": 49964,
+      "mime": "audio/wav",
+      "sha256": "de81d02902fd4674f28ba130928e20f90605b5cd5f7a206a64fcc71f56d4f3cc"
+    },
+    "themes/children/sounds/tileDrop.wav": {
+      "bytes": 243296,
+      "mime": "audio/wav",
+      "sha256": "dbe3705e29b436a8d29d7256ef5e1d00fd95ae08abf330a287ae6136a7bc4e8d"
+    },
+    "themes/children/sounds/tilesBackUp.wav": {
+      "bytes": 159704,
+      "mime": "audio/wav",
+      "sha256": "a18ac219cee1323c87bb8fc27e646e58dd34cea839bfc48e6027dc11d56b95ff"
+    },
+    "themes/children/sounds/voice_response_wait.wav": {
+      "bytes": 244968,
+      "mime": "audio/wav",
+      "sha256": "84305fe8573d4e4f733665ef184df834bb5752c1ab2a4ce7083b73dc2a4eb976"
+    },
+    "themes/children/sounds/wrongAnswer.wav": {
+      "bytes": 344000,
+      "mime": "audio/wav",
+      "sha256": "830b2019b21f9532d1cf2bf3ebb93919c24d92b92a2aa22d231393a4b8ffb472"
+    },
+    "themes/dark/sounds/alertDialog.wav": {
+      "bytes": 414076,
+      "mime": "audio/wav",
+      "sha256": "7323c6ced9605a9b8a406cd088550d06d1a39dc8d37c9abfe52b536482468ad5"
+    },
+    "themes/dark/sounds/buttonClick.wav": {
+      "bytes": 19838,
+      "mime": "audio/wav",
+      "sha256": "751fea465c06316185464f3f9fe1d6469fa25daec8a734bfeb1e7720202f1252"
+    },
+    "themes/dark/sounds/cancelClick.wav": {
+      "bytes": 562828,
+      "mime": "audio/wav",
+      "sha256": "d007b79c7feda43d99da74b80242fb1bf072a70df6f8e296177d8a031d0dcb11"
+    },
+    "themes/dark/sounds/coinDrop.wav": {
+      "bytes": 20218,
+      "mime": "audio/wav",
+      "sha256": "d322c455edbf4220161dcc1f6f642e82c246fe1870f2bdbcc118cadba6232e8b"
+    },
+    "themes/dark/sounds/end_voice_input.wav": {
+      "bytes": 40782,
+      "mime": "audio/wav",
+      "sha256": "c4b5c52d132bfaf4a39f7539d2971c6d91d529a9322dac00a91a7958435397c5"
+    },
+    "themes/dark/sounds/fireworks.wav": {
+      "bytes": 221190,
+      "mime": "audio/wav",
+      "sha256": "cc612baa083a4a11517054010f4a49e714e72d6e343980165fd5ab2fa217afdb"
+    },
+    "themes/dark/sounds/gameOver.wav": {
+      "bytes": 589586,
+      "mime": "audio/wav",
+      "sha256": "5d5271c68ef86a815c3ee3cc34f090ea3292db795933ebaa1aece856651f06df"
+    },
+    "themes/dark/sounds/notification.wav": {
+      "bytes": 234556,
+      "mime": "audio/wav",
+      "sha256": "2ef811b3c3466fbf27a2769d08012c4f72f699d611cbbd9ba89af136c6e10786"
+    },
+    "themes/dark/sounds/rightAnswer.wav": {
+      "bytes": 434512,
+      "mime": "audio/wav",
+      "sha256": "5e04055330c1b9a89a132e34c6b23fa473e16dd40f0f8866a1268c0250055d38"
+    },
+    "themes/dark/sounds/start_voice_input.wav": {
+      "bytes": 58446,
+      "mime": "audio/wav",
+      "sha256": "58fcf99cdc58711698724c86c992738133b92f6fc8bd6a8044e0afd3b62f83e5"
+    },
+    "themes/dark/sounds/swish.wav": {
+      "bytes": 13418,
+      "mime": "audio/wav",
+      "sha256": "34319d80492b1c6371b624150d21979f271d9da48f2b4323660bc14f372a5982"
+    },
+    "themes/dark/sounds/tileDrop.wav": {
+      "bytes": 243296,
+      "mime": "audio/wav",
+      "sha256": "dbe3705e29b436a8d29d7256ef5e1d00fd95ae08abf330a287ae6136a7bc4e8d"
+    },
+    "themes/dark/sounds/tilesBackUp.wav": {
+      "bytes": 159704,
+      "mime": "audio/wav",
+      "sha256": "a18ac219cee1323c87bb8fc27e646e58dd34cea839bfc48e6027dc11d56b95ff"
+    },
+    "themes/dark/sounds/voice_response_wait.wav": {
+      "bytes": 474668,
+      "mime": "audio/wav",
+      "sha256": "58667ca8dfe36fe00f24a58444251f769c7931c8ceaeb92c46bb1c327c7fb6b8"
+    },
+    "themes/dark/sounds/wrongAnswer.wav": {
+      "bytes": 344000,
+      "mime": "audio/wav",
+      "sha256": "830b2019b21f9532d1cf2bf3ebb93919c24d92b92a2aa22d231393a4b8ffb472"
+    },
+    "themes/default/sounds/alertDialog.wav": {
+      "bytes": 242756,
+      "mime": "audio/wav",
+      "sha256": "57051b9ef3c58a3df2e8c3679a80420e4020481ad551e8726a83d29faaa7852b"
+    },
+    "themes/default/sounds/buttonClick.wav": {
+      "bytes": 19838,
+      "mime": "audio/wav",
+      "sha256": "751fea465c06316185464f3f9fe1d6469fa25daec8a734bfeb1e7720202f1252"
+    },
+    "themes/default/sounds/cancelClick.wav": {
+      "bytes": 562828,
+      "mime": "audio/wav",
+      "sha256": "d007b79c7feda43d99da74b80242fb1bf072a70df6f8e296177d8a031d0dcb11"
+    },
+    "themes/default/sounds/coinDrop.wav": {
+      "bytes": 20218,
+      "mime": "audio/wav",
+      "sha256": "d322c455edbf4220161dcc1f6f642e82c246fe1870f2bdbcc118cadba6232e8b"
+    },
+    "themes/default/sounds/end_voice_input.wav": {
+      "bytes": 40782,
+      "mime": "audio/wav",
+      "sha256": "c4b5c52d132bfaf4a39f7539d2971c6d91d529a9322dac00a91a7958435397c5"
+    },
+    "themes/default/sounds/fireworks.wav": {
+      "bytes": 221190,
+      "mime": "audio/wav",
+      "sha256": "cc612baa083a4a11517054010f4a49e714e72d6e343980165fd5ab2fa217afdb"
+    },
+    "themes/default/sounds/gameOver.wav": {
+      "bytes": 589586,
+      "mime": "audio/wav",
+      "sha256": "5d5271c68ef86a815c3ee3cc34f090ea3292db795933ebaa1aece856651f06df"
+    },
+    "themes/default/sounds/notification.wav": {
+      "bytes": 234556,
+      "mime": "audio/wav",
+      "sha256": "2ef811b3c3466fbf27a2769d08012c4f72f699d611cbbd9ba89af136c6e10786"
+    },
+    "themes/default/sounds/rightAnswer.wav": {
+      "bytes": 434512,
+      "mime": "audio/wav",
+      "sha256": "5e04055330c1b9a89a132e34c6b23fa473e16dd40f0f8866a1268c0250055d38"
+    },
+    "themes/default/sounds/start_voice_input.wav": {
+      "bytes": 58446,
+      "mime": "audio/wav",
+      "sha256": "58fcf99cdc58711698724c86c992738133b92f6fc8bd6a8044e0afd3b62f83e5"
+    },
+    "themes/default/sounds/swish.wav": {
+      "bytes": 24286,
+      "mime": "audio/wav",
+      "sha256": "cc5684218ee3d6b076b2e29a732722b47e598bc9876c644ecb5f241682ae310c"
+    },
+    "themes/default/sounds/tileDrop.wav": {
+      "bytes": 243296,
+      "mime": "audio/wav",
+      "sha256": "dbe3705e29b436a8d29d7256ef5e1d00fd95ae08abf330a287ae6136a7bc4e8d"
+    },
+    "themes/default/sounds/tilesBackUp.wav": {
+      "bytes": 159704,
+      "mime": "audio/wav",
+      "sha256": "a18ac219cee1323c87bb8fc27e646e58dd34cea839bfc48e6027dc11d56b95ff"
+    },
+    "themes/default/sounds/voice_response_wait.wav": {
+      "bytes": 769090,
+      "mime": "audio/wav",
+      "sha256": "35fb67a9ca28d03019edb622064b2b88ddd0c60f1aaed020b2322e8acde75669"
+    },
+    "themes/default/sounds/wrongAnswer.wav": {
+      "bytes": 344000,
+      "mime": "audio/wav",
+      "sha256": "830b2019b21f9532d1cf2bf3ebb93919c24d92b92a2aa22d231393a4b8ffb472"
+    }
+  },
+  "release_hash": "70e44ed8f91125696b54e24374df342657454c529495d4c31f58efd2539fc0b2",
+  "schema_version": 1,
+  "sounds": {
+    "alertDialog": {
+      "core": true,
+      "runtime_format": "wav"
+    },
+    "buttonClick": {
+      "core": true,
+      "runtime_format": "wav"
+    },
+    "cancelClick": {
+      "core": false,
+      "runtime_format": "wav"
+    },
+    "coinDrop": {
+      "core": true,
+      "runtime_format": "wav"
+    },
+    "end_voice_input": {
+      "core": true,
+      "runtime_format": "wav"
+    },
+    "fireworks": {
+      "core": true,
+      "runtime_format": "wav"
+    },
+    "gameOver": {
+      "core": false,
+      "runtime_format": "wav"
+    },
+    "notification": {
+      "core": false,
+      "runtime_format": "wav"
+    },
+    "rightAnswer": {
+      "core": false,
+      "runtime_format": "wav"
+    },
+    "start_voice_input": {
+      "core": true,
+      "runtime_format": "wav"
+    },
+    "swish": {
+      "core": false,
+      "runtime_format": "wav"
+    },
+    "tileDrop": {
+      "core": false,
+      "runtime_format": "wav"
+    },
+    "tilesBackUp": {
+      "core": false,
+      "runtime_format": "wav"
+    },
+    "voice_response_wait": {
+      "core": false,
+      "runtime_format": "wav"
+    },
+    "wrongAnswer": {
+      "core": false,
+      "runtime_format": "wav"
+    }
+  }
+}

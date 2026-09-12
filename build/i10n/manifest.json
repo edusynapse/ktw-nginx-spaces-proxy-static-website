@@ -1,0 +1,129 @@
+{
+  "packs": {
+    "AM": {
+      "bytes": 652784,
+      "file": "AM.e5b7dc289260bacc3991dbe10f2a167dbff53ae457d7413747fc2505da2e0569.json.gz",
+      "hash": "e5b7dc289260bacc3991dbe10f2a167dbff53ae457d7413747fc2505da2e0569"
+    },
+    "BN": {
+      "bytes": 861962,
+      "file": "BN.7893f7c57cf84e9b6d01eb007c69b3282fb2879da32e87c5d3dcf13af7a664e3.json.gz",
+      "hash": "7893f7c57cf84e9b6d01eb007c69b3282fb2879da32e87c5d3dcf13af7a664e3"
+    },
+    "CN": {
+      "bytes": 453670,
+      "file": "CN.f2bc0d22416db2768940e0674adfc52ca2bd55321e63afb7d0abf019f931a4c5.json.gz",
+      "hash": "f2bc0d22416db2768940e0674adfc52ca2bd55321e63afb7d0abf019f931a4c5"
+    },
+    "EN": {
+      "bytes": 466742,
+      "file": "EN.acaf2cb5581d5b4e759faec8d9af5272a66ebee01a4f4210981b0527dd9a84dd.json.gz",
+      "hash": "acaf2cb5581d5b4e759faec8d9af5272a66ebee01a4f4210981b0527dd9a84dd"
+    },
+    "ES": {
+      "bytes": 517545,
+      "file": "ES.fec75cb33ccbcbe3785fb95d7033c80ffb535f23c6d7fae2e375f5d7d253a345.json.gz",
+      "hash": "fec75cb33ccbcbe3785fb95d7033c80ffb535f23c6d7fae2e375f5d7d253a345"
+    },
+    "FR": {
+      "bytes": 530937,
+      "file": "FR.c3c8a231c9cf2e3218b601eec8f5173838af4eaaa37120fce5a23c0d407e37b3.json.gz",
+      "hash": "c3c8a231c9cf2e3218b601eec8f5173838af4eaaa37120fce5a23c0d407e37b3"
+    },
+    "GU": {
+      "bytes": 814827,
+      "file": "GU.ec3d0e15a3c241e93961cd0de4c2e8f890215022e32ba18217ffe4fead9f973a.json.gz",
+      "hash": "ec3d0e15a3c241e93961cd0de4c2e8f890215022e32ba18217ffe4fead9f973a"
+    },
+    "HA": {
+      "bytes": 491370,
+      "file": "HA.d5d8bae9f06a1456878e9df4a0c88a39cb6790f1ac5678839cefc4c1f6f24a7b.json.gz",
+      "hash": "d5d8bae9f06a1456878e9df4a0c88a39cb6790f1ac5678839cefc4c1f6f24a7b"
+    },
+    "HI": {
+      "bytes": 826543,
+      "file": "HI.939f5ccbc5d892bc13c5f1075d56184feefb0f3b2b85d0687912bf7ffa959747.json.gz",
+      "hash": "939f5ccbc5d892bc13c5f1075d56184feefb0f3b2b85d0687912bf7ffa959747"
+    },
+    "ID": {
+      "bytes": 488791,
+      "file": "ID.3e066a4a843d2ea19d7880dacfe25dc0b6fab888a25b67be27db9fbeec9e27a3.json.gz",
+      "hash": "3e066a4a843d2ea19d7880dacfe25dc0b6fab888a25b67be27db9fbeec9e27a3"
+    },
+    "IG": {
+      "bytes": 513114,
+      "file": "IG.f57b2815e86d59c0a14625ed14cf58d7703b71d60557d1524a23f16e6f1eaa87.json.gz",
+      "hash": "f57b2815e86d59c0a14625ed14cf58d7703b71d60557d1524a23f16e6f1eaa87"
+    },
+    "KN": {
+      "bytes": 914865,
+      "file": "KN.7431205a71bfe5a9ac40de8ab740bdf937e15fe0573d9bd1aa4d59d45a5d35ed.json.gz",
+      "hash": "7431205a71bfe5a9ac40de8ab740bdf937e15fe0573d9bd1aa4d59d45a5d35ed"
+    },
+    "MR": {
+      "bytes": 824640,
+      "file": "MR.4b68095d317d85ff3d6b2fae3fbb2237c714c0dcb34461a7f0b31c924b44a3da.json.gz",
+      "hash": "4b68095d317d85ff3d6b2fae3fbb2237c714c0dcb34461a7f0b31c924b44a3da"
+    },
+    "OR": {
+      "bytes": 859686,
+      "file": "OR.8f08bdc9533361d65025bfda70a6a1a7db61fc4044f957960a8ececed12f955a.json.gz",
+      "hash": "8f08bdc9533361d65025bfda70a6a1a7db61fc4044f957960a8ececed12f955a"
+    },
+    "PT": {
+      "bytes": 513293,
+      "file": "PT.d085ae4cfee0a65b84af52a13f9246dcfd586a93af05eec6b372308853e27667.json.gz",
+      "hash": "d085ae4cfee0a65b84af52a13f9246dcfd586a93af05eec6b372308853e27667"
+    },
+    "SN": {
+      "bytes": 501068,
+      "file": "SN.23053d84bea1ee5f1e79ead9d2c7b265f2b57ef2f8ffb275ce08eb0e1de88eb1.json.gz",
+      "hash": "23053d84bea1ee5f1e79ead9d2c7b265f2b57ef2f8ffb275ce08eb0e1de88eb1"
+    },
+    "SW": {
+      "bytes": 503942,
+      "file": "SW.e855a0b0f2b76d7f531270d6956d881fa8cdadb21db0e8ce569199941b5ddd68.json.gz",
+      "hash": "e855a0b0f2b76d7f531270d6956d881fa8cdadb21db0e8ce569199941b5ddd68"
+    },
+    "TA": {
+      "bytes": 984068,
+      "file": "TA.3f4fb2e97e54f67b63fc303e162a810b9973b0354f2ba37c72b99fa7c1ae7e53.json.gz",
+      "hash": "3f4fb2e97e54f67b63fc303e162a810b9973b0354f2ba37c72b99fa7c1ae7e53"
+    },
+    "TE": {
+      "bytes": 917231,
+      "file": "TE.ceb88ca5bb2614a13fe009ce79de96f5d503a63a1177db9a46e3d86937083ea6.json.gz",
+      "hash": "ceb88ca5bb2614a13fe009ce79de96f5d503a63a1177db9a46e3d86937083ea6"
+    },
+    "TH": {
+      "bytes": 835250,
+      "file": "TH.aa2630682650c5c43256ad83431e3dbb847be78a4fb147405b21fd27f3a7063e.json.gz",
+      "hash": "aa2630682650c5c43256ad83431e3dbb847be78a4fb147405b21fd27f3a7063e"
+    },
+    "TL": {
+      "bytes": 527696,
+      "file": "TL.62961b566d2707863a23d5d2505820adfac0fca44cd97150951a2a5cbe5bedf0.json.gz",
+      "hash": "62961b566d2707863a23d5d2505820adfac0fca44cd97150951a2a5cbe5bedf0"
+    },
+    "TW": {
+      "bytes": 457538,
+      "file": "TW.7ca2784fa971bf717a3fc8d58666c3ff785f1c83ddaace7432fa5e0f67ad6ba4.json.gz",
+      "hash": "7ca2784fa971bf717a3fc8d58666c3ff785f1c83ddaace7432fa5e0f67ad6ba4"
+    },
+    "VI": {
+      "bytes": 560251,
+      "file": "VI.1f667177e4b35828f17748265f07cf1d1c69c6b31b86b91234cefab7188a3544.json.gz",
+      "hash": "1f667177e4b35828f17748265f07cf1d1c69c6b31b86b91234cefab7188a3544"
+    },
+    "YO": {
+      "bytes": 550972,
+      "file": "YO.6061c1e7f721a58bf977105d51974524a28e69bf8c2bb27884d4972e5a5b2842.json.gz",
+      "hash": "6061c1e7f721a58bf977105d51974524a28e69bf8c2bb27884d4972e5a5b2842"
+    },
+    "ZU": {
+      "bytes": 518136,
+      "file": "ZU.293b790522b3a2480cdfb62ed48cce281d081fffef58c871ab2fa43a9b73ff78.json.gz",
+      "hash": "293b790522b3a2480cdfb62ed48cce281d081fffef58c871ab2fa43a9b73ff78"
+    }
+  }
+}

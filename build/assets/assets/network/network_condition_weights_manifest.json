@@ -1,0 +1,69 @@
+{
+  "schema_version": 2,
+  "description": "Plan 166/167 — platform profiles for blending per-leg network grades into global NetworkCondition, plus API-leg latency bands with enter/exit hysteresis. Electron desktop release uses the device profile (not browser).",
+  "notes": [
+    "Weights within a profile should sum to ~1.0 for measured legs; loader renormalizes over legs with weight > 0 that have a sample.",
+    "origin weight 0 means exclude package/host assets from the global blend (device/electron: local package or app shell is not a network leg).",
+    "browser = Flutter web in a real browser tab only (kIsWeb && !electron shell).",
+    "device = native mobile/desktop targets AND Electron-wrapped releases (isElectronShellActive).",
+    "Passive runtime scoring is API-only (plan 167 G7); multi-leg weights apply to probe snapshots only.",
+    "latency_bands: enter/exit hysteresis for the passive /appdetails API ruler. network_only is used when Server-Timing is present; round_trip when rulerDegraded."
+  ],
+  "score_map": {
+    "excellent": 3,
+    "good": 2,
+    "poor": 1
+  },
+  "score_to_condition": {
+    "optimum_min": 2.0,
+    "comment": "score >= optimum_min → optimum; below optimum_min → slow (intermittent is flap/error-rate driven, not score)"
+  },
+  "latency_bands": {
+    "comment": "Provisional P2 values (ms). Re-derive network_only from real networkElapsedMs after Server-Timing is live (plan 167 P3).",
+    "round_trip": {
+      "excellent_enter_ms": 200,
+      "excellent_leave_ms": 280,
+      "poor_enter_ms": 600,
+      "poor_leave_ms": 450
+    },
+    "network_only": {
+      "excellent_enter_ms": 200,
+      "excellent_leave_ms": 280,
+      "poor_enter_ms": 600,
+      "poor_leave_ms": 450
+    }
+  },
+  "profiles": {
+    "browser": {
+      "label": "Browser tab (web, not Electron)",
+      "applies_when": [
+        "kIsWeb == true",
+        "isElectronShellActive == false"
+      ],
+      "weights": {
+        "api": 0.5,
+        "cdn": 0.25,
+        "origin": 0.25
+      }
+    },
+    "device": {
+      "label": "Native app and Electron release",
+      "applies_when": [
+        "kIsWeb == false (iOS/Android/desktop native)",
+        "OR isElectronShellActive == true (Electron user/admin shells — treat as device, not browser)"
+      ],
+      "weights": {
+        "api": 0.75,
+        "cdn": 0.25,
+        "origin": 0.0
+      },
+      "origin_policy": "exclude_from_blend_even_if_ui_shows_excellent"
+    }
+  },
+  "default_profile": "device",
+  "profile_resolution_order": [
+    "If Electron shell active → device",
+    "Else if kIsWeb → browser",
+    "Else → device"
+  ]
+}

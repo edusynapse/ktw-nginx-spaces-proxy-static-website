@@ -23,6 +23,9 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+  <!-- Replaced in build/web by tool/inject_web_loader_sizes.dart. -->
+  <meta name="ktw-main-wasm-bytes" content="15072683">
+  <meta name="ktw-main-js-bytes" content="15865635">
 
   <!-- ★ SEO: Open Graph / Twitter (aligned with levels) -->
   <meta property="og:type" content="website">
@@ -41,78 +44,106 @@
   <!-- Preconnects (cuts handshake time) -->
   <link rel="preconnect" href="https://checkout.razorpay.com" crossorigin>
   <link rel="dns-prefetch" href="//checkout.razorpay.com">
-  <!-- ★ NEW: preconnect for the CDN hosting latest.tzf -->
   <link rel="preconnect" href="https://cdn.knowtowin.com" crossorigin>
   <link rel="dns-prefetch" href="//cdn.knowtowin.com">
-  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="//www.gstatic.com">
   <link rel="preconnect" href="https://firebaseinstallations.googleapis.com" crossorigin>
   <link rel="dns-prefetch" href="//firebaseinstallations.googleapis.com">
 
-  <!-- Preload your WASM worker artifacts -->
-  <link rel="preload" href="workers/cache_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
-  <link rel="preload" href="workers/decompress_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
-  <link rel="preload" href="workers/language_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
-  <link rel="preload" href="workers/session_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
-  <link rel="preload" href="workers/timeduri_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
-  <link rel="preload" href="workers/usb_auth_service.web.g.dart.wasm" as="fetch" type="application/wasm" crossorigin>
+  <!-- Workers needed before login interactive only: timeduri (appdetails) + language -->
+  <link rel="preload" href="workers/timeduri_service.web.g.dart.wasm" as="fetch" type="application/wasm">
+  <link rel="preload" href="workers/language_service.web.g.dart.wasm" as="fetch" type="application/wasm">
 
-  <!-- ★ NEW: preload the tzf that stalls initialization -->
+  <!-- tzf from own CDN — preload to warm HTTP cache before Dart init -->
+  <link rel="preload" href="https://cdn.knowtowin.com/appdata/latest.tzf" as="fetch" crossorigin="anonymous">
 
-  <!-- after -->
-  <!-- change preload to anonymous (or just delete this line entirely) -->
-  <link rel="preload"
-        href="https://cdn.knowtowin.com/appdata/latest.tzf"
-        as="fetch"
-        crossorigin="anonymous">
-
-  <!-- Preload your JS worker artifacts (disabled by you) -->
-  <!--
-  <link rel="preload" href="workers/cache_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  <link rel="preload" href="workers/decompress_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  <link rel="preload" href="workers/language_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  <link rel="preload" href="workers/session_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  <link rel="preload" href="workers/timeduri_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  <link rel="preload" href="workers/usb_auth_service.web.g.dart.js" as="script" type="text/javascript" crossorigin>
-  -->
-  <link rel="preload" href="/assets/assets/theme/default/svg/background.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/background.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/background.webp" as="image">
-  <link rel="preload" href="/assets/assets/session_shared.webp" as="image">
-  <link rel="preload" href="/assets/assets/session_personal.webp" as="image">
-  <link rel="preload" href="/assets/assets/session_safe.webp" as="image">
-  <link rel="preload" href="/assets/assets/sleeping.webp" as="image">
-  <link rel="preload" href="/assets/assets/awake.webp" as="image">
-  <link rel="preload" href="/assets/assets/ship.webp" as="image">
-  <link rel="preload" href="/assets/assets/turnstile_error.webp" as="image">
+  <!-- Login page images (default theme tiles only; backdrop is themed below) -->
+  <link rel="preload" href="/assets/assets/theme/default/svg/pageBackgroundTile.webp" as="image">
+  <link rel="preload" href="/assets/assets/theme/default/svg/appbarBackground.png" as="image">
   <link rel="preload" href="/icons/loader.gif" as="image">
   <link rel="preload" href="/assets/assets/language.webp" as="image">
   <link rel="preload" href="/assets/assets/logo.png" as="image">
 
-  <link rel="preload" href="/assets/assets/theme/default/svg/pageBackgroundTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/pageBackgroundTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/pageBackgroundTile.webp" as="image">
-
-  <link rel="preload" href="/assets/assets/theme/default/svg/cardBackgroundTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/cardBackgroundTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/cardBackgroundTile.webp" as="image">
-
-  <link rel="preload" href="/assets/assets/theme/default/svg/filterSectionBackgroundTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/filterSectionBackgroundTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/filterSectionBackgroundTile.webp" as="image">
-
-  <link rel="preload" href="/assets/assets/theme/default/svg/popupBackgroundImageTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/popupBackgroundImageTile.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/popupBackgroundImageTile.webp" as="image">
-
-
-  <link rel="preload" href="/assets/assets/theme/default/svg/forgot.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/forgot.webp" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/forgot.webp" as="image">
-
-  <link rel="preload" href="/assets/assets/theme/default/svg/appbarBackground.png" as="image">
-  <link rel="preload" href="/assets/assets/theme/children/svg/appbarBackground.png" as="image">
-  <link rel="preload" href="/assets/assets/theme/dark/svg/appbarBackground.png" as="image">
+  <!-- Apply stored theme backdrop before first paint (reload + same-origin tab). -->
+  <script>
+    (function applyStoredStartupBackdrop() {
+      var FALLBACK_BG = { default: '#FFFFFF', dark: '#26211a', children: '#FFFFFF' };
+      function readStoredString(key) {
+        try {
+          var raw = localStorage.getItem(key);
+          if (raw == null) return '';
+          raw = String(raw).trim();
+          if (!raw) return '';
+          if ((raw.charAt(0) === '"' && raw.charAt(raw.length - 1) === '"') ||
+              (raw.charAt(0) === "'" && raw.charAt(raw.length - 1) === "'")) {
+            try { return JSON.parse(raw); } catch (e) { return raw.slice(1, -1); }
+          }
+          return raw;
+        } catch (e) {
+          return '';
+        }
+      }
+      function sanitizeTheme(name) {
+        var s = String(name || '').trim();
+        return /^[A-Za-z0-9_-]+$/.test(s) ? s : 'default';
+      }
+      function isSafeBackdropUrl(url) {
+        return /^\/assets\/assets\/theme\/[A-Za-z0-9_-]+\/svg\/[A-Za-z0-9_.-]+$/.test(url);
+      }
+      function isSafeColor(c) {
+        return /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/.test(c);
+      }
+      try {
+        var theme = sanitizeTheme(
+          readStoredString('flutter.selected_theme') ||
+          readStoredString('selected_theme') ||
+          'default'
+        );
+        var storedUrl = readStoredString('flutter.startup_bg_image');
+        var url = isSafeBackdropUrl(storedUrl)
+          ? storedUrl
+          : '/assets/assets/theme/' + theme + '/svg/background.webp';
+        var storedColor = readStoredString('flutter.startup_bg_color');
+        var color = isSafeColor(storedColor)
+          ? storedColor
+          : (FALLBACK_BG[theme] || FALLBACK_BG.default);
+        var root = document.documentElement;
+        root.style.setProperty('--ktw-startup-bg', color);
+        root.style.setProperty('--ktw-startup-image', 'url("' + url + '")');
+        var hex = color.slice(1);
+        if (hex.length === 3) {
+          hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) +
+              hex.charAt(2) + hex.charAt(2);
+        }
+        if (hex.length === 6) {
+          var lum = 0.2126 * parseInt(hex.slice(0, 2), 16) +
+              0.7152 * parseInt(hex.slice(2, 4), 16) +
+              0.0722 * parseInt(hex.slice(4, 6), 16);
+          root.classList.toggle('ktw-startup-dark', lum < 128);
+        }
+        var preload = document.createElement('link');
+        preload.rel = 'preload';
+        preload.as = 'image';
+        preload.href = url;
+        document.head.appendChild(preload);
+        function preloadCursor(href) {
+          var link = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'image';
+          link.href = href;
+          document.head.appendChild(link);
+        }
+        if (theme === 'children') {
+          preloadCursor('/cursors/children/wand-32.png');
+          preloadCursor('/cursors/children/star-32.png');
+        }
+        var largePointer = readStoredString('flutter.web_large_pointer');
+        if (largePointer === 'true' || largePointer === '1') {
+          preloadCursor('/cursors/large/arrow-48.png');
+          preloadCursor('/cursors/large/pointer-48.png');
+        }
+      } catch (e) {}
+    })();
+  </script>
 
 
   <style>
@@ -129,12 +160,16 @@
       padding: 16px;
       gap: 12px;
     }
-    html { height: 100%; }
+    html {
+      height: 100%;
+      background-color: var(--ktw-startup-bg, #FFFFFF);
+    }
     body {
       min-height: 100vh;
       height: 100%;
       margin: 0;
-      background-image: url(/assets/assets/theme/default/svg/background.webp);
+      background-color: var(--ktw-startup-bg, #FFFFFF);
+      background-image: var(--ktw-startup-image, url(/assets/assets/theme/default/svg/background.webp));
       background-repeat: no-repeat;
       background-size: cover;
       background-position: center;
@@ -166,6 +201,12 @@
     /* Follows the circular alpha of your GIF */
     filter: drop-shadow(0 0 10px rgba(0,0,0,.35));
   }
+  /* GIF 1-bit alpha is light-matted; crop the halo on dark backdrops. */
+  html.ktw-startup-dark #loading > img {
+    filter: none;
+    -webkit-mask-image: radial-gradient(circle closest-side at 50% 50%, #000 88%, transparent 97%);
+    mask-image: radial-gradient(circle closest-side at 50% 50%, #000 88%, transparent 97%);
+  }
 
 #progress { box-shadow: 0 0 10px 2px rgba(0,0,0,.2), inset 0 1px 2px rgba(0,0,0,.05); }
 
@@ -184,14 +225,14 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "2709727038";
+    const serviceWorkerVersion = "1147890692" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
   </script>
 
-  <!-- ★ NEW: warm the tzf into the HTTP cache (mirrors typical fetch options) -->
+  <!-- Warm tzf into HTTP cache before Dart init fetches it -->
   <script>
     (function warmTZF(){
       const url = 'https://cdn.knowtowin.com/appdata/latest.tzf';
-      fetch(url, { mode: 'cors', credentials: 'omit', cache: 'force-cache' }).catch(()=>{});
+      fetch(url, { cache: 'force-cache', credentials: 'same-origin' }).catch(()=>{});
     })();
   </script>
   <!-- Strip version-y query params immediately to keep deep links clean -->
@@ -228,7 +269,11 @@
           : null;
         console.log('[ver-check] server=', serverVer, 'stored=', storedVer, 'htmlSWV=', swv);
 
-        const mismatch = (storedVer && storedVer !== serverVer) || (swv && swv !== serverVer);
+        // NOTE: `swv` (Flutter's numeric serviceWorkerVersion) is logged for diagnostics only.
+        // It must NOT gate the refresh: serverVer is the app build-info string, so `swv !== serverVer`
+        // is permanently true and caused an infinite clear-caches/reload loop. The buildHash-based
+        // `storedVer !== serverVer` already detects every new build.
+        const mismatch = (storedVer && storedVer !== serverVer);
 
         if (mismatch) {
           console.log('[ver-refresh] New version detected. Clearing SW + caches, reloading with cache-buster…');
@@ -291,6 +336,12 @@
   <script type="application/javascript"
           src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
           defer></script>
+
+  <!-- pdf.js – required by syncfusion_flutter_pdfviewer on web (served locally) -->
+  <script type="module">
+    import * as pdfjsLib from '/pdfjs/pdf.min.mjs';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdfjs/pdf.worker.min.mjs';
+  </script>
 
   <!-- ★ SEO: JSON-LD (extended with Level Map ItemList) -->
   <script type="application/ld+json">
@@ -419,7 +470,13 @@
   </p>
 </noscript>
 
-<!-- Load the Flutter bootstrap LAST (match Flutter’s template for WASM) -->
+<!-- SoLoud's separate WebAssembly engine and its JS initializer. -->
+<script src="assets/packages/flutter_soloud/web/libflutter_soloud_plugin.js" defer></script>
+<script src="assets/packages/flutter_soloud/web/init_module.dart.js" defer></script>
+
+<!-- Pointer controller must parse before Flutter creates flutter-view. -->
+<script src="pointer_controller.js"></script>
+<!-- Load the Dart2Wasm Flutter bootstrap LAST. -->
 <script src="flutter_bootstrap.js" async></script>
 
 <!-- Late-register offline helper SW after wasm (or first-frame) -->

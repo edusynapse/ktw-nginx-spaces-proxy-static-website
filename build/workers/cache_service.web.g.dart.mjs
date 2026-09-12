@@ -275,19 +275,16 @@ class CompiledApp {
       _272: x0 => x0.getReader(),
       _273: x0 => x0.cancel(),
       _274: x0 => x0.read(),
-      _275: x0 => ({type: x0}),
-      _276: (x0,x1) => new Blob(x0,x1),
-      _277: x0 => globalThis.URL.createObjectURL(x0),
-      _280: (x0,x1,x2) => x0.postMessage(x1,x2),
-      _281: x0 => x0.close(),
-      _282: () => new MessageChannel(),
-      _283: (x0,x1) => x0.push(x1),
-      _284: (x0,x1) => x0.postMessage(x1),
-      _295: () => globalThis.self,
-      _296: x0 => x0.close(),
-      _297: (module,f) => finalizeWrapper(f, function(x0) { return module.exports._297(f,arguments.length,x0) }),
-      _298: (module,f) => finalizeWrapper(f, function(x0) { return module.exports._298(f,arguments.length,x0) }),
-      _299: (x0,x1,x2) => x0.postMessage(x1,x2),
+      _277: (x0,x1,x2) => x0.postMessage(x1,x2),
+      _278: x0 => x0.close(),
+      _279: () => new MessageChannel(),
+      _280: (x0,x1) => x0.push(x1),
+      _281: (x0,x1) => x0.postMessage(x1),
+      _292: () => globalThis.self,
+      _293: x0 => x0.close(),
+      _294: (module,f) => finalizeWrapper(f, function(x0) { return module.exports._294(f,arguments.length,x0) }),
+      _295: (module,f) => finalizeWrapper(f, function(x0) { return module.exports._295(f,arguments.length,x0) }),
+      _296: (x0,x1,x2) => x0.postMessage(x1,x2),
       _301: (x0,x1) => globalThis.Object.is(x0,x1),
       _302: (x0,x1) => x0.at(x1),
       _303: x0 => x0.entries(),
@@ -305,15 +302,6 @@ class CompiledApp {
       _325: a => a.length,
       _327: (a, i) => a[i],
       _328: (a, i, v) => a[i] = v,
-      _330: o => {
-        if (o === null || o === undefined) return 0;
-        if (o instanceof ArrayBuffer) return 1;
-        if (globalThis.SharedArrayBuffer !== undefined &&
-            o instanceof SharedArrayBuffer) {
-          return 2;
-        }
-        return 3;
-      },
       _333: o => {
         if (o === null || o === undefined) return 0;
         if (o instanceof Uint8Array) return 1;

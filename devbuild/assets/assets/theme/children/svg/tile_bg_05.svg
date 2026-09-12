@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="400" height="400" preserveAspectRatio="none" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0ffe0"/>
+      <stop offset="55%" stop-color="#d6f5be"/>
+      <stop offset="100%" stop-color="#b3e89a"/>
+    </linearGradient>
+    <linearGradient id="cloudA" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d4f0a0"/><stop offset="100%" stop-color="#a8d65a"/></linearGradient>
+    <linearGradient id="cloudB" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a3e8b0"/><stop offset="100%" stop-color="#5ec77a"/></linearGradient>
+    <linearGradient id="cloudC" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#80d4c4"/><stop offset="100%" stop-color="#46a896"/></linearGradient>
+    <linearGradient id="cloudD" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8ec8ed"/><stop offset="100%" stop-color="#4f9bd6"/></linearGradient>
+    <linearGradient id="cloudE" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c0a8e8"/><stop offset="100%" stop-color="#8866cf"/></linearGradient>
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#e4fad0" stop-opacity="1.0"/>
+      <stop offset="50%"  stop-color="#e4fad0" stop-opacity="0.49"/>
+      <stop offset="70%"  stop-color="#e4fad0" stop-opacity="0.10"/>
+      <stop offset="90%"  stop-color="#e4fad0" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#e4fad0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#sky)"/>
+  <path d="M0,40 Q40,22 80,36 Q120,50 160,32 Q200,18 240,34 Q280,50 320,36 Q360,24 400,38 L400,400 L0,400 Z" fill="url(#cloudA)" opacity="0.92"/>
+  <path d="M0,78 Q45,92 85,76 Q125,62 165,78 Q205,92 245,76 Q285,62 325,78 Q365,92 400,76 L400,400 L0,400 Z" fill="url(#cloudB)" opacity="0.92"/>
+  <path d="M0,118 Q35,100 75,114 Q120,128 160,112 Q200,98 245,112 Q285,128 325,114 Q365,102 400,114 L400,400 L0,400 Z" fill="url(#cloudC)" opacity="0.92"/>
+  <path d="M0,158 Q50,172 90,156 Q130,142 175,156 Q215,170 255,156 Q295,142 335,156 Q370,168 400,158 L400,400 L0,400 Z" fill="url(#cloudD)" opacity="0.92"/>
+  <path d="M0,198 Q40,182 85,196 Q125,210 170,194 Q210,180 250,194 Q295,210 335,196 Q370,184 400,196 L400,400 L0,400 Z" fill="url(#cloudE)" opacity="0.92"/>
+  <path d="M0,238 Q45,252 90,238 Q130,224 175,238 Q215,252 260,238 Q300,224 340,238 Q375,250 400,240 L400,400 L0,400 Z" fill="url(#cloudA)" opacity="0.94"/>
+  <path d="M0,278 Q40,262 80,276 Q125,290 165,274 Q205,260 250,274 Q290,290 330,276 Q370,264 400,276 L400,400 L0,400 Z" fill="url(#cloudB)" opacity="0.94"/>
+  <path d="M0,318 Q50,332 95,316 Q135,302 180,316 Q220,330 260,316 Q300,302 340,316 Q375,328 400,318 L400,400 L0,400 Z" fill="url(#cloudC)" opacity="0.94"/>
+  <path d="M0,355 Q40,340 85,354 Q130,368 170,352 Q210,340 255,354 Q295,368 335,354 Q370,342 400,354 L400,400 L0,400 Z" fill="url(#cloudD)" opacity="0.95"/>
+  <path d="M0,388 Q50,378 100,384 Q150,392 200,384 Q250,378 300,386 Q350,394 400,386 L400,400 L0,400 Z" fill="url(#cloudE)"/>
+  <rect width="400" height="400" fill="url(#centerGlow)"/>
+</svg>

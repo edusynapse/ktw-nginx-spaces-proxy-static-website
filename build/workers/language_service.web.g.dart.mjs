@@ -112,6 +112,9 @@ class CompiledApp {
         }
         return parseFloat(s);
       },
+      _9: () => typeof dartUseDateNowForTicks !== "undefined",
+      _10: () => 1000 * performance.now(),
+      _11: () => Date.now(),
       _12: () => {
         // On browsers return `globalThis.location.href`
         if (globalThis.location != null) {

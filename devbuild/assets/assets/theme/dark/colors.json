@@ -20,8 +20,8 @@
 
   "popupTitleTextColor": "#d58d00",
   "popupTextColor": "#8a7f6c",
-  "popupButtonBackgroundColor": "#2d1e00",
-  "popupButtonTextColor": "#d58d00",
+  "popupButtonBackgroundColor": "#1e170a",
+  "popupButtonTextColor": "#a47f51",
 
   "cardTextColor": "#b4b4b4",
   "cardTitleForegroundColor": "#8a7f6c",
@@ -70,5 +70,21 @@
   "globalTapThrottleIntervalMs": 800,
   "globalTapThrottleMode": "throttle",
 
-  "forgotFunnyImage": "forgot.webp"
+  "forgotFunnyImage": "forgot.webp",
+  "errorColor": "#EF5350",
+  "onErrorColor": "#1A1202",
+  "warningColor": "#FFA726",
+  "onWarningColor": "#1A1202",
+  "successColor": "#66BB6A",
+  "onSuccessColor": "#1A1202",
+  "infoColor": "#64B5F6",
+  "loaderLiquidColor": "#1565C0",
+  "waitingColor": "#FFB74D",
+  "waitingAccentColor": "#B71C1C",
+  "onInfoColor": "#1A1202",
+  "disabledColor": "#3D3631",
+  "onDisabledColor": "#8A7F6C",
+  "linkColor": "#FFB74D",
+  "dangerButtonBackground": "#B71C1C",
+  "dangerButtonText": "#FFE0E0"
 }
