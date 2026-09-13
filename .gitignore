@@ -2366,3 +2366,8 @@
 /.admin_web_parity_cached_artifact_localdev/sw-kill.js
 /.admin_web_parity_cached_artifact_localdev/sw-offline.js
 /.admin_web_parity_cached_artifact_localdev/version.json
+
+# Superseded language-pack hashes moved out of build/ and devbuild/ before a
+# release. The runtime only fetches the file named in manifest.json; these are
+# previous hashes kept out of the way rather than deleted.
+_stale_i10n/
