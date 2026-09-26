@@ -13,9 +13,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="know_to_win">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-  <!-- Cross-origin isolation (align with server/Nginx) -->
-  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
-  <meta http-equiv="Cross-Origin-Embedder-Policy" content="credentialless" />
+  <!-- COOP/COEP are response headers only (nginx snippets, Electron server.cjs);
+       browsers ignore them in <meta>. No COEP on the hosted web: see plan 236. -->
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
   <title>Know To Win App</title>
@@ -24,8 +23,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <!-- Replaced in build/web by tool/inject_web_loader_sizes.dart. -->
-  <meta name="ktw-main-wasm-bytes" content="15125320">
-  <meta name="ktw-main-js-bytes" content="15908342">
+  <meta name="ktw-main-wasm-bytes" content="15833594">
+  <meta name="ktw-main-js-bytes" content="16593515">
 
   <!-- ★ SEO: Open Graph / Twitter (aligned with levels) -->
   <meta property="og:type" content="website">
@@ -225,7 +224,7 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "440489523" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
+    const serviceWorkerVersion = "2378085804" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
   </script>
 
   <!-- Warm tzf into HTTP cache before Dart init fetches it -->
