@@ -5746,7 +5746,7 @@
     UsbAuthCore_decryptPrivateFromFile(enc, pin) {
       var $async$goto = 0,
         $async$completer = A._makeAsyncAwaitCompleter(type$.Map_String_dynamic),
-        $async$returnValue, salt, rounds, derivator, t2, out, key, iv, ct, tag, cipher, combined, len, t1;
+        $async$returnValue, salt, rounds, iv, ct, tag, derivator, t2, out, key, cipher, combined, len, t1;
       var $async$UsbAuthCore_decryptPrivateFromFile = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
         if ($async$errorCode === 1)
           return A._asyncRethrow($async$result, $async$completer);
@@ -5764,18 +5764,15 @@
                 t1 = A.Primitives_parseInt(A.S(enc.$index(0, "rounds")), null);
                 rounds = t1 == null ? 150000 : t1;
               }
+              iv = B.C_Base64Decoder.convert$1(A._asString(enc.$index(0, "ivB64")));
+              ct = B.C_Base64Decoder.convert$1(A._asString(enc.$index(0, "ctB64")));
+              tag = B.C_Base64Decoder.convert$1(A._asString(enc.$index(0, "tagB64")));
               t1 = new Uint8Array(A._ensureNativeList(B.C_Utf8Encoder.convert$1(pin)));
               derivator = A.PBKDF2KeyDerivator$(A.HMac$(A.SHA256Digest$(), 64));
               derivator.__PBKDF2KeyDerivator__params_A = new A.Pbkdf2Parameters(salt, rounds, 32);
               t2 = derivator.get$keySize();
               out = new Uint8Array(t2);
               key = B.NativeUint8List_methods.sublist$2(out, 0, derivator.deriveKey$4(t1, 0, out, 0));
-              t1 = enc.$index(0, "kdf");
-              if (J.toString$0$(t1 == null ? "" : t1) !== "pbkdf2-hmac-sha256" || key.length !== 32)
-                A.throwExpression(A.StateError$("unsupported_kdf"));
-              iv = B.C_Base64Decoder.convert$1(A._asString(enc.$index(0, "ivB64")));
-              ct = B.C_Base64Decoder.convert$1(A._asString(enc.$index(0, "ctB64")));
-              tag = B.C_Base64Decoder.convert$1(A._asString(enc.$index(0, "tagB64")));
               t1 = J.JSArray_JSArray$fixed(0, type$.int);
               cipher = A.GCMBlockCipher$(new A.AESEngine(t1));
               t1 = tag.length;
