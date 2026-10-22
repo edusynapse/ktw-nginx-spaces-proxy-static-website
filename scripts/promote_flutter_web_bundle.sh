@@ -49,8 +49,22 @@ done
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-mkdir -p "$DEST_DIR"
-rsync -a --delete "$SOURCE_DIR"/ "$DEST_DIR"/
+# Exact literal paths only: --delete must never run through a variable. The arguments only pick
+# which of the two known targets this run promotes into; anything else is refused.
+[[ "$SOURCE_DIR" == "/home/surajitray/IdeaProjects/know_to_win/build/web" ]] || {
+  echo "ERROR: --source-dir must be /home/surajitray/IdeaProjects/know_to_win/build/web (got $SOURCE_DIR)" >&2; exit 1; }
+case "$DEST_DIR" in
+  build)
+    mkdir -p "/home/surajitray/StudioProjects/ktw-nginx-spaces-proxy-static-website/build"
+    rsync -a --delete "/home/surajitray/IdeaProjects/know_to_win/build/web/" "/home/surajitray/StudioProjects/ktw-nginx-spaces-proxy-static-website/build/"
+    ;;
+  devbuild)
+    mkdir -p "/home/surajitray/StudioProjects/ktw-nginx-spaces-proxy-static-website/devbuild"
+    rsync -a --delete "/home/surajitray/IdeaProjects/know_to_win/build/web/" "/home/surajitray/StudioProjects/ktw-nginx-spaces-proxy-static-website/devbuild/"
+    ;;
+  *)
+    echo "ERROR: --dest-dir must be build or devbuild (got $DEST_DIR)" >&2; exit 1 ;;
+esac
 
 "$SCRIPT_DIR/normalize_bundle.sh" --bundle-dir "$DEST_DIR"
 
