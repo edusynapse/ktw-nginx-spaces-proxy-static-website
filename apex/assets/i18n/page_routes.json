@@ -28,6 +28,33 @@
     { "code": "SN", "name": "Shona" }
   ],
   "pages": {
+    "idea-box": {
+      "EN": "/idea-box.html",
+      "HI": "/idea-box_HI.html",
+      "ES": "/idea-box_ES.html",
+      "PT": "/idea-box_PT.html",
+      "BN": "/idea-box_BN.html",
+      "TE": "/idea-box_TE.html",
+      "MR": "/idea-box_MR.html",
+      "TA": "/idea-box_TA.html",
+      "GU": "/idea-box_GU.html",
+      "KN": "/idea-box_KN.html",
+      "OR": "/idea-box_OR.html",
+      "FR": "/idea-box_FR.html",
+      "VI": "/idea-box_VI.html",
+      "ID": "/idea-box_ID.html",
+      "TL": "/idea-box_TL.html",
+      "TH": "/idea-box_TH.html",
+      "CN": "/idea-box_CN.html",
+      "TW": "/idea-box_TW.html",
+      "SW": "/idea-box_SW.html",
+      "HA": "/idea-box_HA.html",
+      "YO": "/idea-box_YO.html",
+      "ZU": "/idea-box_ZU.html",
+      "AM": "/idea-box_AM.html",
+      "IG": "/idea-box_IG.html",
+      "SN": "/idea-box_SN.html"
+    },
     "index": {
       "EN": "/",
       "HI": "/index_HI.html"
