@@ -282,6 +282,7 @@ class CompiledApp {
       _922: x0 => x0.status,
       _924: x0 => x0.body,
       _925: x0 => x0.arrayBuffer(),
+      _926: x0 => x0.json(),
       _928: x0 => x0.read(),
       _929: x0 => x0.value,
       _930: x0 => x0.done,
