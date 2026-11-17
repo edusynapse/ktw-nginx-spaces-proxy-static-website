@@ -226,7 +226,7 @@
       "sha256": "830b2019b21f9532d1cf2bf3ebb93919c24d92b92a2aa22d231393a4b8ffb472"
     }
   },
-  "release_hash": "70e44ed8f91125696b54e24374df342657454c529495d4c31f58efd2539fc0b2",
+  "release_hash": "3e12e9ef640aa2453d2b7bd2e3aca165a4b40a4cc2f6e688cb7393680a141bbd",
   "schema_version": 1,
   "sounds": {
     "alertDialog": {
@@ -238,7 +238,7 @@
       "runtime_format": "wav"
     },
     "cancelClick": {
-      "core": false,
+      "core": true,
       "runtime_format": "wav"
     },
     "coinDrop": {
