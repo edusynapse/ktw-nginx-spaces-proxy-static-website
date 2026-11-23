@@ -836,6 +836,7 @@ class CompiledApp {
       _2046: (o,s,v) => o[s] = v,
       _2047: (o, a) => o + a,
       _2065: (o) => !!o,
+      _2066: (m) => import(m),
       _2076: (x0,x1) => x0.call(x1),
       _2097: x0 => new Array(x0),
       _2099: x0 => x0.length,
